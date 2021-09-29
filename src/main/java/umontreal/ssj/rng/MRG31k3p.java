@@ -24,11 +24,8 @@
  */
 package umontreal.ssj.rng;
 
-
-import umontreal.ssj.rng.RandomStream;
-import umontreal.ssj.rng.RandomStreamBase;
 import umontreal.ssj.util.ArithmeticMod;
-import java.io.Serializable;
+// import java.io.Serializable;
 
 /**
  * Extends the abstract class  @ref RandomStreamBase, thus implementing the
@@ -46,9 +43,7 @@ import java.io.Serializable;
  * The difference between the RNG of class  @ref MRG32k3a and this one is
  * that this one has all its coefficients of the form @f$a = \pm2^q
  * \pm2^r@f$. This permits a faster implementation than for arbitrary
- * coefficients. On a 32-bit computer, `MRG31k3p` is about twice as fast as
- * `MRG32k3a`. On the other hand, the latter does a little better in the
- * spectral test and has been more extensively tested.
+ * coefficients. 
  *
  * <div class="SSJ-bigskip"></div>
  */
@@ -130,7 +125,7 @@ public class MRG31k3p extends RandomStreamBase {
    }
 
    /**
-    * Constructs a new stream, initialized at its beginning. Its seed is
+    * Constructs a new stream, initialized to its seed, which is 
     * @f$Z = 2^{134}@f$ steps away from the previous seed.
     */
    public MRG31k3p() {
@@ -179,7 +174,6 @@ public class MRG31k3p extends RandomStreamBase {
          throw new IllegalArgumentException ("The last 3 values must not be 0");
       if (seed[0] >= M1 || seed[1] >= M1 || seed[2] >= M1)
          throw new IllegalArgumentException ("The first 3 values must be less than " + M1);
-
       if (seed[5] >= M2 || seed[3] >= M2 || seed[4] >= M2)
          throw new IllegalArgumentException ("The last 3 values must be less than " + M2);
       for (int i = 0; i < 6;  ++i)
@@ -234,15 +228,15 @@ public class MRG31k3p extends RandomStreamBase {
       resetStartSubstream();
    }
 
-/**
- * Returns the current state @f$C_g@f$ of this stream. This is a vector of 6
- * integers represented. This method is convenient if we want to save the
- * state for subsequent use.
- *  @return the current state of the generator
- */
-public int[] getState() {
+   /**
+    * Returns the current state @f$C_g@f$ of this stream. This is a vector of 6
+    * integers represented. This method is convenient if we want to save the
+    * state for subsequent use.
+    *  @return the current state of the generator
+    */
+   public int[] getState() {
       return new int[]{x11, x12, x13, x21, x22, x23};
-   }
+      }
 
    /**
     * Clones the current generator and return its copy.
@@ -305,7 +299,7 @@ public int[] getState() {
       x22 = x21;
       x21 = y2;
 
-      //Must never return either 0 or 1
+      // Must never return either 0 or 1
       if(x11 <= x21)
          return (x11 - x21 + M1) * NORM;
       else
