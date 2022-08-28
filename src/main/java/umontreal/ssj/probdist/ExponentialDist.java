@@ -28,7 +28,7 @@ import  umontreal.ssj.util.Num;
 /**
  * Extends the class  @ref ContinuousDistribution for the *exponential*
  * distribution @cite tJOH95a&thinsp; (page 494) with mean @f$1/\lambda@f$
- * where @f$\lambda> 0@f$. Its density is
+ * where @f$\lambda> 0@f$ is the rate parameter.  Its density is
  * @anchor REF_probdist_ExponentialDist_eq_fexpon
  * @f[
  *   f(x) = \lambda e^{-\lambda x} \qquad\mbox{for }x\ge0, \tag{fexpon}
@@ -50,7 +50,7 @@ public class ExponentialDist extends ContinuousDistribution {
    private double lambda;
 
    /**
-    * Constructs an `ExponentialDist` object with parameter @f$\lambda@f$
+    * Constructs an `ExponentialDist` object with rate parameter @f$\lambda@f$
     * = 1.
     */
    public ExponentialDist() {
@@ -58,7 +58,7 @@ public class ExponentialDist extends ContinuousDistribution {
    }
 
    /**
-    * Constructs an `ExponentialDist` object with parameter @f$\lambda@f$
+    * Constructs an `ExponentialDist` object with rate parameter @f$\lambda@f$
     * = `lambda`.
     */
    public ExponentialDist (double lambda) {
@@ -146,7 +146,7 @@ public static double density (double lambda, double x) {
    }
 
    /**
-    * Estimates the parameter @f$\lambda@f$ of the exponential
+    * Estimates the rate parameter @f$\lambda@f$ of the exponential
     * distribution using the maximum likelihood method, from the @f$n@f$
     * observations @f$x[i]@f$, @f$i = 0, 1,…, n-1@f$. The estimate is
     * returned in a one-element array, as element 0.  The equation of the
@@ -175,7 +175,7 @@ public static double density (double lambda, double x) {
    }
 
    /**
-    * Creates a new instance of an exponential distribution with parameter
+    * Creates a new instance of an exponential distribution with rate parameter
     * @f$\lambda@f$ estimated using the maximum likelihood method based
     * on the @f$n@f$ observations @f$x[i]@f$, @f$i = 0, 1, …, n-1@f$.
     *  @param x            the list of observations to use to evaluate
@@ -190,7 +190,7 @@ public static double density (double lambda, double x) {
 
    /**
     * Computes and returns the mean, @f$E[X] = 1/\lambda@f$, of the
-    * exponential distribution with parameter @f$\lambda@f$.
+    * exponential distribution with rate parameter @f$\lambda@f$.
     *  @return the mean of the exponential distribution @f$E[X] = 1 /
     * \lambda@f$
     */
@@ -203,7 +203,7 @@ public static double density (double lambda, double x) {
 
    /**
     * Computes and returns the variance, @f$\mbox{Var}[X] =
-    * 1/\lambda^2@f$, of the exponential distribution with parameter
+    * 1/\lambda^2@f$, of the exponential distribution with rate parameter
     * @f$\lambda@f$.
     *  @return the variance of the Exponential distribution
     * @f$\mbox{Var}[X] = 1 / \lambda^2@f$
@@ -217,7 +217,7 @@ public static double density (double lambda, double x) {
 
    /**
     * Computes and returns the standard deviation of the exponential
-    * distribution with parameter @f$\lambda@f$.
+    * distribution with rate parameter @f$\lambda@f$.
     *  @return the standard deviation of the exponential distribution
     */
    public static double getStandardDeviation (double lambda) {

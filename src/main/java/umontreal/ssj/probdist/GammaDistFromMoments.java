@@ -27,7 +27,7 @@ package umontreal.ssj.probdist;
 /**
  * Extends the  @ref GammaDist distribution with constructors accepting the
  * mean @f$\mu@f$ and variance @f$\sigma^2@f$ as arguments instead of a
- * shape parameter @f$\alpha@f$ and a scale parameter @f$\lambda@f$. Since
+ * shape parameter @f$\alpha@f$ and a rate parameter @f$\lambda@f$. Since
  * @f$\mu=\alpha/ \lambda@f$, and @f$\sigma^2=\alpha/ \lambda^2@f$, the
  * shape and scale parameters are @f$\alpha=\mu^2 / \sigma^2@f$, and
  * @f$\lambda=\mu/ \sigma^2@f$, respectively.

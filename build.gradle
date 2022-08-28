@@ -120,7 +120,7 @@ sourceSets {
         java {
             srcDirs = ['src/main/docs/examples']
             exclude 'markovchainrqmc/**' // FIXME: broken examples
-            exclude 'ift6561examples/**'
+//            exclude 'ift6561examples/**'
             exclude 'latnetbuilder/**'  // We do not want this dependence.
             exclude 'umontreal.ssj.latnetbuilder/LatNetBuilderTest.java'  
             exclude 'tutorial/Collision.java'

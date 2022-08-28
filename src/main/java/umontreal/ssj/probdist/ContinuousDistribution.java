@@ -25,7 +25,6 @@
 package umontreal.ssj.probdist;
 import umontreal.ssj.util.PrintfFormat;
 import umontreal.ssj.util.Num;
-import umontreal.ssj.functions.MathFunction;
 
 /**
  * Classes implementing continuous distributions should inherit from this
@@ -40,10 +39,10 @@ import umontreal.ssj.functions.MathFunction;
  * @ingroup probdist_general
  */
 public abstract class ContinuousDistribution implements Distribution {
-   @Deprecated
+   //  @Deprecated
    public int decPrec = 15;
 
-   private int getDecPrec() {
+   public int getDecPrec() {
       return decPrec;
    }
 

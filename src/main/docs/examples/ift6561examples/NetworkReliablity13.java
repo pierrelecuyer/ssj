@@ -1,4 +1,5 @@
 package ift6561examples;
+
 import java.io.*;
 // import java.util.Scanner;
 import umontreal.ssj.rng.*;
@@ -7,15 +8,15 @@ import umontreal.ssj.stat.*;
 import umontreal.ssj.mcqmctools.*;
 
 /**
- * This class simulates a specific stochastic activity network with 9 nodes and
- * 13 links, taken from Elmaghraby (1977) and used again in L'Ecuyer and Lemieux
- * (2000), "Variance Reduction via Lattice Rules". The goal here is to estimate the
- * probability that nodes 1 and 9 are disconncted.
+ * This class simulates a static reliability model using the same network as for 
+ * the specific San13 example with 9 nodes and 13 links, taken from Elmaghraby (1977).
+ * The goal here is to estimate the probability that nodes 1 and 9 are disconnected.
  * This program is very specific to this example and uses a very naive way to
  * compute the shortest path, by enumerating all six paths!
+ * Here the links are numbered from 0 to 12.
  */
 
-public class San13connect implements MonteCarloModelDouble {
+public class NetworkReliablity13 implements MonteCarloModelDouble {
 
 	double[] r = new double[13];
 	boolean[] Y = new boolean[13];
@@ -23,9 +24,8 @@ public class San13connect implements MonteCarloModelDouble {
 	boolean connected;
 
 	// The constructor.
-	public San13connect(double rj) {
+	public NetworkReliablity13(double rj) {
 		for (int k = 0; k < 13; k++) r[k] = rj;
-		// r[4] = 0.99; r[5] = 0.99; r[6] = 0.999;
 	}
 
 	public void simulate(RandomStream stream) {
@@ -33,7 +33,7 @@ public class San13connect implements MonteCarloModelDouble {
 			Y[k] = (stream.nextDouble() < r[k]);
 		}
 		connected = false;
-		// Path lengths
+		// Check all directed connection paths
 		if ((Y[1] & Y[5] & Y[10]) |
 			(Y[0] & Y[2] & Y[5] & Y[10]) |
 			(Y[0] & Y[4] & Y[10]) |
@@ -56,11 +56,12 @@ public class San13connect implements MonteCarloModelDouble {
 	}
 
 	public static void main(String[] args) throws IOException {
-		int n = 1000000 * 1000;
+		int n = 1 * 1000;
 		double rj = 0.999;
-		San13connect san = new San13connect(rj);
-		Tally statC = new Tally("SAN13 reliability example");
-		MonteCarloExperiment.simulateRunsDefaultReportStudent (san, n, new LFSR113(),
+		NetworkReliablity13 net = new NetworkReliablity13(rj);
+		Tally statC = new Tally("Network reliability");
+	    net.r[0] = net.r[1] = 0.95;   // This is for the CMC vs MC example.
+		MonteCarloExperiment.simulateRunsDefaultReportStudent (net, n, new LFSR113(),
 				statC, 0.95, 4);
 		System.out.println(statC.report(0.95, 8));
 	}

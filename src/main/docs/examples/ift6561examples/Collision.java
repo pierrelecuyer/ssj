@@ -80,9 +80,9 @@ public class Collision {
 		statC.setConfidenceIntervalStudent();
 		System.out.println(statC.report(0.95, 3));
 
-		System.out.println("Counters:\n" + "c  count  fraction  Poisson prob.\n");
+		System.out.println("Counters:\n" + "c    count    Expected (Poisson approx.)\n");
 		for (int c = 0; c <= col.maxCounts; c++) {
-			System.out.printf(c + "  " + col.counts[c] + "  %10.6g%n", n * col.poisson.prob(c));
+			System.out.printf(c + "  " + col.counts[c] + "  %12.7g%n", n * col.poisson.prob(c));
 		}
 	}
 }

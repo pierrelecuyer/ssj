@@ -30,7 +30,7 @@ import umontreal.ssj.util.RootFinder;
 /**
  * Extends the class  @ref ContinuousDistribution for the *gamma*
  * distribution @cite tJOH95a&thinsp; (page 337) with shape parameter
- * @f$\alpha> 0@f$ and scale parameter @f$\lambda> 0@f$. The density is
+ * @f$\alpha> 0@f$ and rate parameter @f$\lambda> 0@f$. The density is
  * @anchor REF_probdist_GammaDist_eq_fgamma
  * @f[
  *   f(x) = \frac{\lambda^{\alpha}x^{\alpha- 1}e^{-\lambda x}}{\Gamma(\alpha)}, \qquad\mbox{for } x > 0,\tag{fgamma}
@@ -48,8 +48,8 @@ import umontreal.ssj.util.RootFinder;
  * @ingroup probdist_continuous
  */
 public class GammaDist extends ContinuousDistribution {
-   private double alpha;
-   private double lambda;
+   private double alpha;          // shape parameter
+   private double lambda;         // rate parameter
    private double logFactor;      // Log (lambda^alpha / Gamma (alpha))
    private static final double ALIM = 1.0E5;
 

@@ -7,8 +7,7 @@ import java.util.LinkedList;
 
 public class QueueEv {
 
-   RandomVariateGen genArr;
-   RandomVariateGen genServ;
+   RandomVariateGen genArr, genServ;
    LinkedList<Customer> waitList = new LinkedList<Customer> ();
    LinkedList<Customer> servList = new LinkedList<Customer> ();
    Tally custWaits     = new Tally ("Waiting times");
@@ -22,7 +21,9 @@ public class QueueEv {
    }
 
    public void simulate (double timeHorizon) {
-      Sim.init();
+      Sim.init();  
+   	  waitList.clear();  servList.clear();
+  	  custWaits.init();  totWait.init();
       new EndOfSim().schedule (timeHorizon);
       new Arrival().schedule (genArr.nextDouble());
       Sim.start();
@@ -66,9 +67,15 @@ public class QueueEv {
    }
 
    public static void main (String[] args) {
-      QueueEv queue = new QueueEv (1.0, 2.0);
-      queue.simulate (1000.0);
-      System.out.println (queue.custWaits.report());
-      System.out.println (queue.totWait.report());
+	  double lambda = 1.0/10.0; // Arrival rate 
+	  double mu = 1.0/9.0;      // Service rate
+	  double T = 1000.0;        // Time horizon
+	  int n = 8;                // Number of simulation replications
+	  QueueEv queue = new QueueEv (lambda, mu);
+      for (int rep = 0; rep < n; rep++) {
+         queue.simulate (T);
+         System.out.println (queue.custWaits.report());
+         System.out.println (queue.totWait.report());
+      }
    }
 }

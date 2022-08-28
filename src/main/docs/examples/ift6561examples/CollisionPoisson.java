@@ -5,7 +5,9 @@ import umontreal.ssj.probdist.*;
 import umontreal.ssj.util.Chrono;
 
 // Extension of Collision class in which the number of items thrown is random 
-// with a Poisson distribution with mean mm.
+// with a Poisson distribution with mean mm.  Performs simulations for both cases
+// and compare. This program was used to produce the tables in the book. 
+
 public class CollisionPoisson extends Collision {
 	PoissonDist distm;
 
@@ -67,9 +69,9 @@ public class CollisionPoisson extends Collision {
 		// Print table with statistics on collision counts and Poisson approximation
 		// of P(C=c), for each number c of collisions.
 		System.out.println("Counters:\n"
-				+ "c  count-fixed  count-poisson  Poisson prob.\n");
+				+ "c  count-fixed  count-poisson  Expected (Poisson approx.)\n");
 		for (int c = 0; c <= maxCounts; c++) {
-			System.out.printf("%3d & %8d & %8d & %12.2f  %n", c, col.counts[c],
+			System.out.printf("%3d & %8d & %8d & %12.1f \\\\ %n", c, col.counts[c],
 					colp.counts[c], n * col.poisson.prob(c));
 		}
 	}

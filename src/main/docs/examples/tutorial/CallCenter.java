@@ -40,11 +40,12 @@ public class CallCenter {
    RandomStream streamPatience = new MRG32k3a(); // For patience times.
    GammaGen genServ;      // For service times; created in readData().
 
-   Tally[] allTal = new Tally [4];
-   Tally statArrivals = allTal[0] = new Tally ("Number of arrivals per day");
+   Tally[] allTal = new Tally [5];
+   Tally statArrivals = allTal[0] = new Tally ("Number of arrivals per day"); // Just to check.
    Tally statWaits = allTal[1] = new Tally ("Average waiting time per customer");
    Tally statGoodQoS = allTal[2] = new Tally ("Proportion of waiting times < s");
    Tally statAbandon = allTal[3] = new Tally ("Proportion of calls lost");
+   Tally statService = allTal[4] = new Tally ("Service times"); // Just to check mean and variance.
    Tally statWaitsDay = new Tally ("Waiting times within a day");
 
    public CallCenter (String fileName) throws IOException {
@@ -86,13 +87,15 @@ public class CallCenter {
 
       public Call() {
          serviceTime = genServ.nextDouble(); // Generate service time.
+         statService.add (serviceTime);   // Just for checking...
+         // patienceTime = generPatience(); // Generate the patience for all.
          if (nBusy < nAgents) {           // Start service immediately.
             nBusy++;
             nGoodQoS++;
             statWaitsDay.add (0.0);
             new CallCompletion().schedule (serviceTime);
          } else {                         // Join the queue.
-            patienceTime = generPatience();
+            patienceTime = generPatience(); // Generate the patience only if needed.
             arrivalTime = Sim.time();
             waitList.addLast (this);
          }
@@ -175,9 +178,9 @@ public class CallCenter {
       // Here the simulation is running...
 
       statArrivals.add ((double)nArrivals);
-      statAbandon.add ((double)nAbandon / nCallsExpected);
-      statGoodQoS.add ((double)nGoodQoS / nCallsExpected);
       statWaits.add (statWaitsDay.sum() / nCallsExpected);
+      statGoodQoS.add ((double)nGoodQoS / nCallsExpected);
+      statAbandon.add ((double)nAbandon / nCallsExpected);
    }
 
    public void simulateOneDay () {
@@ -187,7 +190,7 @@ public class CallCenter {
 
    static public void main (String[] args) throws IOException {
       CallCenter cc = new CallCenter (args.length == 1 ? args[0] : "src/main/docs/examples/tutorial/CallCenter.dat");
-      for (int i = 0; i < 10000; i++)  cc.simulateOneDay();
+      for (int i = 0; i < 1000; i++)  cc.simulateOneDay();
       System.out.println ("\nNumber of calls expected per day = " + cc.nCallsExpected +"\n");
       for (int i = 0; i < cc.allTal.length; i++) {
          cc.allTal[i].setConfidenceIntervalStudent();

@@ -119,8 +119,8 @@ public class GammaAcceptanceRejectionGen extends GammaGen {
                                        double alpha, double lambda) {
       super (s, null);
       auxStream = aux;
-      setParams (alpha, lambda);
-      beta  = 1.0/lambda;
+      setParams (alpha, lambda);  // lambda is the rate.
+      beta  = 1.0/lambda;         // scale parameter.
       gamma = 0.0;
       init ();
    }

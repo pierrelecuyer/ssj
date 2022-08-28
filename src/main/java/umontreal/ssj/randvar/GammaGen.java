@@ -28,7 +28,7 @@ import umontreal.ssj.probdist.*;
 
 /**
  * This class implements random variate generators for the *gamma*
- * distribution. Its parameters are @f$\alpha>0@f$ and @f$\lambda>0@f$. Its
+ * distribution. Its parameters are @f$\alpha>0@f$ (shape) and @f$\lambda>0@f$ (rate). Its
  * density function is
  * @anchor REF_randvar_GammaGen_eq_fgamma
  * @f[

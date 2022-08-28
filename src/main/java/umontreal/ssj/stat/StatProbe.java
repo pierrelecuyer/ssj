@@ -203,8 +203,7 @@ public abstract class StatProbe {
       sb.append ("   ");
       sb.append (firstProbe.shortReportHeader()).append (PrintfFormat.NEWLINE);
       for (StatProbe probe : probes) {
-         sb.append
-            (PrintfFormat.s (-maxn, probe.getName()));
+         sb.append (PrintfFormat.s (-maxn, probe.getName()));
          sb.append ("   ");
          sb.append (probe.shortReport()).append (PrintfFormat.NEWLINE);
       }
