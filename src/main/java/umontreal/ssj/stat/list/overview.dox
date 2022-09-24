@@ -1,8 +1,11 @@
 /**
  * @package umontreal.ssj.stat.list
  *
- * @anchor REF_stat_list_overview_over_li_tal Provides support
- * for lists of statistical probes. Sometimes, a simulator computes several
+ * Provides support for lists of statistical probes. 
+ *
+ * @anchor REF_stat_list_overview_over_li_tal 
+ 
+ * Sometimes, a simulator computes several
  * related performance measures such as the quality of service for different
  * call types in a phone call center, the waiting times of different types of
  * customers, the average number of pieces of different types a machine

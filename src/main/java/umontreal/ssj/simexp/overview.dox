@@ -3,7 +3,8 @@
  *
  * Tools for Simulation Experiments.
  *
- * Provides some classes to manage simulation experiments
+ * This is an old package written by Eric Buist for call center simulation before 2007.  
+ * It provides some classes to manage simulation experiments
  * with many replications, batch means, etc. Let
  * @f$\bar{\mathbf{X}}_n@f$ be an average of random vectors:
  * @f[

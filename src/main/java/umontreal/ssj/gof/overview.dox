@@ -5,14 +5,14 @@
  *
  * @anchor REF_gof_overview_sec_overview
  *
- * This package contains tools for performing univariate *goodness-of-fit*
- * (GOF) statistical tests. Methods for computing (or approximating) the
- * distribution function @f$F(x)@f$ of certain GOF test statistics, as well
- * as their complementary distribution function @f$\bar{F}(x) = 1 - F(x)@f$,
- * are implemented in classes of package  @ref umontreal.ssj.probdist. Tools
+ * This package contains tools to apply univariate *goodness-of-fit*
+ * (GOF) statistical tests. The tools
  * for computing the GOF test statistics and the corresponding
  * @f$p@f$-values, and for formating the results, are provided in classes
  * @ref GofStat and  @ref GofFormat.
+ * Methods for computing (or approximating) the cdf 
+ * @f$F(x)@f$ and complementary cdf @f$\bar{F}(x) = 1 - F(x)@f$ of 
+ * certain GOF test statistics are implemented in the package  @ref umontreal.ssj.probdist. 
  *
  * We are concerned here with GOF test statistics for testing the hypothesis
  * @f$\mathcal{H}_0@f$ that a sample of @f$N@f$ observations @f$X_1,…,X_N@f$

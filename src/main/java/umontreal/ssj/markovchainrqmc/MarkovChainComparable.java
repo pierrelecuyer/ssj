@@ -1,5 +1,5 @@
 package umontreal.ssj.markovchainrqmc;
-import umontreal.ssj.util.sort.MultiDimComparable;
+import umontreal.ssj.util.multidimsort.MultiDimComparable;
 
 /**
  * A subclass of `MarkovChain` for which there is a total ordering between the

@@ -4,7 +4,8 @@ import umontreal.ssj.stat.*;
 import umontreal.ssj.rng.*;
 import umontreal.ssj.hups.*;
 import umontreal.ssj.util.*;
-import umontreal.ssj.util.sort.*;
+import umontreal.ssj.util.multidimsort.*;
+
 import java.util.Arrays;
 
 /**

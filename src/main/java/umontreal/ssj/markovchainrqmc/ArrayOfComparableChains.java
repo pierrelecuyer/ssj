@@ -2,8 +2,8 @@ package umontreal.ssj.markovchainrqmc;
  import umontreal.ssj.stat.PgfDataTable;
  import umontreal.ssj.stat.Tally;
  import umontreal.ssj.util.*;
- import umontreal.ssj.util.sort.*;
- import umontreal.ssj.hups.*;
+import umontreal.ssj.util.multidimsort.*;
+import umontreal.ssj.hups.*;
  import umontreal.ssj.charts.*;
  import umontreal.ssj.functionfit.LeastSquares;
  import java.io.IOException;
@@ -28,13 +28,13 @@ package umontreal.ssj.markovchainrqmc;
  * and sort according to the value of this sorting function.
  * We end up sorting in @f$\ell’=1@f$ dimensions.
  * The second possibility is to use a multivariate sort of the type 
- *  @ref umontreal.ssj.util.sort.MultiDimSort, which
- * in general can sort  @ref umontreal.ssj.util.sort.MultiDimComparable objects.
+ *  @ref umontreal.ssj.util.multidimsort.MultiDimSort, which
+ * in general can sort  @ref umontreal.ssj.util.multidimsort.MultiDimComparable objects.
  * Special cases of these multivariate sorts are of type
- * @ref umontreal.ssj.util.sort.MultiDimSort01.  Some of them
+ * @ref umontreal.ssj.util.multidimsort.MultiDimSort01.  Some of them
  * effectively map the chain states to the one-dimensional interval
  * @f$(0,1)@f$. For example, the sorts based on a Hilbert curve, such as
- * @ref umontreal.ssj.util.sort.HilbertCurveSort, do that. 
+ * @ref umontreal.ssj.util.multidimsort.HilbertCurveSort, do that. 
  * In that case, we end up again sorting in @f$\ell’=1@f$ dimensions.
  * Otherwise, we sort in @f$\ell’ \leq \ell@f$ dimensions.
  *

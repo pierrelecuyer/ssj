@@ -1,7 +1,7 @@
 /**
  * @package umontreal.ssj.mcqmctools
  *
- * Tools for Simple Monte Carlo and Quasi-Monte Carlo Experiments.
+ * Functions to help make simple Monte Carlo and quasi-Monte Carlo experiments.
  *
  * @anchor REF_mcqmctools_overview_sec_overview
  *
@@ -22,7 +22,7 @@
  * compute confidence intervals, make histograms, scatter plots, print a report, etc.  
  *  
  * The class @ref RQMCExperiment provides tools to perform similar experiments with 
- * randomized quasi-Monte Carlo (RQMC) instead.  In an RQMC experiment, one simulates the system 
+ * randomized quasi-Monte Carlo (RQMC) instead (@cite vLEC18a}. In an RQMC experiment, one simulates the system 
  * `n` times, using an RQMC point set of size `n`, and this is repeated `m` times by
  * randomizing the point set independently for each of the `m` replications.
  * 
@@ -30,14 +30,5 @@
  * for example all powers of 2 in some interval, in order to study the behavior of RQMC estimators
  * as a function of `n`. For example, one might be interested in estimating how the variance
  * (and in some cases the bias) converges as a function of `n`, and perhaps plot it in log-log scale.
- *
- *
- *
- * # Examples
- *
- * @anchor REF_markovchainrqmc_overview_sec_examples
- *
- * The following examples show how to use this package.   (To do... ) 
- *
  * 
  */

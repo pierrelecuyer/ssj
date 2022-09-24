@@ -27,7 +27,6 @@ import umontreal.ssj.simevents.Simulator;
 import umontreal.ssj.stat.FunctionOfMultipleMeansTally;
 import umontreal.ssj.stat.StatProbe;
 import umontreal.ssj.stat.Tally;
-import umontreal.ssj.stat.matrix.MatrixOfStatProbes;
 
 /**
  * Represents a framework for performing experiments using simulation. This

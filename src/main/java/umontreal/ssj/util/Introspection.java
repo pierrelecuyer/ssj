@@ -72,7 +72,7 @@ public static Method[] getMethods (Class<?> c) {
          methods.add (mt[i]);
 
       List<Method> inheritedMethods = new ArrayList<Method>();
-      Class[] iface = c.getInterfaces();
+      Class<?>[] iface = c.getInterfaces();
       for (int i = 0; i < iface.length; i++)
          inheritedMethods.addAll (internalGetMethods (iface[i]));
       if (!c.isInterface()) {
@@ -124,8 +124,8 @@ public static Method[] getMethods (Class<?> c) {
  *  @return `true` if the signatures are the same, `false` otherwise.
  */
 public static boolean sameSignature (Method m1, Method m2) {
-      Class[] pt1 = m1.getParameterTypes();
-      Class[] pt2 = m2.getParameterTypes();
+      Class<?>[] pt1 = m1.getParameterTypes();
+      Class<?>[] pt2 = m2.getParameterTypes();
       if (pt1.length != pt2.length)
          return false;
       for (int i = 0; i < pt1.length; i++)
@@ -175,7 +175,7 @@ public static boolean sameSignature (Method m1, Method m2) {
    }
 
    private static void processInterfaceFields (final Class<?> c, final List<Field> lst, final Set<Class<?>> traversedInterfaces) {
-      Class[] iface = c.getInterfaces();
+      Class<?>[] iface = c.getInterfaces();
       for (int i = 0; i < iface.length; i++) {
          if (traversedInterfaces.contains (iface[i]))
             continue;

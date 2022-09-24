@@ -6,18 +6,19 @@
  *  @anchor REF_charts_overview_sec_overview
  *
  * This package contains utility classes to produce charts either for LaTeX
- * or to be shown on the computer screen, from a Java program.
- * It is based on the open source `JFreeChart` software, available at
+ * or to be displayed on the computer screen, directly from a Java program.
+ * It was written mostly by students before 2010 and it is not perfect.
+ * For LaTeX, the package generates TikZ source code, which can be adjusted manually afterwards if needed.
+ *
+ * The package is built over the open source `JFreeChart` software
  * [http://www.jfree.org/jfreechart/](http://www.jfree.org/jfreechart/),
- * and distributed under the terms of
+ * which is distributed under the terms of
  * the GNU Lesser General Public License (LGPL).
  * It provides tools for the construction, visualization, and
  * customization of XY plots, histograms, and empirical styled charts.
  * It offers facilities to export charts to PGF/TikZ source
- * code, which can be included into LaTeX documents. TikZ is a free LaTeX
- * package to produce pictures such as plots, and can be downloaded from
+ * code, which can be included into LaTeX documents
  * [http://sourceforge.net/projects/pgf](http://sourceforge.net/projects/pgf).
- *
  * The user does not need to be familiar with the `JFreeChart` package or the
  * TikZ syntax to use these tools, except if customization is required. For
  * this, one may see the API specification of `JFreeChart`, and the reference

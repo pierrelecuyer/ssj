@@ -26,8 +26,8 @@ package umontreal.ssj.hups;
 
 import umontreal.ssj.util.PrintfFormat;
 import java.util.Arrays;
-import umontreal.ssj.util.sort.DoubleArrayComparator;
-import umontreal.ssj.util.sort.MultiDimSort;
+import umontreal.ssj.util.multidimsort.DoubleArrayComparator;
+import umontreal.ssj.util.multidimsort.MultiDimSort;
 import umontreal.ssj.rng.RandomStream;
 
 /**

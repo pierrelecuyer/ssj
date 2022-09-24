@@ -1,7 +1,7 @@
 /**
  * @package umontreal.ssj.stat.density 
  *
- * Univariate density estimation.
+ * Tools for univariate density estimation.
  * 
  * This package provides tools for univariate density estimation from a set of 
  * real-valued observations \f$x_0,x_1,\dots,x_{n-1}\f$ which may come from 

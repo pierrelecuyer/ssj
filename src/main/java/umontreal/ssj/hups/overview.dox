@@ -1,7 +1,7 @@
 /**
  * @package umontreal.ssj.hups
  *
- * This package provides tools to generate and randomize *highly uniform point sets*
+ * Provides tools to generate and randomize *highly uniform point sets*
  * (HUPS), alias *quasi-Monte Carlo* (QMC) or *low-discrepancy* points, 
  * for use in place of independent random numbers in Monte Carlo experiments.
  *

@@ -22,11 +22,11 @@
    <a href="http://www.gnu.org/licenses">GPL licence site</a>.
  */
 package umontreal.ssj.hups;
- import umontreal.ssj.util.sort.MultiDimSort;
  import umontreal.ssj.rng.RandomStream;
  import umontreal.ssj.util.PrintfFormat;
  // import java.util.Comparator;
  // import java.util.Arrays;
+import umontreal.ssj.util.multidimsort.MultiDimSort;
 
 /**
  * This class is useful for the Array-RQMC method, in the situation where

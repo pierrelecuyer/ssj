@@ -180,7 +180,7 @@
  * arrays from/to text, operations on binary vectors and matrices, some
  * mathematical functions and constants, root-finding tools, and so on.
  *
- *  @ref umontreal.ssj.util.sort 
+ *  @ref umontreal.ssj.util.multidimsort 
  * contains utility classes to sort multi-dimensional points.
  * This is useful for Array-RQMC, for example.
  *

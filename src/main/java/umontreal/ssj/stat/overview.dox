@@ -1,7 +1,7 @@
 /**
  * @package umontreal.ssj.stat
  *
- * Tools for Collecting Statistics and computing some estimators.
+ * Tools for Collecting Statistics and computing estimators and confidence intervals.
  *
  * This package provides elementary tools for collecting data and 
  * computing some estimators and confidence intervals. The base class

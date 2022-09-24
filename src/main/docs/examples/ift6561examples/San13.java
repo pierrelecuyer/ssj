@@ -14,7 +14,7 @@ import umontreal.ssj.rng.*;
  * length T of the longest path in the network. This program is very specific to
  * this example and uses a very naive way to compute the longest path, by
  * enumerating all six paths! Here the arcs are numbered from 0 to 12.
- */
+ **/
 
 public class San13 implements MonteCarloModelDouble {
 

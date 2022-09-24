@@ -1,6 +1,8 @@
 /**
  * @package umontreal.ssj.rng
  *
+ * Streams of independent uniform random numbers.
+ *
  * This package offers basic facilities for generating multiple streams and substreams
  * of uniform random numbers over the interval @f$U(0,1)@f$ or over a range of integer values. 
  * The design is based on the interface @ref RandomStream and the package offers various 
@@ -31,7 +33,7 @@
  * the CPU time (in seconds) to generate @f$10^9@f$
  * @f$U(0,1)@f$ random numbers (gen. time), and the CPU time to jump ahead
  * @f$10^9@f$ times to the next substream (jump time). These timings
- * were on a 2100 MHz 32-bit AMD Athlon XP 2800+ computer running Linux, with
+ * were on a (old) 2100 MHz 32-bit AMD Athlon XP 2800+ computer running Linux, with
  * the JDK 1.4.2.
  *
  * <center>
@@ -82,7 +84,7 @@
  *
  * </center>
  *
- * The following timings are on a 2400 MHz 64-bit AMD Athlon 64 Processor
+ * The following timings were made on a 2400 MHz 64-bit AMD Athlon 64 Processor
  * 4000+ computer running Linux, with the JDK 1.5.0.
  *
  * <center>
