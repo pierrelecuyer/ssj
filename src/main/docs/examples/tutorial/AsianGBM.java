@@ -69,7 +69,7 @@ public class AsianGBM {
       Tally statValue = new Tally ("Stats on value of Asian option");
       Chrono timer = new Chrono();
       int n = 100000;
-      process.simulateRuns (n, new MRG32k3a(), statValue);
+      process.simulateRuns (n, new LFSR113(), statValue);
       statValue.setConfidenceIntervalStudent();
       System.out.println (statValue.report (0.95, 3));
       System.out.println ("Total CPU time:      " + timer.format() + "\n");

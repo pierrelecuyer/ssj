@@ -125,13 +125,13 @@ public class RQMCExperiment extends MonteCarloExperiment {
 		str.append(12, 5, 4, variancePerRunMC);
 		str.append ("\n");
 		str.append ("RQMC Variance per run: ");
-		str.append(12, 5, 4, varianceRQMC);
+		str.append(10, 5, 4, varianceRQMC);
 		str.append ("\n");
 		str.append ("Variance ratio:   ");
-		str.append(12, 5, 4, variancePerRunMC / varianceRQMC);
+		str.append(12, 3, 4, variancePerRunMC / varianceRQMC);
 		str.append ("\n");
 		str.append ("Efficiency ratio: ");
-		str.append(12, 5, 4, (variancePerRunMC * secondsPerRunMC) / (varianceRQMC * secondsRQMC));
+		str.append(12, 3, 4, (variancePerRunMC * secondsPerRunMC) / (varianceRQMC * secondsRQMC));
 		str.append ("\n---------------------------------------------------------------\n");
 		return str.toString();
 	}

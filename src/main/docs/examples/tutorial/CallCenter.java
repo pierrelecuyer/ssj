@@ -191,7 +191,7 @@ public class CallCenter {
 
    static public void main (String[] args) throws IOException {
       CallCenter cc = new CallCenter (args.length == 1 ? args[0] : "src/main/docs/examples/tutorial/CallCenter.dat");
-      for (int i = 0; i < 1000; i++)  cc.simulateOneDay();
+      for (int i = 0; i < 10000; i++)  cc.simulateOneDay();
       System.out.println ("\nNumber of calls expected per day = " + cc.nCallsExpected +"\n");
       for (int i = 0; i < cc.allTal.length; i++) {
          cc.allTal[i].setConfidenceIntervalStudent();

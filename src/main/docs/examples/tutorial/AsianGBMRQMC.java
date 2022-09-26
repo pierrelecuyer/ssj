@@ -43,7 +43,7 @@ public class AsianGBMRQMC extends AsianGBM {
       // We first perform a Monte Carlo experiment, to compare with RQMC.
       int n = 100000;
       System.out.println ("Ordinary MC:\n");
-      process.simulateRuns (n, new MRG32k3a(), statMC);
+      process.simulateRuns (n, new LFSR113(), statMC);
       statMC.setConfidenceIntervalStudent();
       System.out.println (statMC.report (0.95, 3));
       System.out.println ("Total CPU time: " + timer.format());
@@ -54,7 +54,7 @@ public class AsianGBMRQMC extends AsianGBM {
       // Then we make a RQMC experiment, and compare the work-normalized variances (or efficiencies).
       timer.init();
       DigitalNet p = new SobolSequence (16, 31, d); // n = 2^{16} points in d dim.
-      PointSetRandomization rand = new LMScrambleShift (new MRG32k3a());
+      PointSetRandomization rand = new LMScrambleShift (new LFSR113());
       RQMCPointSet prqmc = new RQMCPointSet (p, rand);
       n = p.getNumPoints();           // Number of RQMC points.
       int m = 50;                     // Number of RQMC randomizations.
@@ -63,7 +63,7 @@ public class AsianGBMRQMC extends AsianGBM {
           " points and affine matrix scramble:\n");
       statRQMC.setConfidenceIntervalStudent();
       System.out.println (statRQMC.report (0.95, 3));
-      System.out.println ("Total CPU time: " + timer.format() + "\n");
+      System.out.println ("Total CPU time: " + timer.format());
       System.out.println ("------------------------\n");
       double varRQMC = p.getNumPoints() * statRQMC.variance();
       double cpuRQMC = timer.getSeconds() / (m * n);

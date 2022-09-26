@@ -97,7 +97,7 @@ public class San13Dist implements MonteCarloModelDouble {
 	public static void main(String[] args) throws IOException {
 		int n = 100000;
         int groupSize = 100;   
-		San13Dist san = new San13Dist("san13a.dat");
+		San13Dist san = new San13Dist("src/main/docs/examples/tutorial/san13a.dat");
 		TallyStore statT = new TallyStore("TallyStore for SAN13 example");
 		System.out.println (MonteCarloExperiment.simulateRunsDefaultReportStudent 
 			(san, n, new LFSR113(), statT, 0.95, 4));
@@ -113,10 +113,10 @@ public class San13Dist implements MonteCarloModelDouble {
 		double[] bounds2 = { 0, 200, 0, 1.0 };
 		cdf.setManualRange(bounds2);
 		cdf.view(800, 500);
-		String cdfLatex = cdf.toLatex(12.0, 8.0);
-		file = new FileWriter("san13cdf.tex");
-		file.write(cdfLatex);
-		file.close();
+		// String cdfLatex = cdf.toLatex(12.0, 8.0);
+		// file = new FileWriter("src/main/docs/examples/tutorial/san13cdf.tex");
+		// file.write(cdfLatex);
+		// file.close();
 		
 		HistogramChart hist = new HistogramChart("Distribution of $T$",
 				"Values of $T$", "Frequency", statT.getArray(), n);
@@ -125,10 +125,9 @@ public class San13Dist implements MonteCarloModelDouble {
 		(hist.getSeriesCollection()).setBins(0, 40, 0, 200);
 		hist.view(800, 500);
 		String histLatex = hist.toLatex(12.0, 8.0);
-		file = new FileWriter("san13chart.tex");
+		file = new FileWriter("src/main/docs/examples/tutorial/san13chart.tex");
 		file.write(histLatex);
 		file.close();
-
 
 		// Print p-th quantile
 		double p = 0.99;

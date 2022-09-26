@@ -5,7 +5,6 @@ import umontreal.ssj.rng.*;
 import umontreal.ssj.hups.*;
 import umontreal.ssj.mcqmctools.*;
 import umontreal.ssj.stat.Tally;
-import umontreal.ssj.util.Chrono;
 
 // An extension of AsianGBM2 that uses an RQMC.
 public class AsianGBMRQMC2 extends AsianGBM2 {
@@ -23,25 +22,28 @@ public class AsianGBMRQMC2 extends AsianGBM2 {
       AsianGBMRQMC2 model = new AsianGBMRQMC2 (0.05, 0.5, 100.0, 100.0, d, zeta);
       Tally statMC  = new Tally ("value of Asian option");
       Tally statRQMC = new Tally ("RQMC averages for Asian option under GBM");
-
-      // We first perform a Monte Carlo experiment, to compare with RQMC.
-      int n = 100000;
-      System.out.println ("Ordinary MC:\n");
+      RandomStream noise = new LFSR113();
+      int n = 100000;     // Number of runs for MC.
+      DigitalNet p = new SobolSequence (16, 31, d); // n = 2^{16} RQMC points in d dim.
+      PointSetRandomization rand = new LMScrambleShift (noise);
+      int m = 50;         // Number of RQMC randomizations.
+      
+      // We first perform a Monte Carlo experiment.
+      System.out.println ("Ordinary MC:");
       System.out.println (MonteCarloExperiment.simulateRunsDefaultReportStudent 
-          (model, n, new MRG32k3a(), statMC));
+          (model, n, noise, statMC));
       System.out.println ("------------------------\n");
 
-      // Then we make a RQMC experiment.
-      DigitalNet p = new SobolSequence (16, 31, d); // n = 2^{16} points in d dim.
-      PointSetRandomization rand = new LMScrambleShift (new MRG32k3a());
-      int m = 50;                     // Number of RQMC randomizations.
+      // Then we make an RQMC experiment.
+      System.out.println ("RQMC experiment:");
       System.out.println (RQMCExperiment.simulReplicatesRQMCDefaultReport 
            (model, p, rand, m, statRQMC));
       System.out.println ("----------------------------------------------------\n");
       
       // This single function makes both the MC and RQMC experiments and also 
       // compares the variances and efficiencies.
+      System.out.println ("Experiment for MC/RQMC comparison:");
       System.out.println (RQMCExperiment.makeComparisonExperimentMCvsRQMC
-              (model, new MRG32k3a(), p, rand, n, m));
+              (model, noise, p, rand, n, m));
    }
 }

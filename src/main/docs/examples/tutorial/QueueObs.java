@@ -1,4 +1,5 @@
 package tutorial;
+
 import java.util.*;
 import umontreal.ssj.stat.*;
 import umontreal.ssj.rng.*;

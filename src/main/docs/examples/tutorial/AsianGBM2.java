@@ -70,7 +70,7 @@ public class AsianGBM2 implements MonteCarloModelDouble {
       Tally statValue = new Tally ("Stats on value of Asian option");
       Chrono timer = new Chrono();
       int n = 100000;
-      MonteCarloExperiment.simulateRuns (model, n, new MRG32k3a(), statValue);
+      MonteCarloExperiment.simulateRuns (model, n, new LFSR113(), statValue);
       statValue.setConfidenceIntervalStudent();
       System.out.println (statValue.report (0.95, 3));
       System.out.println ("Total CPU time:      " + timer.format() + "\n");

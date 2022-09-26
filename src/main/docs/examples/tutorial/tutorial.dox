@@ -705,10 +705,9 @@
  * Note that generating the sample path and computing the payoff is done in
  * two different methods. This way, other methods could eventually be added
  * to compute payoffs that are defined differently (e.g., based on the
- * geometric average, or with barriers, etc.) over the same generated sample
- * path.
+ * geometric average, or with barriers, etc.) over the same generated sample path.
  *
- *  **Pricing an Asian option on a GMB process** [AsianGBM]
+ *  **Pricing an Asian option on a GBM process** [AsianGBM]
  * @anchor REF_examples_lst_AsianGBM
  * @include tutorial/AsianGBM.java
  *
@@ -751,8 +750,12 @@
  * coordinate of the next point. Each generation of a uniform random number
  * (directly or indirectly) with this stream during the simulation moves the
  * iterator to the next coordinate of the current point.
+ * Note that invoking the methods `resetStartStream` and  `resetNextSubstream`
+ * as done here is essential for RQMC to work properly. 
+ * They could also be replaced by the methods `resetCurPointIndex` and `resetToNextPoint`,
+ * but these methods would work only for RQMC and not for MC.
  *
- *  **Pricing an Asian option on a GMB process with randomized quasi-Monte Carlo**
+ *  **Pricing an Asian option on a GBM process with randomized quasi-Monte Carlo**
  * [AsianGBMQMC]
  * @anchor REF_examples_lst_AsianGBMQMC
  * @include tutorial/AsianGBMQMC.java
@@ -760,8 +763,8 @@
  * The `main` program constructs an `AsianGBMQMC` object and first makes a Monte Carlo (MC)
  * experiment.  Then it constructs the point set and its randomization for the RQMC experiment.
  * The point set `p` used in this example is a *Sobolâ€™ net* with @f$n = 2^{16}@f$
- * points in @f$t@f$ dimensions. 
- * The randomization `rand` is a left matrix scramble followed by a random digital shift.  
+ * points in @f$t@f$ dimensions.
+ * The randomization `rand` is a left matrix scramble followed by a random digital shift.
  * See @ref umontreal.ssj.hups for more details on what these classes are doing.
  * By putting together `p`  and `rand`, we obtain the `RQMCPointSet` `prqmc`.
  * 
@@ -772,16 +775,21 @@
  * using RQMC instead of MC in this example, and the ratio of efficiencies,
  * which can be interpreted as the estimated *efficiency improvement factor*.
  * (The efficiency of an estimator is defined as 1/(variance @f$\times@f$
- * CPU time per run.) The results are in Listing
+ * CPU time per run; note that the total number of runs is not the same for the two methods.) 
+ * We make $n=100000$ runs for MC and $m = 50$ independent replications for RQMC.
+ * The results are in Listing
  * {@link REF_examples_res_AsianGBMRQMC AsianGBMRQMC results}: RQMC reduces the
- * variance by a factor of around 250 and improves the efficiency by a factor
- * of about 646. RQMC not only reduces the variance, it also runs
+ * variance by a factor of around 478 and improves the efficiency by a factor
+ * of about 824 (the second number changes across different runs of the program,
+ * sometimes by @f$\pm 30\%@f$, depending on what else is running). 
+ * RQMC not only reduces the variance, it also runs
  * faster than MC. The main reason for this is the call to
  * `resetNextSubstream` in `simulateRuns`, which is a bit costly for a
- * random number stream of class `MRG32k3a` (with the current implementation)
+ * random number stream of class `LFSR113` (with the current implementation)
  * and takes negligible time for an iterator over a digital net in base 2. In
  * fact, in the the case of MC, the call to `resetNextSubstream` is not
- * really needed. Removing it for that case would reduce the CPU time.
+ * really needed. Removing it for that case would reduce the CPU time by about 20\%,
+ * but it would make the program more complicated.
  *
  *  <strong>Results of the program `AsianGBMRQMC` </strong> [AsianGBMRQMC results]
  * @anchor REF_examples_res_AsianGBMRQMC
@@ -796,17 +804,34 @@
  * `getPerformance` that returns the payoff for that run,
  * `getDimension` that returns the number of unifoorm random variables used for each run,
  * and `toString` that returns a descriptor of this class. 
- * The method `MonteCarloExperiment.simulateRuns` then uses these methods internally 
+ * The method `MonteCarloExperiment.simulateRuns` uses these methods internally 
  * to make the experiment and returns the statistics in `statValue`. 
- * The output turns out to be exactly the same as in Listing {@link REF_examples_res_AsianGBM2 AsianGBM2}.
+ * The output turns out to be the same as for Listing {@link REF_examples_res_AsianGBM2 AsianGBM2}.
  
  
- *  **Pricing an Asian option on a GMB process using `mcqmctools`** [AsianGBM2]
+ *  **Pricing an Asian option on a GBM process using `mcqmctools`** [AsianGBM2]
  * @anchor REF_examples_lst_AsianGBM2
  * @include tutorial/AsianGBM2.java
  * 
  * Listing {@link REF_examples_lst_AsianGBMRQMC2 AsianGBMRQMC2} gives a version of `AsianGBMRQMC`
- * that uses 
+ * that uses the class `RQMCExperiment` to make and RQMC experiment and compare the variance
+ * and efficiency of RQMC vs MC. 
+ * We first call one function to make a MC experiment, then another function to make an RQMC experiment.
+ * Then we show how to make both experiments, print the results, and compare the variances and efficiencies,
+ * by a single function call. With this function, the two previous function calls are not needed,
+ * but we left them just for illustration.  
+ * The results are in Listing
+ * {@link REF_examples_res_AsianGBMRQMC2 AsianGBMRQMC2 results}.
+ * The variance and efficiencies differ slightly between
+ * the different experiments, due to statistical noise.
+ *
+ *  **Pricing an Asian option on a GMB process with RQMC using the class `RQMCExperiment`** [AsianGBMRQMC2]
+ * @anchor REF_examples_lst_AsianGBMRQMC2
+ * @include tutorial/AsianGBMRQMC2.java
+ *
+ *  <strong>Results of the program `AsianGBMRQMC2` </strong> [AsianGBMRQMC2 results]
+ * @anchor REF_examples_res_AsianGBMRQMC2
+ * @include tutorial/AsianGBMRQMC2.res
  *
  * 
  * **************************************************************************************************
@@ -1185,13 +1210,13 @@
  * `Locale.setDefault(Locale.US)` is added because real numbers in the data
  * file are read in the anglo-saxon form 8.3 instead of the form 8,3 used by
  * many other countries. The `main` program then simulates @f$n =
- * 100000@f$ operating days and prints the value of @f$a@f$, as well as 90%
+ * 10000@f$ operating days and prints the value of @f$a@f$, as well as 90%
  * confidence intervals on @f$a@f$, @f$w@f$, @f$g(s)@f$, and @f$\ell@f$,
  * based on their estimators @f$\bar{A}_n@f$, @f$\bar{W}_n/a@f$,
  * @f$\bar{G}_n(s)/a@f$, and @f$\bar{L}_n/a@f$, assuming that these
  * estimators have approximately the Student distribution. This is justified
  * by the fact that @f$W_i@f$, and @f$G_i(s)@f$, and @f$L_i@f$ are themselves
- * â€œaveragesâ€� over several observations, so we may expect their distribution
+ * averages over several observations, so we may expect their distribution
  * to be not far from a normal.
  *
  * To generate the service times, we use a gamma random variate generator
@@ -1259,8 +1284,12 @@
  * event is scheduled for the call completion.
  *
  * The results of this program, with the data in file `CallCenter.dat`, are
- * shown in Listing {@link REF_examples_res_CallCenter
- * CallCenter results}.
+ * shown in Listing {@link REF_examples_res_CallCenter CallCenter results}.
+ * A statistical report is given for the @f$n = 10000@f$ observations 
+ * for each of the four statistical probes considered in `allTal`.
+ * We also give a report on the empirical distribution of all service times, 
+ * just for testing.   Their empirical mean and variance are very close to the
+ * theoretical ones, which are 100 and 10000, respectively.
  *
  *  **Simulation of a simplified call center** [CallCenter results]
  * @anchor REF_examples_res_CallCenter

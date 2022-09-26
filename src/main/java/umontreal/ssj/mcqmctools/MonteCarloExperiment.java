@@ -175,7 +175,7 @@ public class MonteCarloExperiment {
 		str.append(statValue.report(level, d));
 		str.append("Variance per run: ");
 		str.append (10, d, d-1, statValue.variance());	str.append ("\n");
-		str.append("\n");
+		// str.append("\n");
 		str.append("Total CPU time:      " + timer.format() + "\n");
 		return str.toString();
 	}

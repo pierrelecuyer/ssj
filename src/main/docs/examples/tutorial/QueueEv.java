@@ -1,4 +1,5 @@
 package tutorial;
+
 import umontreal.ssj.simevents.*;
 import umontreal.ssj.rng.*;
 import umontreal.ssj.randvar.*;
@@ -70,12 +71,9 @@ public class QueueEv {
 	  double lambda = 1.0/10.0; // Arrival rate 
 	  double mu = 1.0/9.0;      // Service rate
 	  double T = 1000.0;        // Time horizon
-	  int n = 8;                // Number of simulation replications
 	  QueueEv queue = new QueueEv (lambda, mu);
-      for (int rep = 0; rep < n; rep++) {
-         queue.simulate (T);
-         System.out.println (queue.custWaits.report());
-         System.out.println (queue.totWait.report());
-      }
+      queue.simulate (T);
+      System.out.println (queue.custWaits.report());
+      System.out.println (queue.totWait.report());
    }
 }
