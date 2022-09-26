@@ -122,6 +122,17 @@
    note = "\url{https://computing.llnl.gov/tutorials/parallel_comp/}"
 }
 
+@inbook{iBEL20a,
+author = {Francois Belletti and Davis King and Kun Yang and Roland Nelet 
+          and Yusef Shafi and Yi-Fan Shen and John Anderson},
+title = {Tensor Processing Units for Financial {Monte Carlo}},
+booktitle = {Proceedings of the 2020 {SIAM} Conference on Parallel Processing for Scientific Computing},
+chapter = {},
+pages = {12--23},
+doi = {10.1137/1.9781611976137.2},
+xURL = {https://epubs.siam.org/doi/abs/10.1137/1.9781611976137.2},
+}
+
 @Book{iBEZ70a,
   author =	 {P. B\'ezier},
   title = 	 {Emploi des Machines \`a Commande Num\'erique},
@@ -200,6 +211,16 @@
        SERIES={Lecture Notes in Computer Science},
        PUBLISHER={Springer Verlag},
        YEAR={1988}  }
+
+@manual{iBRA21a,
+  author = "J. Bradbury and R. Frostig and P. Hawkins and M. J. Johnson and 
+	   C. Leary and D. Maclaurin and G. Necula and A. Paszke and J. Vander{P}las 
+		 and S. Wanderman-{M}ilne and Q. Zhang",
+  title = {{JAX}: composable transformations of {P}ython+{N}um{P}y programs},
+  note = {\url{http://github.com/google/jax}, accessed $9^{\rm th}$ August 2021},
+  version = {0.2.14},
+  year = {2021},
+}
 
 @article{iBRE71a,
   author =   {R. P. Brent},
@@ -518,6 +539,18 @@ pages =  {269--271}
          ADDRESS={Houston, Texas},
          YEAR={1997} }
 
+@inproceedings{iGEN84a,
+author = {Genz, Alan},
+title = {Testing Multidimensional Integration Routines},
+year = {1984},
+Xisbn = {0444875700},
+publisher = {Elsevier North-Holland},
+booktitle = {Proceedings of the International Conference on Tools, 
+     Methods and Languages for Scientific and Engineering Computation},
+pages = {81--94},
+Xlocation = {Paris, France}
+} 
+
 @Manual{iGIL11a,
   author =   {M. Giles},
   title = {Course on {CUDA} Programming},
@@ -610,6 +643,13 @@ pages =  {269--271}
 	Xmonth =  {Feb},
   note =	 {Reference Manual, Version 2.5.2, 
 	          available at \url{www.flintlib.org/flint-2.5.pdf}}
+}
+
+@manual{iHES21a,
+  author = {M. Hessel and R. Schneider},
+  title =  {Pseudo Random Numbers in {JAX}},
+  year =	 {2021},
+  note =	 {\url{https://jax.readthedocs.io/en/latest/jax-101/05-random-numbers.html}}
 }
 
 @Book{iHOL00a,
@@ -777,6 +817,12 @@ pages =  {269--271}
 	ORGANISATION={ModulaWare},
         ADDRESS={La Chanenche, France} }
 
+@misc{iJAX21a,
+  author = "{JAX}",
+  title = "{JAX}",
+  note = "See \url{https://github.com/google/jax}",
+  year = "2019"}
+
 @manual{iKHR08a,
    title = {{Khronos Group} releases {OpenCL} 1.0 speciﬁcation},
    organization = {Khronos Group},
@@ -915,11 +961,29 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
 	AUTHOR="P. L'Ecuyer and G. Perron and F. Blouin",
 	TITLE="SENTIERS:  Un Logiciel Modula-2 pour l'Arithm\'e\-ti\-que
 	   sur les Grands Entiers",
-        LANGUAGE={French},
-        NUMBER={DIUL-RT-8802},
+  LANGUAGE={French},
+  NUMBER={DIUL-RT-8802},
 	INSTITUTION={Computer Science Department, Laval University},
-	ADDRESS={Ste-Foy (Que.), Canada},
+	xADDRESS={Ste-Foy (Que.), Canada},
 	YEAR={1988}  }
+
+@manual{iLEC00l,
+  author = {P. L'Ecuyer and R. Couture},
+  title =  {LatMRG User’s Guide: A Modula-2 software for the theoretical analysis 
+     of linear congruential and multiple recursive random number generators},
+  institution = {DIRO, Universit\'e de Montr\'eal},
+  year =  {2000},
+	note = {\url{http://www.iro.umontreal.ca/~lecuyer/myftp/papers/guide-latmrg-m2.pdf}}
+}
+
+@TECHREPORT {iLEC00s,
+  AUTHOR="P. L'{E}cuyer",
+  TITLE="{SIMOD-99}: D{\'e}finition fonctionnelle et guide d'utilisation",
+  LANGUAGE={french},
+  institution = {DIRO, Universit\'e de Montr\'eal},
+  year =  {2000},
+	note = {\url{http://www.iro.umontreal.ca/~lecuyer/myftp/papers/guide-simod-2000.pdf}}
+}	
 
 @manual{iLEC01j,
   author = {P. L'Ecuyer},
@@ -1019,21 +1083,21 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
 
 @unpublished{iLEC15c,
   author = 	 {P. L'Ecuyer and D. Munger and N. Kemerchou},
-  title = 	 {{clRNG}: A Library for Uniform Random Number Generation in {OpenCL}},
+  title = 	 {{clRNG}: A Random Number {API} with Multiple Streams for {OpenCL}},
   OPTjournal = {},
   xvolume =    {},
   xnumber =    {},
   xpages =      {},
   year =	     {2015},
   url = {http://simul.iro.umontreal.ca/clrng/},
-	note = {\url{http://www.iro.umontreal.ca/~lecuyer/myftp/papers/clrng-api.pdf}},
+	note = {\url{http://www.iro.umontreal.ca/~lecuyer/myftp/papers/clrng-api.pdf}, accessed $9^{\rm th}$ August 2021},
   xxnote = {see\url{http://simul.iro.umontreal.ca/clrng/indexe.html}}
 }
 
 @unpublished{iLEC16j,
   author = {P. L'Ecuyer},
   title =  {{SSJ}: Stochastic Simulation in {Java}}, 
-  note = {\url{http://simul.iro.umontreal.ca/ssj/}},
+  note = {\url{http://simul.iro.umontreal.ca/ssj/}, accessed $9^{\rm th}$ August 2021},
   institution = {DIRO, Universit\'e de Montr\'eal},
   year =  {2016},
   OPTannote = {}
@@ -1048,11 +1112,40 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
   OPTannote = {}
 }
 
+@unpublished{iLEC22l,
+  author = {P. L'Ecuyer and E. Bourceret and D. Munger and M.-A. Savard and R. Simard},
+  title =  {Lattice Tester}, 
+  note = {\url{https://github.com/umontreal-simul/latticetester}},
+  institution = {DIRO, Universit\'e de Montr\'eal},
+  year =  {2022},
+  OPTannote = {}
+}
+
+@unpublished{iLEC22m,
+  author = {P. L'Ecuyer and E. Bourceret and D. Munger and M.-A. Savard and R. Simard and P. Wambergue},
+  title =  {LatMRG}, 
+  note = {\url{https://github.com/umontreal-simul/LatMRG}},
+  institution = {DIRO, Universit\'e de Montr\'eal},
+  year =  {2022},
+  OPTannote = {}
+}
+
 @unpublished{iLEE02a,
    author = {R. Lee},
    title = "The {JNDI} Tutorial",
    year = "2002",
    note = "See \url{http://java.sun.com/products/jndi/tutorial}"
+}
+
+@Article{iLEE15a,
+  author =       "Mikael Leetmaa and Natalia V. Skorodumova",
+  title =        "{KMCLib 1.1}: Extended random number support and
+                 technical updates to the {KMCLib} general framework for
+                 kinetic {Monte-Carlo} simulations",
+  journal =     "Computer Physics Communications",
+  volume =       "196",
+  pages =        "611--613",
+  year =         "2015",
 }
 
 @manual{iLEM04a,
@@ -1382,6 +1475,16 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
   OPTannote = {}
 }
 
+@misc{iNUY20q,
+  author = {D. Nuyens},
+  title =  {QMC4PDE: Quasi-Monte Carlo methods for elliptic PDEs 
+	          with random diffusion coefficients}, 
+  note = {\url{https://people.cs.kuleuven.be/~dirk.nuyens/qmc4pde/}},
+  institution = {K. U. Leuven},
+  year =  {2020},
+  OPTannote = {}
+}
+
 @manual{iNVI09a,
   title =  {NVIDIA OpenCL JumpStart Guide},
   note = "See {NVIDIA\_OpenCL\_JumpStart\_Guide.pdf}",
@@ -1416,6 +1519,25 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
   title = {{CURAND} Library: Programming Guide, Version 7.0},
   year = {2015},
   url = {http://docs.nvidia.com/cuda/curand}
+}
+
+@manual{iNVI21a,
+  key = {NVIDIA corp},
+  title =  {{cuRAND} Library: Programming Guide},
+  ORGANIZATION = {NVIDIA corp},
+  year = {2021},
+  note =  "See \url{https://docs.nvidia.com/cuda/pdf/CURAND_Library.pdf}"
+} 
+
+@article {iNYG78a,
+  author = 	 {Kristen Nygaard and Ole-Johan Dahl},
+  title = 	 {The development of the {SIMULA} languages},
+  journal = 	 {{ACM SIGPLAN} Notices},
+  pages =	 {245--272},
+  year =	 {1978},
+  volume =	 {13},
+	number = {8},
+  OPTannote = 	 {}
 }
 
 @manual{iOLS10a,
@@ -1667,6 +1789,14 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
   OPTannote = {}
 }
 
+@misc{iSEV19a,
+   author = {H. Sevcikova and T. Rossini and P. L'Ecuyer},
+   title = {rlecuyer: R Interface to RNG with Multiple Streams},
+   year = {2019},
+   note = "See \url{https://cran.r-project.org/web/packages/rlecuyer/} and 
+	         \url{https://cran.r-project.org/web/packages/rlecuyer/rlecuyer.pdf}"
+}
+
 @ARTICLE {iSHA48a,
 	AUTHOR="C. E. Shannon",
 	TITLE="The Mathematical Theory of Communication",
@@ -1710,7 +1840,7 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
   organization = {Courant Institute, New York University},
   address =	 {New York, NY},
   year =	 {2005},
-  note =	 {Available at \url{http://shoup.net/ntl/}}
+  note =	 {\url{http://shoup.net/ntl/}}
 }
 
 @Manual{iSHO18a,
@@ -1720,7 +1850,7 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
   address =	 {New York, NY},
   year =	 {2018},
 	month = {July},
-  note =	 {Available at \url{https://shoup.net/ntl/}}
+  note =	 {\url{https://shoup.net/ntl/}}
 }
 
 @ARTICLE {iSIL87a,
@@ -1740,6 +1870,12 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
         ORGANIZATION={C.A.C.I.  Los Angeles  California},
         YEAR={1983} }
 
+@MANUAL {iSIM20a,
+        AUTHOR={Team SimPy},
+        TITLE="{SimPy Documentation} ",
+        note={\url{https://simpy.readthedocs.io/en/latest/}},
+        YEAR={2020} }
+
 @ARTICLE {iSLE85a,
 	AUTHOR={D. D. Sleator and R. E. Tarjan},
 	TITLE="Self-Adjusting Binary Search Trees",
@@ -1758,6 +1894,14 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
    note = "See \url{http://www.w3.org/XML/Schema}"
 }
 
+@ARTICLE {iSRI14a,
+	AUTHOR={N. Srivastava and G. Hinton and A. Krizhevsky and I. Sutskever and R. Salakhutdinov},
+	TITLE="Dropout: A Simple Way to Prevent Neural Networks from Overfitting",
+	JOURNAL={Journal of Machine Learning Research},
+	VOLUME={15},
+	YEAR={2014},
+  PAGES={1929--1958} }
+
 @MANUAL {iSUN91a,
         ORGANIZATION={Sun Microsystems},
         YEAR={1991},
@@ -1769,6 +1913,12 @@ Xdoi = "https://doi.org/10.1016/0196-6774(82)90006-2",
   title = "{Java Technology}",
   note = "See \url{http://java.sun.com}",
   year = "2006"}
+
+@misc{iTEN21a,
+  author = "{Tensorflow}",
+  title = "{Tensorflow}",
+  note = "See \url{https://www.tensorflow.org}, accessed $9^{\rm th}$ August 2021",
+  year = "2019"}
 
 @BOOK {iTRA88a,
         AUTHOR="J. F. Traub and G. W. Wasilkowski and H. Wo\'zniakowski",

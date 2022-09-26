@@ -67,9 +67,8 @@ public class AsianGBM {
          zeta[j] = (double)j / (double)d;
       AsianGBM process = new AsianGBM (0.05, 0.5, 100.0, 100.0, d, zeta);
       Tally statValue = new Tally ("Stats on value of Asian option");
-
       Chrono timer = new Chrono();
-      int n = 1000000;
+      int n = 100000;
       process.simulateRuns (n, new MRG32k3a(), statValue);
       statValue.setConfidenceIntervalStudent();
       System.out.println (statValue.report (0.95, 3));

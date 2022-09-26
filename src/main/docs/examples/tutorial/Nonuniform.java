@@ -1,5 +1,4 @@
 package tutorial;
-
 import umontreal.ssj.rng.*;
 import java.io.*;
 import umontreal.ssj.charts.HistogramChart;

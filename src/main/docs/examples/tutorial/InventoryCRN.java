@@ -12,7 +12,7 @@ public class InventoryCRN extends Inventory {
       super (lambda, c, h, K, k, p);
    }
 
-   public void simulateDiff (int n, int m, int s1, int S1, int s2, int S2) {
+   public void simulateDiffIRN (int n, int m, int s1, int S1, int s2, int S2) {
       statDiff.init();
       for (int i = 0; i < n; i++) {
          double value1 = simulate (m, s1, S1);
@@ -40,7 +40,7 @@ public class InventoryCRN extends Inventory {
       InventoryCRN system = new InventoryCRN (100.0, 2.0, 0.1, 10.0, 1.0, 0.95);
       Chrono timer = new Chrono();
 
-      system.simulateDiff (500, 2000, 80, 198, 80, 200);
+      system.simulateDiffIRN (500, 2000, 80, 198, 80, 200);
       system.statDiff.setConfidenceIntervalStudent();
       System.out.println (system.statDiff.report (0.9, 3));
       double varianceIndep = system.statDiff.variance();
@@ -51,6 +51,6 @@ public class InventoryCRN extends Inventory {
       System.out.println (system.statDiff.report (0.9, 3));
       double varianceCRN = system.statDiff.variance();
       System.out.println ("Total CPU time: " + timer.format());
-      System.out.printf ("Variance ratio:  %8.4g%n", varianceIndep/varianceCRN);
+      System.out.printf ("\nVariance ratio:  %8.4g%n", varianceIndep/varianceCRN);
    }
 }

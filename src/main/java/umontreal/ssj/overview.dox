@@ -31,7 +31,7 @@
  * not require knowledge of a programming language, provide graphical
  * animation, have automatic facilities to collect statistics and perform
  * experiments, and can sometimes perform optimization to a certain extent.
- * On the other hand, these tools are often too restrictive, because they are
+ * On the other hand, the drag-drop tools are often too restrictive, because they are
  * targeted at specific classes of models. With these tools, simulating a
  * system whose logic is complicated or unconventional may become
  * difficult. The graphical and automatic devices also tend to slow down
@@ -108,7 +108,7 @@
  *  to constructs quasi-Monte Carlo point sets and sequences of various types
  *  (lattices, polynomial lattices, digital nets, etc.) for arbitrary dimension
  *  and cardinality, various uniformity criteria, etc.
- *  **This will be moved to a separate Java project, to avoid having SSJ depend on LatNet Builder.** 
+ *  This package works only if LatNet Builder is installed on the computer where the program is run.
  *
  * **Statistical tools:**
  *
@@ -153,7 +153,7 @@
  *  provides tools for construction,
  * visualization, and customization of @f$x-y@f$ plots, histograms, and
  * empirical styled charts from a Java program. 
- * It extends the jfreechart library and offers LaTeX source code as an output option.
+ * It extends the jfreechart library and offers LaTeX source code (using TikZ) as an output option.
  *
  *  @ref umontreal.ssj.simexp
  *  provides facilities for performing simulation
@@ -168,7 +168,7 @@
  *
  *  @ref umontreal.ssj.markovchainrqmc 
  * contains classes designed for Markov chain simulation using 
- * randomized quasi-Monte Carlo, e.g., via Array-RQMC.
+ * randomized quasi-Monte Carlo via the Array-RQMC method.
  *
  * 
  *  **General utilities:**
@@ -257,7 +257,7 @@
  * @section REF_0_sec_04  Documentation
  * 
  * The tutorial available in the scr/main/docs/examples/tutorial  directory
- * of this distribution is the best starting point to learn SSJ.
+ * of this distribution is a good starting point to learn SSJ.
  * It can be accessed by clicking  "SSJ Introduction and Tutorial by Examples"
  * in the "Related Pages" section of this Git distribution.
  *  

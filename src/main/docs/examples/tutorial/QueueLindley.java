@@ -1,8 +1,8 @@
 package tutorial;
+
 import umontreal.ssj.stat.*;
 import umontreal.ssj.rng.*;
 import umontreal.ssj.probdist.ExponentialDist;
-import umontreal.ssj.util.Chrono;
 
 public class QueueLindley {
 
@@ -29,10 +29,8 @@ public class QueueLindley {
    }
 
    public static void main (String[] args) { 
-      // Chrono timer = new Chrono();
       QueueLindley queue = new QueueLindley();
       queue.simulateRuns (100, 10000, 1.0, 2.0);
       System.out.println (queue.averageWaits.report());
-      // System.out.println ("Total CPU time: " + timer.format());
    }
 }

@@ -88,8 +88,7 @@ public class RQMCExperiment extends MonteCarloExperiment {
 	 * Similar to `simulReplicatesRQMC`, but also returns a report as a `String`.
 	 */
 	public static String simulReplicatesRQMCDefaultReport (MonteCarloModelDouble model, 
-			PointSet p, PointSetRandomization rand, int m, RandomStream noise,
-			Tally statRQMC) {
+			PointSet p, PointSetRandomization rand, int m, Tally statRQMC) {
 		PrintfFormat str = new PrintfFormat();
 		Chrono timer = new Chrono();
 		simulReplicatesRQMC(model, p, rand, m, statRQMC);
