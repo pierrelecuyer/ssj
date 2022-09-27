@@ -88,8 +88,7 @@ public class NI2a extends NortaInitDisc
     * Computes and returns the correlation @f$\rho_Z@f$ using the
     * algorithm NI2a.
     */
-   public double computeCorr()
-   {
+   public double computeCorr() {
       // x, y and c coefficients used for quadratic interpolation.
       double[] x = new double[3];
       double[] y = new double[3];
@@ -115,14 +114,13 @@ public class NI2a extends NortaInitDisc
           section 4 in the paper. */
       double b = 0.0; // The returned solution.
       double h2 = 0.0, hd3 = 0.0; // Precompute constants.
-      double lrx = (integ ( -1) - mu1 * mu2) / sd1 * sd2; // Min.correlation.
-      double urx = (integ (1) - mu1 * mu2) / sd1 * sd2; // Max.correlation.
+      // double lrx = (integ ( -1) - mu1 * mu2) / sd1 * sd2; // Min.correlation.
+      // double urx = (integ (1) - mu1 * mu2) / sd1 * sd2; // Max.correlation.
       double rho1 = 2 * Math.sin (Math.PI * rX / 6); // The initial guess.
       double intg1 = integ (rho1); // Computes g_r(rho1).
       double gr = rX * sd1 * sd2 + mu1 * mu2; /* Target value; integ(\rho)
       						   = gr is equivalent to
       						   \rho = the solution. */
-
       if (intg1 == gr)
          return rho1;
 

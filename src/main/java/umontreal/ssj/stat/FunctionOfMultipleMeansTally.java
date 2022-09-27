@@ -22,11 +22,10 @@
    <a href="http://www.gnu.org/licenses">GPL licence site</a>.
  */
 package umontreal.ssj.stat;
-   import umontreal.ssj.util.MultivariateFunction;
-   import umontreal.ssj.stat.list.ListOfTalliesWithCovariance;
+import umontreal.ssj.util.MultivariateFunction;
+import umontreal.ssj.stat.list.ListOfTalliesWithCovariance;
 import umontreal.ssj.util.PrintfFormat;
 import umontreal.ssj.probdist.NormalDist;
-import cern.colt.matrix.DoubleMatrix1D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

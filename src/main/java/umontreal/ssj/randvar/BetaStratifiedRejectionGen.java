@@ -363,7 +363,7 @@ public class BetaStratifiedRejectionGen extends BetaGen {
    public static double nextDouble (RandomStream s, 
                                     double alpha, double beta, 
                                     double a, double b) {
-      return BetaDist.inverseF (alpha, beta, a, b, 15, s.nextDouble());
+      return BetaDist.inverseF (alpha, beta, a, b, s.nextDouble());
    }
 
 

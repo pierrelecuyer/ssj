@@ -23,7 +23,6 @@
  *
  */
 package umontreal.ssj.probdistmulti.norta;
-import umontreal.ssj.util.*;
 import umontreal.ssj.probdist.*;
 
 /**

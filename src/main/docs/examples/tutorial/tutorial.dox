@@ -727,8 +727,8 @@
  *
  *
  * The program in Listing
- * {@link REF_examples_lst_AsianGBMQMC AsianGBMQMC} extends the class
- * `AsianGBM` to `AsianGBMQMC`, whose method `simulateRunsRQMC` estimates the
+ * {@link REF_examples_lst_AsianGBMRQMC AsianGBMRQMC} extends the class
+ * `AsianGBM` to `AsianGBMRQMC`, whose method `simulateRunsRQMC` estimates the
  * option value via randomized quasi-Monte Carlo (RQMC). This method takes as input 
  * an RQMC point set, and makes @f$m@f$ independent randomizations of it.
  * For each randomization, it computes the average payoff over the @f$n@f$ points 
@@ -756,11 +756,11 @@
  * but these methods would work only for RQMC and not for MC.
  *
  *  **Pricing an Asian option on a GBM process with randomized quasi-Monte Carlo**
- * [AsianGBMQMC]
- * @anchor REF_examples_lst_AsianGBMQMC
- * @include tutorial/AsianGBMQMC.java
+ * [AsianGBMRQMC]
+ * @anchor REF_examples_lst_AsianGBMRQMC
+ * @include tutorial/AsianGBMRQMC.java
  *
- * The `main` program constructs an `AsianGBMQMC` object and first makes a Monte Carlo (MC)
+ * The `main` program constructs an `AsianGBMRQMC` object and first makes a Monte Carlo (MC)
  * experiment.  Then it constructs the point set and its randomization for the RQMC experiment.
  * The point set `p` used in this example is a *Sobolâ€™ net* with @f$n = 2^{16}@f$
  * points in @f$t@f$ dimensions.

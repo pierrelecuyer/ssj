@@ -492,16 +492,13 @@ public class Henriksen implements EventList {
 
 		if (findEvent) {
 			// on cherche l'evenement identique
-			Entry start = e;
-
+			// Entry start = e;
 			while (e != firstEntry && e.time == evtime && e.event != ev)
 				e = e.left;
-
 			// on ne l'a pas trouve
 			if (e.event != ev)
 				return null;
 		}
-
 		return e;
 	}
 

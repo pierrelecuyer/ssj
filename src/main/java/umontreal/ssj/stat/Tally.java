@@ -430,7 +430,9 @@ public class Tally extends StatProbe implements Cloneable {
          case CI_STUDENT:
             str.append (formatCIStudent (level, d));
             break;
-      }
+         case CI_NONE:
+             break;
+         }
 
       return str.toString();
    }
@@ -482,6 +484,8 @@ public String shortReport() {
          case CI_STUDENT:
             confidenceIntervalStudent (level, ci);
             break;
+         case CI_NONE:
+             break;
          }
          pf.append ("   ").append ((100*level) + "% (");
          pf.append (9, 3, 2, ci[0] - ci[1]).append (',');

@@ -3,6 +3,8 @@
  *
  * Tools for Collecting Statistics and computing estimators and confidence intervals.
  *
+ * @anchor REF_stat_overview_sec_overview
+ *
  * This package provides elementary tools for collecting data and 
  * computing some estimators and confidence intervals. The base class
  * @ref umontreal.ssj.stat.StatProbe implements common methods needed by all
@@ -69,3 +71,4 @@
  * which is an `Object`. The argument must then be type-casted to a
  * `Double` wrapper object before the observation value can be extracted.
  */
+ 

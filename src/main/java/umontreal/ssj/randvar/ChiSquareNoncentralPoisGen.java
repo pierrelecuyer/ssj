@@ -25,7 +25,6 @@
  */
 package umontreal.ssj.randvar;
 import umontreal.ssj.rng.*;
-import umontreal.ssj.probdist.*;
 
 /**
  * This class implements *noncentral chi square* random variate generators

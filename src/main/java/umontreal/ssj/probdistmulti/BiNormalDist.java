@@ -24,7 +24,6 @@
  */
 package umontreal.ssj.probdistmulti;
 import umontreal.ssj.probdist.NormalDist;
-import umontreal.ssj.probdist.NormalDistQuick;
 
 /**
  * Extends the class  @ref ContinuousDistribution2Dim for the *bivariate

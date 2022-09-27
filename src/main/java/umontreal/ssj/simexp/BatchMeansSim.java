@@ -24,15 +24,11 @@
 package umontreal.ssj.simexp;
 
 import java.lang.ref.SoftReference;
-
 import cern.colt.list.DoubleArrayList;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
-
 import umontreal.ssj.simevents.Event;
 import umontreal.ssj.simevents.Simulator;
-import umontreal.ssj.stat.Tally;
-import umontreal.ssj.stat.TallyStore;
 import umontreal.ssj.util.Misc;
 
 /**
