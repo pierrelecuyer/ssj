@@ -24,14 +24,7 @@
  */
 package umontreal.ssj.stat.list;
 
-import umontreal.ssj.util.PrintfFormat;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.RandomAccess;
+import java.util.*;
 import umontreal.ssj.stat.StatProbe;
 
 /**

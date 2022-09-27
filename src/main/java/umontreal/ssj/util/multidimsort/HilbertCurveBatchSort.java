@@ -22,9 +22,6 @@
    <a href="http://www.gnu.org/licenses">GPL licence site</a>.
  */
 package umontreal.ssj.util.multidimsort;
- import java.util.Comparator;
- import java.util.Arrays;
- import umontreal.ssj.util.*;
 
 /**
  * This sort is similar to  @ref BatchSortPow2, except that after applying
@@ -70,7 +67,7 @@ public class HilbertCurveBatchSort <T extends MultiDimComparable<? super T>> imp
    int m;          // Number of bit retained for each coordinate. Must be <= 31.
    HilbertCurveMap hcMap;
 
-   BatchSortPow2 bsort;   // Batch sort used.
+   BatchSortPow2<T> bsort;   // Batch sort used.
    long[][] indexH;       // Table whose each line gives the number of an object after the 
                           // batch sort in first coord. and its Hilbert index in second coord.
                           // Here, the second coordinates are all distinct!
@@ -94,7 +91,7 @@ public class HilbertCurveBatchSort <T extends MultiDimComparable<? super T>> imp
       hcMap = new HilbertCurveMap(batchExponents.length, m);
       dimension = batchExponents.length;
       this.m = m;
-      bsort = new BatchSortPow2 (batchExponents);
+      bsort = new BatchSortPow2<T> (batchExponents);
    }
 
    /**
@@ -114,7 +111,7 @@ public class HilbertCurveBatchSort <T extends MultiDimComparable<? super T>> imp
       if (map.dimension() != dimension)
          throw new IllegalArgumentException("HilbertCurveMap has a different dimension! Expecting: " + dimension);
       this.hcMap = map;
-      bsort = new BatchSortPow2 (batchExponents);
+      bsort = new BatchSortPow2<T> (batchExponents);
    }
 
    /**

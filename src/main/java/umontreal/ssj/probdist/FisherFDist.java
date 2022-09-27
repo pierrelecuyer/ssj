@@ -120,7 +120,7 @@ public static double density (int n1, int n2, double x) {
          throw new IllegalArgumentException ("n2 <= 0");
       if (x <= 0.0)
          return 0.0;
-      return BetaDist.cdf (n1/2.0, n2/2.0, d, (n1*x)/(n1*x + n2));
+      return BetaDist.cdf (n1/2.0, n2/2.0, (n1*x)/(n1*x + n2));
    }
 
    /**
@@ -144,7 +144,7 @@ public static double density (int n1, int n2, double x) {
          throw new IllegalArgumentException ("n2 <= 0");
       if (x <= 0.0)
          return 1.0;
-      return BetaDist.barF (n1/2.0, n2/2.0, d, (n1 * x) / (n1 * x + n2));
+      return BetaDist.barF (n1/2.0, n2/2.0, (n1 * x) / (n1 * x + n2));
    }
 
    /**
@@ -228,22 +228,6 @@ public static double density (int n1, int n2, double x) {
     */
    public static double getStandardDeviation (int n1, int n2) {
       return Math.sqrt (FisherFDist.getVariance (n1, n2));
-   }
-
-   /**
-    * Returns the parameter `n1` of this object.
-    */
-   @Deprecated
-   public int getN() {
-      return n1;
-   }
-
-   /**
-    * Returns the parameter `n2` of this object.
-    */
-   @Deprecated
-   public int getM() {
-      return n2;
    }
 
    /**

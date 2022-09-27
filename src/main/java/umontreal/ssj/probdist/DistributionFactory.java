@@ -162,7 +162,7 @@ public class DistributionFactory {
       StringTokenizer paramTok = new StringTokenizer (paramStr, ",");
       int nparams = paramTok.countTokens();
       Constructor[] cons = distClass.getConstructors();
-      Constructor distCons = null;
+      Constructor<Distribution> distCons = null;
       Class[] paramTypes = null;
       // Find a public constructor with the correct number of parameters.
       for (i = 0; i < cons.length; i++) {

@@ -23,13 +23,12 @@
  *
  */
 package umontreal.ssj.hups;
-import umontreal.ssj.util.PrintfFormat;
 import cern.colt.list.*;
 
 /**
  * Implements a recurrence-based point set defined via a linear congruential
- * recurrence of the form @f$x_i = a x_{i-1} \mod n@f$ and @f$u_i = x_i /
- * n@f$. The implementation is done by storing the values of @f$u_i@f$ over
+ * recurrence of the form @f$x_i = a x_{i-1} \mod n@f$ and @f$u_i = x_i / n@f$.
+ *  The implementation is done by storing the values of @f$u_i@f$ over
  * the set of all cycles of the recurrence.
  *
  * <div class="SSJ-bigskip"></div><div class="SSJ-bigskip"></div>

@@ -24,11 +24,7 @@
  */
 package umontreal.ssj.stat.list;
 
-import umontreal.ssj.util.PrintfFormat;
-import cern.colt.list.DoubleArrayList;
-import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
-
 import umontreal.ssj.stat.Tally;
 import umontreal.ssj.stat.TallyStore;
 

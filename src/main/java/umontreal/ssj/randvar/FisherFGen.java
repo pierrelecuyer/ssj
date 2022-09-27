@@ -59,7 +59,7 @@ public class FisherFGen extends RandomVariateGen {
    public FisherFGen (RandomStream s, FisherFDist dist) {
       super (s, dist);
       if (dist != null)
-         setParams (dist.getN(), dist.getM());
+         setParams (dist.getN1(), dist.getN2());
    }
 
    /**

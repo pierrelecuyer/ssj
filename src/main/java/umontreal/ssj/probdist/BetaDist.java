@@ -60,8 +60,7 @@ public class BetaDist extends ContinuousDistribution {
    protected double Beta;          // Function Beta(alpha, beta)
    protected double logBeta;       // Ln(Beta(alpha, beta))
 
-   private static class Optim implements Lmder_fcn
-   {
+   private static class Optim implements Lmder_fcn {
       private double a;
       private double b;
 
@@ -119,16 +118,6 @@ public class BetaDist extends ContinuousDistribution {
    public BetaDist (double alpha, double beta, double a, double b) {
       setParams (alpha, beta, a, b);
    }
-   @Deprecated
-   public BetaDist (double alpha, double beta, int d) {
-      setParams (alpha, beta, 0.0, 1.0, d);
-   }
-
-   @Deprecated
-   public BetaDist (double alpha, double beta, double a, double b, int d) {
-      setParams (alpha, beta, a, b, d);
-   }
-
 
    @Override
    public double density (double x) {
@@ -168,11 +157,11 @@ public class BetaDist extends ContinuousDistribution {
       return BetaDist.getStandardDeviation (alpha, beta, a, b);
    }
 
-/**
+   /**
  * Same as  {@link #density(double,double,double,double,double)
  * density(alpha, beta, 0, 1, x)}.
  */
-public static double density (double alpha, double beta, double x) {
+   public static double density (double alpha, double beta, double x) {
       return density (alpha, beta, 0.0, 1.0, x);
    }
 
@@ -192,12 +181,11 @@ public static double density (double alpha, double beta, double x) {
    }
 
 
-   static double beta_g (double x)
-   /*
+   static double beta_g (double x) {
+      /*
     * Used in the normal approximation of beta. This is the function
     * (1 - x^2 + 2x*ln(x)) / (1 - x)^2.
     */
-   {
       if (x > 1.0)
          return -beta_g(1.0/x);
       if (x < 1.0e-200)
@@ -333,38 +321,10 @@ public static double density (double alpha, double beta, double x) {
       return con * Math.exp (-tem);
    }
 
-   @Deprecated
-   public static double cdf (double alpha, double beta, int d, double x) {
-      return cdf (alpha, beta, x);
-   }
-
-
-   @Deprecated
-   public static double cdf (double alpha, double beta,
-                             double a, double b, int d, double x) {
-      return cdf (alpha, beta, d, (x - a)/(b - a));
-   }
-
-
-   @Deprecated
-   public static double barF (double alpha, double beta, int d, double x) {
-      return 1.0 - cdf (alpha, beta, d, x);
-   }
-
-
-   @Deprecated
-   public static double barF (double alpha, double beta,
-                              double a, double b, int d, double x) {
-      if (a >= b)
-         throw new IllegalArgumentException ("a >= b");
-      return 1.0 - cdf (alpha, beta, d, (x - a)/(b - a));
-   }
-
-/**
- * Same as  {@link #cdf(double,double,double,double,double) cdf(alpha, beta,
- * 0, 1, x)}.
- */
-public static double cdf (double alpha, double beta, double x) {
+   /**
+    * Same as  {@link #cdf(double,double,double,double,double) cdf(alpha, beta, 0, 1, x)}.
+    */
+   public static double cdf (double alpha, double beta, double x) {
       if (alpha <= 0.0)
         throw new IllegalArgumentException ("alpha <= 0");
       if (beta <= 0.0)
@@ -438,7 +398,6 @@ public static double cdf (double alpha, double beta, double x) {
          return 0;
       if (u >= 1)
          return 1;
-
       /*
        * Code taken from
        * Cephes Math Library Release 2.8:  June, 2000
@@ -475,7 +434,7 @@ public static double cdf (double alpha, double beta, double x) {
       else
          dithresh = 1.0e-4;
 
-mainloop:
+      mainloop:
       while (true) {
          if (ihalve) {
             ihalve = false;
@@ -907,13 +866,6 @@ public static double inverseF (double alpha, double beta,
    public double getB() {
       return b;
    }
-
-   @Deprecated
-   public void setParams (double alpha, double beta,
-                          double a, double b, int d) {
-      setParams (alpha, beta, a, b);
-   //   this.decPrec = d;
-    }
 
 /**
  * Sets the parameters of the current distribution. See the constructor.

@@ -22,8 +22,7 @@
    <a href="http://www.gnu.org/licenses">GPL licence site</a>.
  */
 package umontreal.ssj.util.multidimsort;
- import java.util.Comparator;
- import java.util.Arrays;
+import java.util.Arrays;
 
 /**
  * This class implements a  @ref MultiDimSortComparable that simply sorts the

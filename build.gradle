@@ -77,9 +77,10 @@ doxygen {
     project_name "SSJ"
     project_number project.version
 
-    source new File(projectDir, 'src/main/java')
-    source new File(projectDir, 'src/main/docs/examples/tutorial')
-    image_paths new File(projectDir, 'src/main/docs/images')
+    source projectDir
+    include 'src/main/java/'
+    include 'src/main/docs/examples/tutorial/tutorial.dox'
+    // image_path new File(projectDir, 'src/main/docs/images')   Already in Doxyfile.
  
     template 'src/main/docs/Doxyfile'
 }

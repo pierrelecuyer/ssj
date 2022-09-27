@@ -22,8 +22,6 @@
    <a href="http://www.gnu.org/licenses">GPL licence site</a>.
  */
 package umontreal.ssj.util.multidimsort;
- import java.util.Comparator;
- import java.util.Arrays;
 
 /**
  * This interface extends  @ref MultiDimSort<T> to implement multivariate

@@ -22,8 +22,6 @@
    <a href="http://www.gnu.org/licenses">GPL licence site</a>.
  */
 package umontreal.ssj.util.multidimsort;
- import java.util.Comparator;
- import java.util.Arrays;
 
 /**
  * This is a subclass of  @ref BatchSort for which the batch numbers
@@ -38,11 +36,11 @@ package umontreal.ssj.util.multidimsort;
  * are defined as @f$e_0 = \lceil e \alpha_0 \rceil@f$ and @f$e_j =
  * \lceil(e - e_0 - \cdots- e_{j-1}) (\alpha_0 + \cdots+ \alpha_j)
  * \rceil@f$ for @f$1\le j < d@f$. This gives @f$e_0 + \cdots+ e_{d-1} =
- * e@f$.
+ * e@f$. 
  *
  * <div class="SSJ-bigskip"></div>
  */
-public class BatchSortPow2 extends BatchSort {
+public class BatchSortPow2<T extends MultiDimComparable<? super T>> extends BatchSort<T> {
    int[] ej;   // The current exponents e_j.
 
    /**

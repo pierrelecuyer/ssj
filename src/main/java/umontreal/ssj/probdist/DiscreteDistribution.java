@@ -339,6 +339,7 @@ public class DiscreteDistribution implements Distribution {
 		for (int i = 0; i < nVal - 1; i++)
 			formatter.format("%f : %f%n", sortedVal[i], cdf[i]);
 		formatter.format("%f : %f%n", sortedVal[nVal - 1], 1.0);
+		formatter.close();
 		return sb.toString();
 	}
 

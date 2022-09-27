@@ -23,11 +23,8 @@
  */
 package umontreal.ssj.stat.list;
 
-import umontreal.ssj.util.PrintfFormat;
 import umontreal.ssj.stat.FunctionOfMultipleMeansTally;
 import umontreal.ssj.util.MultivariateFunction;
-import umontreal.ssj.stat.Tally;
-
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 

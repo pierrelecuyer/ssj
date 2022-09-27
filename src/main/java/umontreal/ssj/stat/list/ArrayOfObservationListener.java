@@ -23,7 +23,6 @@
  *
  */
 package umontreal.ssj.stat.list;
-import umontreal.ssj.stat.StatProbe;
 
 /**
  * Represents an object that can listen to observations broadcast by lists of

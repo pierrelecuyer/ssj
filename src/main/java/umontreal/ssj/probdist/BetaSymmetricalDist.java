@@ -85,7 +85,7 @@ public class BetaSymmetricalDist extends BetaDist {
     * distribution, complementary distribution, and inverse functions.
     */
    public BetaSymmetricalDist (double alpha, int d) {
-      super(alpha, alpha, d);
+      super(alpha, alpha);
       setParams (alpha, d);
    }
 

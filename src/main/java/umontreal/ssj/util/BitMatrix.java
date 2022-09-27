@@ -487,9 +487,7 @@ public class BitMatrix implements Serializable, Cloneable {
     * Runtime exception raised when the dimensions of the `BitMatrix` are
     * not appropriate for the operation.
     */
-   public class IncompatibleDimensionException extends RuntimeException
-
-   {
+   public class IncompatibleDimensionException extends RuntimeException {
       private IncompatibleDimensionException() {
          super();
       }

@@ -32,8 +32,6 @@
   * Copyright (c) 1991, University of Michigan
   */
 package umontreal.ssj.util.multidimsort;
-  import java.util.Comparator;
-  import java.util.Arrays;
 
 /**
  * This class implements the mapping of a Hilbert curve in the
