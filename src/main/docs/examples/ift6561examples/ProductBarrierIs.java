@@ -34,9 +34,9 @@ public class ProductBarrierIs extends ProductBarrier {
 	
 	public static void main(String[] args) throws IOException {
 		double C = 100, K = 102, a = 100, b = 102;
-		double mu1 = 0.01, sigma1 = 0.05;
-		double mu2 = 0.01, sigma2 = 0.05;
-		int n = 100000;
+		double mu1 = 0.01, sigma1 = 0.04;
+		double mu2 = 0.01, sigma2 = 0.04;
+		int n = 10000;
 		RandomStream stream = new LFSR113();
 		Tally statX = new TallyStore("Option payoffs");  // To store the n observations of X.
 
