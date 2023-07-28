@@ -3,7 +3,7 @@ package ift6561examples;
 import java.io.*;
 import umontreal.ssj.charts.HistogramChart;
 // import umontreal.ssj.charts.EmpiricalChart;
-import umontreal.ssj.probdist.ContinuousDistribution;
+// import umontreal.ssj.probdist.ContinuousDistribution;
 import umontreal.ssj.rng.*;
 import umontreal.ssj.mcqmctools.*;
 import umontreal.ssj.stat.TallyStore;

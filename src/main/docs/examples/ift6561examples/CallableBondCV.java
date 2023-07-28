@@ -65,7 +65,7 @@ public class CallableBondCV extends CallableBond {
         tallyWithCV.standardDeviationWithCV(stdDevWithCV);
         System.out.println("std. dev. with CV = " + stdDevWithCV[0]);
         System.out.println("corresponding 95% CI half-width = " + (1.96 * stdDevWithCV[0] / Math.sqrt((double) nSimulations)));
-        System.out.println("beta for CV = " + tallyWithCV.getBeta().get(0,0));
+        // System.out.println("beta for CV = " + tallyWithCV.getBeta().get(0,0));
         System.out.println("\nvariance reduction from CV = " + (tallyBond.variance() / stdDevWithCV[0] / stdDevWithCV[0]));
     }
 }

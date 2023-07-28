@@ -52,7 +52,6 @@ public class LFSR258 extends RandomStreamBase {
 
    private static final long serialVersionUID = 140406L;
    //La date de modification a l'envers, lire 06/04/2014
-   //La date de modification a l'envers, lire 10/05/2007
 
     //private static final double NORM = 5.4210108624275221e-20;
 
