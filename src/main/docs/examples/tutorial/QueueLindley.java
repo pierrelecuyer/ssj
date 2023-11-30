@@ -6,31 +6,32 @@ import umontreal.ssj.probdist.ExponentialDist;
 
 public class QueueLindley {
 
-   RandomStream streamArr  = new MRG32k3a();
+   RandomStream streamArr = new MRG32k3a();
    RandomStream streamServ = new MRG32k3a();
-   Tally averageWaits = new Tally ("Average waits");
- 
-   public double simulate (int numCust, double lambda, double mu) {
+   Tally averageWaits = new Tally("Average waits");
+
+   public double simulate(int numCust, double lambda, double mu) {
       double Wi = 0.0;
       double sumWi = 0.0;
       for (int i = 2; i <= numCust; i++) {
-         Wi += ExponentialDist.inverseF (mu, streamServ.nextDouble()) -
-               ExponentialDist.inverseF (lambda, streamArr.nextDouble());
-         if (Wi < 0.0) Wi = 0.0;
+         Wi += ExponentialDist.inverseF(mu, streamServ.nextDouble())
+               - ExponentialDist.inverseF(lambda, streamArr.nextDouble());
+         if (Wi < 0.0)
+            Wi = 0.0;
          sumWi += Wi;
       }
       return sumWi / numCust;
    }
 
-   public void simulateRuns (int n, int numCust, double lambda, double mu) {
+   public void simulateRuns(int n, int numCust, double lambda, double mu) {
       averageWaits.init();
-      for (int i=0; i<n; i++)
-	  averageWaits.add (simulate (numCust, lambda, mu));
+      for (int i = 0; i < n; i++)
+         averageWaits.add(simulate(numCust, lambda, mu));
    }
 
-   public static void main (String[] args) { 
+   public static void main(String[] args) {
       QueueLindley queue = new QueueLindley();
-      queue.simulateRuns (100, 10000, 1.0, 2.0);
-      System.out.println (queue.averageWaits.report());
+      queue.simulateRuns(100, 10000, 1.0, 2.0);
+      System.out.println(queue.averageWaits.report());
    }
 }

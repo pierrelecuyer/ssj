@@ -24,22 +24,21 @@
 package umontreal.ssj.util.multidimsort;
 
 /**
- * This interface extends  @ref MultiDimSort<T> to implement multivariate
- * sorting algorithms that sort objects that are pairwise comparable. These
- * objects have @f$d@f$ sorting fields (or coordinates) and must implement
- * the interface  @ref MultiDimComparable, which is used to sort them on any
- * given coordinate, numbered from 0 to @f$d-1@f$.
+ * This interface extends @ref MultiDimSort<T> to implement multivariate sorting
+ * algorithms that sort objects that are pairwise comparable. These objects
+ * have @f$d@f$ sorting fields (or coordinates) and must implement the
+ * interface @ref MultiDimComparable, which is used to sort them on any given
+ * coordinate, numbered from 0 to @f$d-1@f$.
  *
  * The ordering is induced by the method
  * umontreal.ssj.util.MultiDimComparable.compareTo, and the number of the
  * largest coordinate used by the sort must not exceed @f$d-1@f$, where the
  * dimension @f$d@f$ refers to the value returned by
- * umontreal.ssj.util.MultiDimComparable.dimension. One can sort only a
- * subset of the objects, or all of them.
+ * umontreal.ssj.util.MultiDimComparable.dimension. One can sort only a subset
+ * of the objects, or all of them.
  *
  * <div class="SSJ-bigskip"></div>
  */
-public interface MultiDimSortComparable <T extends MultiDimComparable<? super T>> extends 
-   MultiDimSort<T> {
+public interface MultiDimSortComparable<T extends MultiDimComparable<? super T>> extends MultiDimSort<T> {
 
 }

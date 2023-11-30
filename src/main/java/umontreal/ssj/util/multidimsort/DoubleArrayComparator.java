@@ -23,17 +23,19 @@
  *
  */
 package umontreal.ssj.util.multidimsort;
+
 import java.util.Comparator;
 
 /**
- * This provides an implementation of  Comparator in which arrays of `double`
- * in @f$d@f$ dimensions are compared by comparing their coordinate @f$j@f$
- * in the natural order of real numbers, where @f$j \in\{0,…,d-1\}@f$ is
- * given in the constructor. The method `compare(d1, d2)` returns @f$-1@f$,
- * @f$0@f$, or @f$1@f$ depending on whether `d1[j]` is less than, equal to,
- * or greater than `d2[j]`.
+ * This provides an implementation of Comparator in which arrays of `double`
+ * in @f$d@f$ dimensions are compared by comparing their coordinate @f$j@f$ in
+ * the natural order of real numbers, where @f$j \in\{0,…,d-1\}@f$ is given in
+ * the constructor. The method `compare(d1, d2)` returns @f$-1@f$,
+ * 
+ * @f$0@f$, or @f$1@f$ depending on whether `d1[j]` is less than, equal to, or
+ *          greater than `d2[j]`.
  *
- * <div class="SSJ-bigskip"></div>
+ *          <div class="SSJ-bigskip"></div>
  */
 public class DoubleArrayComparator implements Comparator<double[]> {
    private int j;
@@ -41,23 +43,24 @@ public class DoubleArrayComparator implements Comparator<double[]> {
    /**
     * Constructs a comparator, where `j` is the coordinate used for the
     * comparisons.
-    *  @param j            index used for comparison
+    * 
+    * @param j index used for comparison
     */
-   public DoubleArrayComparator (int j) {
+   public DoubleArrayComparator(int j) {
       this.j = j;
    }
 
    /**
-    * Returns @f$-1@f$, @f$0@f$, or @f$1@f$ depending on whether `d1[j]`
-    * is less than, equal to, or greater than `d2[j]`.
-    *  @param d1           first array
-    *  @param d2           second array
+    * Returns @f$-1@f$, @f$0@f$, or @f$1@f$ depending on whether `d1[j]` is less
+    * than, equal to, or greater than `d2[j]`.
+    * 
+    * @param d1 first array
+    * @param d2 second array
     */
-   public int compare (double[] d1, double[] d2) {
+   public int compare(double[] d1, double[] d2) {
       if (j >= d1.length || j >= d2.length)
-         throw new IllegalArgumentException("Comparing in a"+
-                    "dimension larger than array dimension");
-      return (d1[j]< d2[j] ? -1 : (d1[j] > d2[j] ? 1 : 0));
+         throw new IllegalArgumentException("Comparing in a" + "dimension larger than array dimension");
+      return (d1[j] < d2[j] ? -1 : (d1[j] > d2[j] ? 1 : 0));
    }
 
 }

@@ -24,12 +24,11 @@
 package umontreal.ssj.util.multidimsort;
 
 /**
- * This interface extends  @ref MultiDimSort<T> to implement multivariate
- * sorting algorithms that sort points of @f$d@f$ dimensions in the unit
+ * This interface extends @ref MultiDimSort<T> to implement multivariate sorting
+ * algorithms that sort points of @f$d@f$ dimensions in the unit
  * hypercube @f$[0, 1)^d@f$.
  *
  * <div class="SSJ-bigskip"></div>
  */
-public interface MultiDimSort01 <T extends MultiDim01> extends 
-   MultiDimSort<T> {
+public interface MultiDimSort01<T extends MultiDim01> extends MultiDimSort<T> {
 }

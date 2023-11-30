@@ -26,7 +26,7 @@ package umontreal.ssj.util.multidimsort;
 /**
  * This interface represents a point or array of @f$d@f$ dimensions in a unit
  * hypercube @f$[0, 1)^d@f$. The value of the @f$j@f$th dimension can be
- * accessed with the method  {@link #getCoordinate() getCoordinate(j)}.
+ * accessed with the method {@link #getCoordinate() getCoordinate(j)}.
  *
  * <div class="SSJ-bigskip"></div>
  */
@@ -43,11 +43,11 @@ public interface MultiDim01 {
    public double[] getPoint();
 
    /**
-    * Returns the value of @f$j@f$th coordinate (or dimension). This value
-    * should be in the interval @f$[0, 1)@f$. If @f$j@f$ is outside the
+    * Returns the value of @f$j@f$th coordinate (or dimension). This value should
+    * be in the interval @f$[0, 1)@f$. If @f$j@f$ is outside the
     * range @f$\{0,…,d-1\}@f$, this method should throw an
     * IllegalArgumentException.
     */
-   public double getCoordinate (int j);
+   public double getCoordinate(int j);
 
 }

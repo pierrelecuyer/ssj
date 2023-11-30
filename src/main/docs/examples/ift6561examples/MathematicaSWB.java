@@ -1,4 +1,5 @@
 package ift6561examples;
+
 import umontreal.ssj.rng.RandomStreamBase;
 
 public class MathematicaSWB extends RandomStreamBase {
@@ -85,18 +86,18 @@ public class MathematicaSWB extends RandomStreamBase {
    }
 
    public void resetStartStream() {
-      throw new UnsupportedOperationException ();
+      throw new UnsupportedOperationException();
    }
 
    public void resetStartSubstream() {
-      throw new UnsupportedOperationException ();
+      throw new UnsupportedOperationException();
    }
 
    public void resetNextSubstream() {
-      throw new UnsupportedOperationException ();
+      throw new UnsupportedOperationException();
    }
 
-   //=======================================================================
+   // =======================================================================
 
    public static void main(String[] args) {
       double x;

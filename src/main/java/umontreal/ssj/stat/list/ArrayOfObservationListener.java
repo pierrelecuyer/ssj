@@ -32,14 +32,14 @@ package umontreal.ssj.stat.list;
  */
 public interface ArrayOfObservationListener {
 
-/**
- * Receives the new array of observations `x` broadcast by the list of
- * statistical probes `listOfProbes`.
- *  @param listOfProbes the list of statistical probes broadcasting the
- *                      observation.
- *  @param x            the array of observations being broadcast.
- */
-public void newArrayOfObservations (ListOfStatProbes<?> listOfProbes,
-                                       double[] x);
+   /**
+    * Receives the new array of observations `x` broadcast by the list of
+    * statistical probes `listOfProbes`.
+    * 
+    * @param listOfProbes the list of statistical probes broadcasting the
+    *                     observation.
+    * @param x            the array of observations being broadcast.
+    */
+   public void newArrayOfObservations(ListOfStatProbes<?> listOfProbes, double[] x);
 
 }

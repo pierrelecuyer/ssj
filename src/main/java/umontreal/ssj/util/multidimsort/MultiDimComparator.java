@@ -22,44 +22,46 @@
    <a href="http://www.gnu.org/licenses">GPL licence site</a>.
  */
 package umontreal.ssj.util.multidimsort;
+
 import java.util.Comparator;
 import java.lang.IllegalArgumentException;
 
 /**
  * This class is useful if one wishes to perform an ordinary one-dimensional
- * sort on  @ref MultiDimComparable<T> objects based on a single coordinate
- * @f$j@f$, which is specified in the constructor. It defines a bridge
- * between the  @ref MultiDimComparable<T> interface and the classic Comparator
- * in Java. It implements  Comparator in a way that the method `compare(o1,
- * o2)` compares two  @ref MultiDimComparable<T> objects in the dimension
+ * sort on @ref MultiDimComparable<T> objects based on a single coordinate
+ * 
+ * @f$j@f$, which is specified in the constructor. It defines a bridge between
+ *          the @ref MultiDimComparable<T> interface and the classic Comparator
+ *          in Java. It implements Comparator in a way that the method
+ *          `compare(o1, o2)` compares two @ref MultiDimComparable<T> objects in
+ *          the dimension
  * @f$j@f$ given in the constructor, by calling `o1.compareTo(o2, j)`.
  *
- * <div class="SSJ-bigskip"></div>
+ *         <div class="SSJ-bigskip"></div>
  */
-public class MultiDimComparator<T extends MultiDimComparable<? super T>>
-                                  implements Comparator<T> {
+public class MultiDimComparator<T extends MultiDimComparable<? super T>> implements Comparator<T> {
    private int compareDim;
 
    /**
-    * Constructs a comparator that uses coordinate `j` for the comparison
-    * of  @ref MultiDimComparable<T> objects. One must have @f$j
-    * \in\{0,…,d-1\}@f$.
-    *  @param j            index used for comparison
+    * Constructs a comparator that uses coordinate `j` for the comparison of @ref
+    * MultiDimComparable<T> objects. One must have @f$j \in\{0,…,d-1\}@f$.
+    * 
+    * @param j index used for comparison
     */
-   public MultiDimComparator (int j) {
+   public MultiDimComparator(int j) {
       compareDim = j;
    }
 
    /**
-    * Calls `o1.compareTo(o2, j)` from class  @ref MultiDimComparable<T>.
-    *  @param o1           first object to compare
-    *  @param o2           second object to compare
+    * Calls `o1.compareTo(o2, j)` from class @ref MultiDimComparable<T>.
+    * 
+    * @param o1 first object to compare
+    * @param o2 second object to compare
     */
-   public int compare (T o1, T o2) {
+   public int compare(T o1, T o2) {
       if (compareDim >= o1.getStateDimension() || compareDim >= o2.getStateDimension())
-         throw new IllegalArgumentException("Comparing in a "+
-                    "dimension larger than object dimension");
-      return o1.compareTo (o2, compareDim);
+         throw new IllegalArgumentException("Comparing in a " + "dimension larger than object dimension");
+      return o1.compareTo(o2, compareDim);
    }
 
- }
+}
