@@ -61,6 +61,10 @@ public class AsianGBM2 implements MonteCarloModelDouble {
    public String toString() {
       return "Asian option under GBM, for testing";
    }
+   
+   public String getTag() {
+      return "AsianGBM";
+   }
 
    public static void main(String args[]) throws IOException {
       int s = 12;

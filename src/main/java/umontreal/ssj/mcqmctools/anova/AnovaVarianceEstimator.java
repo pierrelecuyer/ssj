@@ -150,4 +150,11 @@ public class AnovaVarianceEstimator implements MonteCarloModel<double[]> {
       return s;
    }
 
+   /**
+    * Returns a model tag.
+    */
+   public String getTag() {
+      return getModel().getTag();
+   }
+   
 }

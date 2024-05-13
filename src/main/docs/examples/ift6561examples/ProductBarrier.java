@@ -45,5 +45,9 @@ public class ProductBarrier implements MonteCarloModelDouble {
    public String toString() {
       return "Simplified financial option with product and barriers, no IS";
    }
+   
+   public String getTag() {
+      return "ProductBarrier";
+   }
 
 }

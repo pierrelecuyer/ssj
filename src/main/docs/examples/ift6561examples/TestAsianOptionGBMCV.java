@@ -64,7 +64,7 @@ public class TestAsianOptionGBMCV {
       // System.out.println (MonteCarloExperiment.simulateRunsDefaultReportCV
       // (asian, n, noise, mean, variance, 0.95, 4, timer));
 
-      ListOfTalliesWithCV<Tally> list = ListOfTalliesWithCV.createWithTally(1, 2);
+      ListOfTalliesWithCV<TallyStore> list = ListOfTalliesWithCV.createWithTallyStore(1, 2);
       System.out.println(MonteCarloExperiment.simulateRunsDefaultReportCV(asian, n, noise, list, 0.95, 4, timer));
    }
 

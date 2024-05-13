@@ -73,6 +73,10 @@ public class CallableBond implements MonteCarloModelDouble {
       return priceCallableBond(rates, expectedDiscounts);
    }
 
+   public String getTag() {
+      return "CallableBond";
+   }
+
    public double priceCallableBond(double[] rates, double[] expectedDiscounts) {
       double callableValue = protectionPeriodValue;
       boolean didCallBack = false;

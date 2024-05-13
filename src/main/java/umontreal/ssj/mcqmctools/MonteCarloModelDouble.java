@@ -4,9 +4,7 @@ import umontreal.ssj.rng.*;
 
 /**
  * An interface for a very simple simulation model for which Monte Carlo (MC)
- * and RQMC experiments are to be performed. This interface is used by the
- * classes
- * 
+ * and RQMC experiments are to be performed. This interface is used by the classes 
  * @ref MonteCarloExperiment and @ref RQMCExperiment, among others, to run the
  *      model. This interface assumes that the simulation requires a single
  *      `RandomStream` and that the output (sample performance) from the model
@@ -35,8 +33,13 @@ public interface MonteCarloModelDouble {
    public double getPerformance();
 
    /**
-    * Returns a short description of the model and its parameters.
+    * Returns a description of the model and its parameters.
     */
    public String toString();
 
+   /** 
+    * Returns a short model name (tag) to be used in reports.
+    */
+   public String getTag();
+   
 }

@@ -31,6 +31,10 @@ public class TestAsianRQMCSeries extends AsianGBM implements MonteCarloModelDoub
    public String toString() {
       return "Asian option under GBM, for testing";
    }
+   
+   public String getTag() {
+      return "AsianRQMCSeries";
+   }
 
    public static void main(String[] args) throws IOException {
       // public static void main() {

@@ -66,6 +66,8 @@ public class RandomShift implements PointSetRandomization {
     * This method calls
     * {@link umontreal.ssj.hups.PointSet.addRandomShift(RandomStream)
     * addRandomShift(stream)}.
+    * *** WARNING: Here the randomization is stored in \texttt{p}, so one
+    * cannot have multiple randomizations for the same \texttt{p}.  ***
     * 
     * @param p Point set to randomize
     */

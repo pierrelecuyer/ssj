@@ -90,4 +90,9 @@ public class San13 implements MonteCarloModelDouble {
             + "Simulates and returns the length T of the longest path \n";
       return s;
    }
+   
+   public String getTag() {
+      return "SAN13";
+   }
+
 }

@@ -74,7 +74,14 @@ public class RQMCExperimentSeries {
    String title;
 
    /**
-    * Constructor with a give series of RQMC point sets.
+    * Constructor without RQMC point sets.  Must use init() afterwards
+    * 
+    * @param base    the base used for all logarithms.
+    */
+   public RQMCExperimentSeries() {};
+
+   /**
+    * Constructor with a given series of RQMC point sets.
     * 
     * @param theSets the RQMC point sets.
     * @param base    the base used for all logarithms.
@@ -171,7 +178,7 @@ public class RQMCExperimentSeries {
    /**
     * Performs an RQMC experiment with the given model, with this series of RQMC
     * point sets. For each set in the series, computes m replicates of the RQMC
-    * estimator, the computes the average and the variance of these m replicates,
+    * estimator, then computes the average and the variance of these m replicates,
     * and the logs of n and of the variance in the given base.
     */
    public void testVarianceRate(MonteCarloModelDouble model, int m) {

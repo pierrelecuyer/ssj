@@ -91,6 +91,10 @@ public class San13Dist implements MonteCarloModelDouble {
             + "Estimate distribution of length T of longest path \n";
       return s;
    }
+   
+   public String getTag() {
+      return "San13Dist";
+   }
 
    public static void main(String[] args) throws IOException {
       int n = 100000;

@@ -153,4 +153,11 @@ public class AsianOption implements MonteCarloModelDouble {
       return "Asian option model with " + d + " observation times";
    }
 
+   /**
+    * Returns a model tag.
+    */
+   public String getTag() {
+      return "AsianOption";
+   }
+   
 }

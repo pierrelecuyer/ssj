@@ -45,8 +45,8 @@ package umontreal.ssj.stochprocess;
  */
 public abstract class MultivariateStochasticProcess extends StochasticProcess {
 
-   protected double[] x0; // Default value of the process at time t_0.
-   protected int c = 1; // Dimension of the process.
+   protected double[] x0;  // Default value of the process at time t_0.
+   protected int c = 1;    // Dimension of the process.
 
    /**
     * Generates, returns, and saves the sample path

@@ -53,6 +53,10 @@ public class NetworkReliablity13 implements MonteCarloModelDouble {
             + "Estimate prob that nodes 1 and 9 are disconnected";
       return s;
    }
+   
+   public String getTag() {
+      return "SAN-Reliability13";
+   }
 
    public static void main(String[] args) throws IOException {
       int n = 1 * 1000;

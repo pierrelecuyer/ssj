@@ -57,6 +57,10 @@ public class OldAsianGBM implements MonteCarloModelDouble {
       else
          return 0.0;
    }
+   
+   public String getTag() {
+      return "OldAsianGBM";
+   }
 
    public static void main(String[] args) {
       int d = 12;

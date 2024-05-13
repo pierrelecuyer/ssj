@@ -58,7 +58,8 @@ public class NormalInverseGaussianIGGen extends NormalInverseGaussianGen {
     * parameters @f$\alpha@f$, @f$\beta@f$ = `beta`, @f$\mu@f$ = `mu`
     * and @f$\delta@f$, using generators `ig` and `ng`, as described in eq. (
     * {@link REF_randvar_NormalInverseGaussianIGGen_nig2 nig2} ). The
-    * parameters @f$\alpha@f$ and @f$\delta@f$ are included in generator `ig`.
+    * parameters @f$\alpha@f$ and @f$\delta@f$ are included in generator `ig`,
+    * while `ng` must be a standard normal generator. 
     */
    public NormalInverseGaussianIGGen(InverseGaussianGen ig, NormalGen ng, double beta, double mu) {
       super(null, null);
@@ -73,7 +74,7 @@ public class NormalInverseGaussianIGGen extends NormalInverseGaussianGen {
     *           described in eq. (
     *           {@link REF_randvar_NormalInverseGaussianIGGen_nig2 nig2} ). The
     *           parameters @f$\alpha@f$ and @f$\delta@f$ are included in generator
-    *           `ig`.
+    *           `ig`, and `ng` must be a standard normal generator.
     */
    public static double nextDouble(InverseGaussianGen ig, NormalGen ng, double beta, double mu) {
       return mynig(ig, ng, beta, mu);
@@ -86,7 +87,6 @@ public class NormalInverseGaussianIGGen extends NormalInverseGaussianGen {
 // >>>>>>>>>>>>>>>>>>>>  P R I V A T E     M E T H O D S   <<<<<<<<<<<<<<<<<<<
 
    private static double mynig(InverseGaussianGen ig, NormalGen ng, double beta, double mu) {
-
       double y = ig.nextDouble();
       double x = mu + beta * y + Math.sqrt(y) * ng.nextDouble();
       return x;

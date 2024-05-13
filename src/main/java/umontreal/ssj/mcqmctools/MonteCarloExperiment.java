@@ -10,7 +10,6 @@ import umontreal.ssj.util.PrintfFormat;
 /**
  * Provides generic tools to perform simple Monte Carlo experiments with a
  * simulation model that implements one of the interfaces
- * 
  * @ref MonteCarloModelDouble, @ref MonteCarloModelDoubleArray, or @ref
  *      MonteCarloModelCV. The experiment consists of `n` independent simulation
  *      runs and the results are returned in @ref Tally satistical collectors.
@@ -62,7 +61,7 @@ public class MonteCarloExperiment {
     * with a vector of control variates. The results are returned in `statWithCV`.
     */
    public static void simulateRunsCV(MonteCarloModelCV model, int n, RandomStream stream,
-         ListOfTalliesWithCV<Tally> statWithCV) {
+         ListOfTalliesWithCV<TallyStore> statWithCV) {
       statWithCV.init();
       for (int i = 0; i < n; i++) {
          model.simulate(stream);
@@ -219,7 +218,7 @@ public class MonteCarloExperiment {
     * estimator with the CV.
     */
    public static String simulateRunsDefaultReportCV(MonteCarloModelCV model, int n, RandomStream stream,
-         ListOfTalliesWithCV<Tally> statWithCV, double level, int d, Chrono timer) {
+         ListOfTalliesWithCV<TallyStore> statWithCV, double level, int d, Chrono timer) {
       PrintfFormat str = new PrintfFormat();
       timer.init();
       simulateRunsCV(model, n, stream, statWithCV);
@@ -245,7 +244,7 @@ public class MonteCarloExperiment {
     * externally).
     */
    public static String simulateRunsDefaultReportCV(MonteCarloModelCV model, int n, RandomStream stream,
-         ListOfTalliesWithCV<Tally> statWithCV, double level, int d) {
+         ListOfTalliesWithCV<TallyStore> statWithCV, double level, int d) {
       return simulateRunsDefaultReportCV(model, n, stream, statWithCV, level, d, new Chrono());
    }
 

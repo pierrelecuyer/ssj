@@ -39,6 +39,10 @@ public class ProductExpCosRQMC implements MonteCarloModelDouble {
    public String toString() {
       return "Test function for MC and RQMC: product of exponentials and cosine functions.";
    }
+   
+   public String getTag() {
+      return "ProductExpCosRQMC";
+   }
 
    public static void main(String[] args) throws IOException {
       int s = 3;
@@ -46,14 +50,16 @@ public class ProductExpCosRQMC implements MonteCarloModelDouble {
       int m = 20; // Number of RQMC randomizations.
       RandomStream stream = new LFSR113();
       DigitalNet p = new SobolSequence(16, 31, s); // n = 2^{16} points in s dim.
-      // PointSetRandomization rand = new LMScrambleShift(stream);
-      PointSetRandomization rand = new RandomShift(stream);
+      PointSetRandomization rand = new LMScrambleShift(stream);
+      // PointSetRandomization rand = new RandomShift(stream);
 
       System.out.println(
             RQMCExperiment.makeComparisonExperimentMCvsRQMC(new ProductExpCosRQMC(s, 2.0, 0.5), stream, p, rand, n, m));
-      System.out.println(RQMCExperiment.makeComparisonExperimentMCvsRQMC(new ProductExpCosRQMC(s, 2.0, 50.0), stream, p,
+      System.out.println(
+            RQMCExperiment.makeComparisonExperimentMCvsRQMC(new ProductExpCosRQMC(s, 2.0, 50.0), stream, p,
             rand, n, m));
-      System.out.println(RQMCExperiment.makeComparisonExperimentMCvsRQMC(new ProductExpCosRQMC(s, 10.0, 0.5), stream, p,
+      System.out.println(
+            RQMCExperiment.makeComparisonExperimentMCvsRQMC(new ProductExpCosRQMC(s, 10.0, 0.5), stream, p,
             rand, n, m));
    }
 }

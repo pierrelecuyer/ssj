@@ -118,6 +118,10 @@ public class TestOptionVGIS {
       public String toString() {
          return "European option on geometric VG process, one time step, MC";
       }
+      
+      public String getTag() {
+         return "OptionVG1";
+      }
    }
 
    public class OptionVGIS1 extends OptionVG1 {
@@ -134,7 +138,12 @@ public class TestOptionVGIS {
       public String toString() {
          return "European option on geometric VG process, one time step, IS twisting";
       }
+      
+      public String getTag() {
+         return "OptionVGIS1";
+      }
    }
+
 
    public class OptionVGIS2 extends OptionVG1 {
 
@@ -152,6 +161,10 @@ public class TestOptionVGIS {
 
       public String toString() {
          return "European option on geometric VG process, one time step, IS + Cond";
+      }
+      
+      public String getTag() {
+         return "OptionVGIS2";
       }
    }
 

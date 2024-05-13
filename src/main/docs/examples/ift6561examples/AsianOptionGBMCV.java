@@ -39,8 +39,9 @@ public class AsianOptionGBMCV extends AsianOption implements MonteCarloModelCV {
    }
 
    /**
-    * Set (or reset) the process to `sp', which much be a GBM in this class. Also
+    * Sets (or resets) the process to `sp', which much be a GBM in this class, and
     * resets the observation times of `sp` to those of this `AsianOption` object.
+    * Also computes the expected values of the CVs.  
     */
    public void setProcess(GeometricBrownianMotion sp) {
       // Reset the process to sp. Assumes that obsTimes have been set.

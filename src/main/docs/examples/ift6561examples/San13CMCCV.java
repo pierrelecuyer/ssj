@@ -15,8 +15,8 @@ import cern.colt.matrix.linalg.Algebra;
  */
 public class San13CMCCV extends San13Prob {
 
-   double estimate; // Cond. prod. of exceeding x.
-   int[] indexV = new int[8]; // The 8 control variates.
+   double estimate;                  // Cond. probability of exceeding x.
+   int[] indexV = new int[8];        // The 8 control variates.
    double[] meansCV = new double[8]; // CV expectations.
    TallyStore[] statsCV = new TallyStore[8]; // Stats on control variates.
    TallyStore statsProb = new TallyStore("Original CMC estimator");
@@ -78,7 +78,8 @@ public class San13CMCCV extends San13Prob {
    }
 
    public String toString() {
-      String s = "SAN network with 9 nodes and 13 links, from Elmaghraby (1977)\n" + "Estimate prob longest path > x = "
+      String s = "SAN network with 9 nodes and 13 links, from Elmaghraby (1977)\n" 
+            + "Estimate prob longest path > x = "
             + x + ", using CMC + control variates.\n";
       return s;
    }
@@ -128,22 +129,22 @@ public class San13CMCCV extends San13Prob {
          return;
       }
 
-      // Compute average Xc = X - Beta^t * (C - E[C])
-      double avgWithCV = x.average();
+      // Compute the average Xc = X - Beta^t (C - E[C])  and the 
+      // variance Var[Xc] = Var[X] + Beta^t (Var[C]*Beta - 2 Cov[C, X]).
+      // Calling x.average(), x.variance(), etc. recomputes the average, variance, etc.,
+      // each time, so we avoid repeated calls.
+      double avgNoCV = x.average();
+      double avgWithCV = avgNoCV;
       for (int i = 0; i < c.length; i++)
          avgWithCV -= mbeta.getQuick(i, 0) * (c[i].average() - ec[i]);
-      // Compute variance Var[Xc] = Var[X] + Beta^t*Var[C]*Beta - 2Beta*Cov[C, X]
-      double varWithCV = x.variance();
+      double varNoCV = x.variance();
+      double varWithCV = varNoCV;
       // viewDice transposes the matrix mbeta (which contains a single column),
       // and zMult performs the matrix multiplication.
-      // The null second argument instructs Colt to create a new matrix for the
-      // result.
-      // The result of the operation is a 1x1 matrix from which we extract the single
-      // element;
-      // this is the second term of the controlled variance.
+      // The null second argument instructs Colt to create a new matrix for the result.
+      // The end result is a 1x1 matrix from which we extract the single element.
+      // A similar technique is used to compute the other term.
       varWithCV += mbeta.viewDice().zMult(matC, null).zMult(mbeta, null).getQuick(0, 0);
-      // A similar technique is used to compute the third term of the controlled
-      // variance.
       varWithCV -= 2 * mbeta.viewDice().zMult(matCX, null).getQuick(0, 0);
 
       // Print the results
@@ -151,28 +152,27 @@ public class San13CMCCV extends San13Prob {
       for (int i = 0; i < c.length; i++)
          System.out.printf("%s%.3g", i > 0 ? ", " : "", mbeta.getQuick(i, 0));
       System.out.println(")");
-      System.out.printf("Average without CV                         : %8.5g%n", x.average());
+      System.out.printf("Average without CV                         : %8.5g%n", avgNoCV);
       System.out.printf("Average with CV                            : %8.5g%n", avgWithCV);
-      System.out.printf("Variance without CV                        : %8.5g%n", x.variance());
+      System.out.printf("Variance without CV                        : %8.5g%n", varNoCV);
       System.out.printf("Variance with CV                           : %8.5g%n", varWithCV);
-      System.out.printf("Variance reduction factor                  : %8.5g%n", x.variance() / varWithCV);
+      System.out.printf("Variance reduction factor                  : %8.5g%n", varNoCV / varWithCV);
 
       int n = x.numberObs();
-      double delta = Math.sqrt(x.variance() / n);
-      double LB_sansCV = x.average() - 1.96 * delta;
-      double UB_sansCV = x.average() + 1.96 * delta;
+      double delta = Math.sqrt(varNoCV / n);
+      double LowNoCV = avgNoCV - 1.96 * delta;
+      double UpNoCV = avgNoCV + 1.96 * delta;
       delta = Math.sqrt(varWithCV / n);
-      double LB_avecCV = avgWithCV - 1.96 * delta;
-      double UB_avecCV = avgWithCV + 1.96 * delta;
-      System.out.printf("IC 95 pourcent sans CV: (%8.5g, %8.5g)%n", LB_sansCV, UB_sansCV);
-      System.out.printf("IC 95 pourcent avec CV: (%8.5g, %8.5g)%n", LB_avecCV, UB_avecCV);
-      // System.out.println("IC 95% avec CV: (" + LB_avecCV + ", " + UB_avecCV + ")");
+      double LowWithCV = avgWithCV - 1.96 * delta;
+      double UpWithCV = avgWithCV + 1.96 * delta;
+      System.out.printf("95 percent IC without CV: (%8.5g, %8.5g)%n", LowNoCV, UpNoCV);
+      System.out.printf("95 percent IC with CV: (%8.5g, %8.5g)%n", LowWithCV, UpWithCV);
       System.out.println();
    }
 
    public static void main(String[] args) throws IOException {
-      int n = 1000 * 100;
-      San13CMCCV san = new San13CMCCV(90.0, "san13a.dat");
+      int n = 1000 * 10;
+      San13CMCCV san = new San13CMCCV(90.0, "src/main/docs/examples/ift6561examples/san13a.dat");
       san.simulateRuns(n, new LFSR113());
       System.out.println(san.statsProb.reportAndCIStudent(0.95, 6));
       applyCV(san.statsProb, san.statsCV, san.meansCV);

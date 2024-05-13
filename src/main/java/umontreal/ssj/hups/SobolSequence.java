@@ -311,7 +311,7 @@ public class SobolSequence extends DigitalSequenceBase2 {
 
             // Direction number lines from dimension 2 and up
             if (tokens.length < 4) {
-               System.err.println("\nBad direction number file format!\n");
+               System.err.println("\nBad direction number file format, < 4 tokens\n");
                System.exit(1);
             }
 
@@ -322,7 +322,7 @@ public class SobolSequence extends DigitalSequenceBase2 {
             int a = Integer.parseInt(tokens[2]);
 
             if (s + 3 != tokens.length) {
-               System.err.println("\nBad direction number file format!\n");
+               System.err.println("\nBad direction number file format, not s+3 tokens!\n");
                System.exit(1);
             }
 

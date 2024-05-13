@@ -36,6 +36,10 @@ public class ProductBarrierIs extends ProductBarrier {
    public String toString() {
       return "Simplified financial option with product and barriers, with IS";
    }
+   
+   public String getTag() {
+      return "ProductBarrierIS";
+   }
 
    public static void main(String[] args) throws IOException {
       double C = 100, K = 102, a = 100, b = 102;

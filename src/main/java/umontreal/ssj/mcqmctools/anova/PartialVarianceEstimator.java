@@ -165,5 +165,11 @@ public class PartialVarianceEstimator implements MonteCarloModel<double[]> {
       String s = String.format("Partial Variance Estimator" + " [model=%s]", model.toString());
       return s;
    }
-
+   
+   /**
+    * Returns a model tag.
+    */
+   public String getTag() {
+      return getModel().getTag();
+   }
 }

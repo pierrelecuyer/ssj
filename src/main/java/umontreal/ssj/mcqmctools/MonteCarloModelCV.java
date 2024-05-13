@@ -13,7 +13,7 @@ public interface MonteCarloModelCV extends MonteCarloModelDouble {
    public double[] getValuesCV();
 
    /**
-    * TO DO: Recovers the realizations of the control variates for the last run.
+    * TO DO: Recovers the realizations of the control variates from the last run.
     */
    // public void getValuesCV (double[] valCV);
 

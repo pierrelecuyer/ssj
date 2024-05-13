@@ -52,7 +52,7 @@ public class Tally extends StatProbe implements Cloneable {
                            // observations.
    private Logger log = Logger.getLogger("umontreal.ssj.stat");
 
-   private static enum CIType {
+   protected static enum CIType {
       CI_NONE, CI_NORMAL, CI_STUDENT
    };
 

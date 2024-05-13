@@ -142,10 +142,9 @@ public class DigitalNet extends PointSet {
    protected int numCols = 0; // The number of columns in each C_j. (= k)
    protected int numRows = 0; // The number of rows in each C_j. (= r)
    protected int outDigits = 0; // Number of output digits (= w)
-   private int[][] originalMat; // Original gen. matrices without randomizat.
+   private int[][] originalMat; // Original gen. matrices without randomization
    protected transient int[][] genMat; // The current generator matrices.
-   // genMat[j*numCols+c][l] contains column c
-   // and row l of C_j.
+   // genMat[j*numCols+c][l] is element in column c and row l of C_j.
    protected int[][] digitalShift; // The digital shift, initially zero (null).
                                    // Entry [j][l] is for dimension j, digit l,
                                    // for 0 <= l < outDigits.

@@ -112,9 +112,9 @@ public class MultivariateBrownianMotion extends MultivariateStochasticProcess {
     *                       observation returned will be for time @f$t_j@f$.
     */
    public void nextObservationVector(double[] obs) {
-      if (!covZiSCholDecomp) // the cholesky factorisation must be done to use the matrix covZCholDecomp
+      if (!covZiSCholDecomp) 
+         // the cholesky factorisation must be done to use the matrix covZCholDecomp
          initCovZCholDecomp();
-
       double z;
       for (int i = 0; i < c; i++) {
          z = 0.0;
@@ -199,7 +199,8 @@ public class MultivariateBrownianMotion extends MultivariateStochasticProcess {
     * which are used to generate the path.
     */
    public double[] generatePath(double[] uniform01) {
-      if (!covZiSCholDecomp) { // the cholesky factorisation must be done to use the matrix covZCholDecomp
+      if (!covZiSCholDecomp) { 
+         // the cholesky factorisation must be done to use the matrix covZCholDecomp
          initCovZCholDecomp();
       }
       double z;

@@ -25,8 +25,13 @@ public interface MonteCarloModel<E> {
    public E getPerformance();
 
    /**
-    * Returns a short description of the model and its parameters.
+    * Returns a description of the model and its parameters.
     */
    public String toString();
 
+   /** 
+    * Returns a short model name (usually a single word) to be used in reports.
+    */
+   public String getTag();
+   
 }
