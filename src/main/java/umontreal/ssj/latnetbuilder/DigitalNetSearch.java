@@ -50,7 +50,7 @@ public class DigitalNetSearch extends Search {
          this.normFactor = 1.0 / ((double) (1L << this.outDigits));
          this.interlacing = interlacing;
 
-         generatorMatricesFromStandardFormat(matrices);
+         genMatricesFromBitByBitFormat(matrices);
       }
    }
 

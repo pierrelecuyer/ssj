@@ -126,7 +126,7 @@ public abstract class PointSet {
     * Current dimension of the shift. This is useful mostly for the case where the
     * points have an unlimited number of coordinates.
     */
-   // **Pierre:** Maybe this could be defined only in `CycleBasedPointSet`.
+   // **Pierre:** Maybe this could be defined only in `CycleBasedPointSet` ???
    protected int dimShift = 0;
 
    /**
