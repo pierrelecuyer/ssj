@@ -118,16 +118,15 @@ public class SobolSequence extends DigitalSequenceBase2 {
    /**
     * Maximal degree of the primitive polynomials that are stored.
     */
-   protected static final int MAXDEGREE = 18; // Of primitive polynomial
+   protected static final int MAXDEGREE = 18;
 
-   private String filename = null;
+   private String filename = null;  // File that contains direction numbers. 
 
    /**
-    * Constructs a new digital net with @f$n = 2^k@f$ points and @f$w@f$ output
-    * digits, in dimension `dim`, formed by taking the first
-    * 
-    * @f$n@f$ points of the Sobol’ sequence. The predefined generator
-    *         matrices @f$\mathbf{C}_j@f$ are @f$w\times k@f$. Restrictions:
+    * Constructs a new digital net formed by the first @f$n = 2^k@f$ points 
+    * of a Sobol' sequence, with @f$w@f$ output digits, in `dim` in dimensions.
+    * The predefined generating matrices @f$\mathbf{C}_j@f$ are @f$w\times k@f$,
+    * but only their first `r = k` rows are nonzero. Restrictions:
     * @f$0\le k\le30@f$, @f$k\le w@f$ and `dim` @f$ \le360@f$. To use other
     *         direction numbers or to create points in **higher dimensions**, one
     *         should use #SobolSequence(String,int,int,int) instead of this
@@ -139,30 +138,29 @@ public class SobolSequence extends DigitalSequenceBase2 {
     * @param dim dimension of the point set
     */
    public SobolSequence(int k, int w, int dim) {
-      init(k, w, w, dim);
+      init(k, w, dim);
    }
 
-   private void init(int k, int r, int w, int dim) {
+   private void init(int k, int w, int dim) {
       if (filename == null)
          if ((dim < 1) || (dim > MAXDIM))
             throw new IllegalArgumentException("Dimension for SobolSequence must be > 0 and <= " + MAXDIM);
          else if (dim < 1)
             throw new IllegalArgumentException("Dimension for SobolSequence must be > 0");
-
-      if (r < k || w < r || w > MAXBITS || k >= MAXBITS)
-         throw new IllegalArgumentException("One must have k < 31 and k <= r <= w <= 31 for SobolSequence");
+      if (w > MAXBITS || k >= MAXBITS)
+         throw new IllegalArgumentException("One must have k < 31 and k <= w <= 31 for SobolSequence");
       numCols = k;
-      numRows = r; // Used in DigitalNetBase2, to read and print matrices and for interlacing.
+      numRows = k; // Used in DigitalNetBase2, to read and print matrices and for interlacing.
       outDigits = w;
       numPoints = (1 << k);
       this.dim = dim;
       normFactor = 1.0 / ((double) (1L << (outDigits)));
-      genMat = new int[dim * numCols];
+      genMat = new int[dim * numCols];  // Each column is a w-bit integer.
       initGenMat();
    }
 
    /**
-    * Constructs a Sobol point set with *at least* `n` points and 31 output digits,
+    * Constructs a Sobol point set with *at least* `n` points and `w=31` output digits,
     * in dimension `dim`. Equivalent to `SobolSequence (k, 31, dim)` with @f$k =
     * \lceil\log_2 n\rceil@f$.
     * 
@@ -175,7 +173,7 @@ public class SobolSequence extends DigitalSequenceBase2 {
          numCols--;
       if (1 << numCols != n)
          numCols++;
-      init(numCols, MAXBITS, MAXBITS, dim);
+      init(numCols, MAXBITS, dim);
    }
 
    /**
@@ -258,8 +256,7 @@ public class SobolSequence extends DigitalSequenceBase2 {
     *           is @f$x^4 + x^3 +1@f$.
     *
     *           Several files of parameters for Sobol sequences in this format are
-    *           given on [F. Kuo’s Web
-    *           site](http://web.maths.unsw.edu.au/~fkuo/sobol/) up to 21201
+    *           given at  http://web.maths.unsw.edu.au/~fkuo/sobol/  in up to 21201
     *           dimensions. The different files give parameters that were selected
     *           using different criteria. To avoid waiting for a file to download
     *           every time a SobolSequence object is created, one should download
@@ -358,10 +355,8 @@ public class SobolSequence extends DigitalSequenceBase2 {
          System.err.printf("\n\nNot enough dimension in file: %s", filename);
          System.exit(1);
       }
-
       this.filename = filename;
-
-      init(k, w, w, dim);
+      init(k, w, dim);
    }
 
    public String toString() {
@@ -409,7 +404,7 @@ public class SobolSequence extends DigitalSequenceBase2 {
       }
    }
 
-   // Initializes the generator matrices for a sequence.
+   // Initializes the original generator matrices for a sequence.
    private void initGenMat() {
       int start, degree, nextCol;
       int i, j, c;
@@ -443,28 +438,8 @@ public class SobolSequence extends DigitalSequenceBase2 {
       }
    }
 
-   /*
-    * // Initializes the generator matrices for a net. protected void
-    * initGenMatNet() { int start, degree, nextCol; int i, j, c;
-    * 
-    * // the first dimension, j = 0. Will be the reflected identity. for (c = 0; c
-    * < numCols; c++) genMat[c] = (1 << (outDigits-numCols+c));
-    * 
-    * // the second dimension, j = 1. for (c = 0; c < numCols; c++)
-    * genMat[numCols+c] = (1 << (outDigits-c-1));
-    * 
-    * // the other dimensions j > 1. for (j = 2; j < dim; j++) { // find the degree
-    * of primitive polynomial f_j for (degree = MAXDEGREE; ((poly[j-1] >> degree) &
-    * 1) == 0; degree--); // Get initial direction numbers m_{j,0},...,
-    * m_{j,degree-1}. start = j * numCols; for (c = 0; (c < degree && c < numCols);
-    * c++) genMat[start+c] = minit[j-2][c] << (outDigits-c-1);
-    * 
-    * // Compute the following ones via the recursion. for (c = degree; c <
-    * numCols; c++) { nextCol = genMat[start+c-degree] >> degree; for (i = 0; i <
-    * degree; i++) if (((poly[j-1] >> i) & 1) == 1) nextCol ^=
-    * genMat[start+c-degree+i]; genMat[start+c] = nextCol; } } }
-    */
 
+   
    // *******************************************************
 
    protected int[] poly_from_file;
@@ -496,9 +471,12 @@ public class SobolSequence extends DigitalSequenceBase2 {
    protected int minit_from_file[][];
 
    /**
-    * The default direction numbers. For @f$j > 0@f$ and @f$c < c_j@f$,
+    * The default direction numbers, taken from Lemieux et al (2004). 
+    * For @f$j > 0@f$ and @f$c < c_j@f$,
     * `minit[j-1][c]` contains the integer @f$m_{j,c}@f$. The values for @f$j=0@f$
     * are not stored, since @f$\mathbf{C}_0@f$ is the identity matrix.
+    * 
+    * *** Pierre: I think thse should also be put in a file, not in the code.
     */
    protected static final int minit[][] = { { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
          { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 1, 3, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0 },

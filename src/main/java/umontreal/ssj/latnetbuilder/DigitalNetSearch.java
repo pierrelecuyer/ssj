@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class DigitalNetSearch extends Search {
 
    /**
-    * Class for the construction od digital nets.
+    * Class for the construction of digital nets.
     */
    protected class DigitalNetBase2FromLatNetBuilder extends DigitalNetBase2 {
 

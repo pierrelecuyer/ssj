@@ -39,9 +39,11 @@ import umontreal.ssj.util.*;
  * for @f$c=0,\dots,k-1@f$, is stored at position @f$jk + c@f$ of this array, as
  * a 32-bit integer. For all derived classes, this 32-bit integer must have a
  * binary representation of the form @f$c_0\, c_1 \cdots \, c_{w-1}@f$ where
- * @f$w=31@f$ and the most significant bit is for the first row of the matrix.
- * To represent matrices with @f$r < w@f$ rows, it suffices to set the last 
- * @f$w-r@f$ bits of each integer to 0.  We always take @f$w=31@f$ to make the 
+ * the most significant bit is for the first row of the matrix.
+ * By default, @f$w=31@f$. It can be changed to a smaller value in subclasses, 
+ * usually in the constructor, but this is not recommended.
+ * To represent matrices with @f$r < w@f$ rows, one can also set the last 
+ * @f$w-r@f$ bits of each integer to 0. We take @f$w=31@f$ by default to make the 
  * implementation simpler and faster.
  * The value of @f$k@f$ cannot exceed 31 (32 is not allowed
  * because Java does not have 32-bit unsigned integers). 
@@ -63,7 +65,6 @@ public class DigitalNetBase2 extends DigitalNet {
       int res;
       int pos = 0;
       int grayCode = i ^ (i >> 1);
-
       if (digitalShift == null)
          res = 0;
       else
@@ -125,11 +126,6 @@ public class DigitalNetBase2 extends DigitalNet {
       return sb.toString();
    }
 
-   public void clearRandomShift() {
-      super.clearRandomShift();
-      digitalShift = null;
-   }
-
    // The digital random shift always has `w = outDigits` bits.
    public void addRandomShift(int d1, int d2, RandomStream stream) {
       if (null == stream)
@@ -165,17 +161,9 @@ public class DigitalNetBase2 extends DigitalNet {
       addRandomShift(0, dim, stream);
    }
 
-
-   
-   private void leftMultiplyMat (int j, int[] Lj) {
-      int c, d, col; // Dimension j, column c for new C_j.
-      for (c = 0; c < numCols; c++) {
-         col = 0;
-         for (d = 0; d < outDigits; d++)
-            // Multiply subdiagonal d of M_j by column c of C_j, and xor.
-            col ^= (Lj[d] & originalMat[j * numCols + c]) >> d;
-         genMat[j * numCols + c] = col;  // Column c for coordinate j.
-      }
+   public void clearRandomShift() {
+      super.clearRandomShift();
+      digitalShift = null;
    }
 
    // Left-multiplies lower-triangular matrix Mj by original C_j,
@@ -225,12 +213,13 @@ public class DigitalNetBase2 extends DigitalNet {
       }
    }
 
-   // This is a version of LMS in which each column of the lower-triangular 
-   // scrambling matrix is represented as an integer, just like for Cj.
-   // The matrix scramble is applied only to the r most significant bits. 
-   // The algo is described in the document "latnetbuider notes".
-   // The new scrambled matrices are put in `genMat`.
-   public void leftMatrixScramble (int q, int r, RandomStream stream) {
+   /** This is a version of LMS in which each column of the lower-triangular 
+    * scrambling matrix is represented as an integer less than `w`, just like for Cj.
+    * The nonzero part of L_j will be r x numRows, i.e., the scrambled generating 
+    * matrices will have `r` nonzero rows only.  They are put in `genMat`.
+    * The algo is described in the document "latnetbuider notes".
+    */
+   public void leftMatrixScramble (int r, RandomStream stream) {
       int j, c, d; // dimension j, column c of original Cj, column d of new Cj.
       int jk;
       final int tworm1 = 1 << (r - 1); // 2^{r-1}
@@ -245,7 +234,7 @@ public class DigitalNetBase2 extends DigitalNet {
       // scrambleMat[j][l] contains column l of L_j as a single integer.
       for (j = 0; j < dim; j++) {
          jk = j * numCols;
-         for (c = 0; c < q; c++) {
+         for (c = 0; c < numRows; c++) {
             int colc = (tworm1 + stream.nextInt(0, tworm1-1)) >> (c + wmr);
             for (d = 0; d < numCols; d++)   // Column d for coordinate j.
                genMat[jk + d] ^= ((originalMat[jk + d] >> (outDigits-1-c)) & 1) * colc;
@@ -253,6 +242,13 @@ public class DigitalNetBase2 extends DigitalNet {
       }
    }
    
+   /**
+    * By default, the matrices L_j have r = w rows.
+    */
+   public void leftMatrixScramble (RandomStream stream) {
+      leftMatrixScramble (outDigits, stream);
+   }
+
    
    // This is a version of LMS in which each subdiagonal of the lower-triangular 
    // scrambling matrix is represented as an integer. 
@@ -278,7 +274,7 @@ public class DigitalNetBase2 extends DigitalNet {
       }
       // Multiply M_j by the generator matrix C_j for each j.
       for (j = 0; j < dim; j++)
-         leftMultiplyMat(j, scrambleMat[j]);
+         leftMultiplyMatSubdiag(j, scrambleMat[j]);
    }
 
    // A more general version added by Youssef Cherkani.
@@ -302,9 +298,13 @@ public class DigitalNetBase2 extends DigitalNet {
       }
       // Multiply M_j by the generator matrix C_j for each j.
       for (j = 0; j < dim; j++)
-         leftMultiplyMat(j, scrambleMat[j]);
+         leftMultiplyMatSubdiag(j, scrambleMat[j]);
    }
 
+   /**
+    * Similar to `leftMatrixScramble`, except that all entries on any given
+    * diagonal or subdiagonal of any given @f$\mathbf{M}_j@f$ are identical.
+    */
    public void iBinomialMatrixScramble(RandomStream stream) {
       int j, d; // Dimension j, subdiagonal d of M_j.
       final int allOnes = (1 << outDigits) - 1; // outDigits ones.
@@ -315,9 +315,9 @@ public class DigitalNetBase2 extends DigitalNet {
          originalMat = genMat;
          genMat = new int[dim * numCols];
       }
-
       // Constructs the lower-triangular scrambling matrices M_j, w by w.
-      // scrambleMat[j][l] contains row l of M_j.
+      // scrambleMat[j][l] contains the subdiagonal l of M_j.
+      // *** Pierre: We should avoid creating and storing all these matrices.  ****
       int[][] scrambleMat = new int[dim][outDigits];
       for (j = 0; j < dim; j++) {
          scrambleMat[j][0] = allOnes;
@@ -330,7 +330,7 @@ public class DigitalNetBase2 extends DigitalNet {
                scrambleMat[j][d] = (allOnes >> d) << d;
       }
       for (j = 0; j < dim; j++)
-         leftMultiplyMat(j, scrambleMat[j]);
+         leftMultiplyMatSubdiag(j, scrambleMat[j]);
       // leftMultiplyMat (scrambleMat);
    }
 
@@ -349,57 +349,9 @@ public class DigitalNetBase2 extends DigitalNet {
       for (d = 0; d < outDigits; d++)
          scrambleMat[d] = (allOnes >> d) << d;
       for (j = 0; j < dim; j++)
-         leftMultiplyMat(j, scrambleMat);
+         leftMultiplyMatSubdiag(j, scrambleMat);
    }
 
-   /*
-    * public void leftMatrixScramble (RandomStream stream) { int j, l; // dimension
-    * j, row l. int boundInt;
-    * 
-    * // If genMat contains the original gen. matrices, copy to originalMat. if
-    * (originalMat == null) { originalMat = genMat; genMat = new int[dim *
-    * numCols]; }
-    * 
-    * // Constructs the lower-triangular scrambling matrices M_j, w by w. //
-    * scrambleMat[j][l] contains row l in a single integer (binary repres.) int[][]
-    * scrambleMat = new int[dim][outDigits]; for (j = 0 ; j < dim; j++) { boundInt
-    * = 0; for (l = 0; l < outDigits; l++) { boundInt += (1 << l); // Integer
-    * repres. by string of l+1 ones. scrambleMat[j][l] = (stream.nextInt (0,
-    * boundInt) | 1) << (outDigits-l-1); } }
-    * 
-    * // Multiply M_j by the generator matrix C_j for each j. for (j = 0; j < dim;
-    * j++) leftMultiplyMat (j, scrambleMat[j]); }
-    * 
-    * public void iBinomialMatrixScramble (RandomStream stream) { int j, l; //
-    * dimension j, row l of M_j. int allOnes;
-    * 
-    * // If genMat is original generator matrices, copy it to originalMat. if
-    * (originalMat == null) { originalMat = genMat; genMat = new int[dim *
-    * numCols]; }
-    * 
-    * // Constructs the lower-triangular scrambling matrices M_j, w by w. //
-    * scrambleMat[j][l] contains row l of M_j. int[][] scrambleMat = new
-    * int[dim][outDigits]; for (j = 0 ; j < dim; j++) { allOnes = ~0 >> (32 -
-    * outDigits); // outDigits ones. scrambleMat[j][outDigits-1] = stream.nextInt
-    * (0, allOnes) | 1; for (l = outDigits - 2; l >= 0; l--) scrambleMat[j][l] =
-    * scrambleMat[j][l+1] << 1; }
-    * 
-    * for (j = 0; j < dim; j++) leftMultiplyMat (j, scrambleMat[j]); //
-    * leftMultiplyMat (scrambleMat); }
-    * 
-    * public void stripedMatrixScramble (RandomStream stream) { int j, l; //
-    * dimension j, row l of M_j. int allOnes;
-    * 
-    * // If genMat is original generator matrices, copy it to originalMat. if
-    * (originalMat == null) { originalMat = genMat; genMat = new int[dim *
-    * numCols]; }
-    * 
-    * // Constructs the lower-triangular scrambling matrix M, w by w, // filled
-    * with 1's. scrambleMat[l] contains row l of M. int[] scrambleMat = new
-    * int[outDigits]; allOnes = ~0 >> (32 - outDigits); // outDigits ones. for (l =
-    * 0; l < outDigits; l++) scrambleMat[l] = (allOnes << (outDigits - 1 - l)) &
-    * allOnes; for (j = 0; j < dim; j++) leftMultiplyMat (j, scrambleMat); }
-    */
 
    public void rightMatrixScramble(RandomStream stream) {
       int j, c; // Dimension j, column c for new C_j.
@@ -407,7 +359,7 @@ public class DigitalNetBase2 extends DigitalNet {
          originalMat = genMat;
          genMat = new int[dim * numCols];
       }
-      // Generate an upper triangular matrix for Faure-Tezuka right-scramble.
+      // Generate an upper triangular matrix for the Faure-Tezuka right-scramble.
       // scrambleMat[c] contains column c of M.
       int[] scrambleMat = new int[outDigits];
       int boundInt = 0;
@@ -422,7 +374,7 @@ public class DigitalNetBase2 extends DigitalNet {
 
    /**
     * Generate a vector of `numBits <= 31` random bits using the random stream
-    * `stream`.
+    * `stream`.  The `numBits` bits will be the most significant ones in the 31-bit integer.
     */
    private int randomBitVector(RandomStream stream, int numBits) {
       if (numBits < 1)
@@ -482,17 +434,14 @@ public class DigitalNetBase2 extends DigitalNet {
 
    /**
     * Same as @link nestedUniformScramble(RandomStream,double[][],int)@endlink, but
-    * it returns the points as integers between 0 and 2^outDigits - 1, instead of
-    * doubles.
+    * it returns the points as integers from 0 to 2^outDigits - 1, instead of doubles.
     */
    public void nestedUniformScramble(RandomStream stream, int[][] output, int numBits) {
       assert output.length == numPoints;
       assert output.length > 0;
       assert output[0].length == dim;
-
       if (numBits == 0)
          numBits = outDigits;
-
       int[] poslist = new int[2 * numPoints];
       int[] bvlist = new int[2 * numPoints];
       int[] counts = new int[256];
@@ -581,6 +530,35 @@ public class DigitalNetBase2 extends DigitalNet {
 
    public void stripedMatrixScrambleFaurePermutAll(RandomStream stream, int sb) {
       ScrambleError("stripedMatrixScrambleFaurePermutAll");
+   }
+
+
+   /**
+    * Restores the original generator matrices and removes the random shift.
+    */
+   public void unrandomize() {
+      resetGeneratorMatrices();
+      digitalShift = null;
+   }
+
+   /**
+    * Restores `genMat` to the original generator matrices. This removes the current linear
+    * matrix scrambles. A new `genMat` object will be created next time we scramble.
+    */
+   public void resetGenMatrices() {
+      if (originalMat != null) {
+         genMat = originalMat;
+         originalMat = null;
+      }
+   }
+
+   /**
+    * Erases the original generator matrices and replaces them by the current ones.
+    * The current linear matrix scrambles thus become *permanent*. This is useful
+    * if we want to apply several scrambles in succession to a given digital net.
+    */
+   public void eraseOriginalGenMatrices() {
+      originalMat = null;
    }
 
    
@@ -724,7 +702,7 @@ public class DigitalNetBase2 extends DigitalNet {
     * This function returns a new digital net, whose dimension equals
     * getDimension() / getInterlacing(), and whose generating matrices are
     * interlaced.
-    * ****   This seems to be very inefficient!  
+    * ****  Pierre: This seems to be very inefficient!  
     */
    public DigitalNetBase2 matrixInterlace() {
       DigitalNetBase2 result = new DigitalNetBase2();
@@ -770,7 +748,7 @@ public class DigitalNetBase2 extends DigitalNet {
          init2();
       }
 
-      public void init() { // This method is necessary to overload
+      public void init() { // This empty method is necessary to overload
       } // the init() of DigitalNetIterator
 
       public void init2() { // See constructor
@@ -789,6 +767,7 @@ public class DigitalNetBase2 extends DigitalNet {
             return cachedCurPoint[curCoordIndex++] * normFactor;
          else
             return cachedCurPoint[curCoordIndex++] * normFactor + EpsilonHalf;
+         // *** Pierre: EpsilonHalf could be replaced by a variable `epsAdd` to avoid the "if".
       }
 
       protected void addShiftToCache() {

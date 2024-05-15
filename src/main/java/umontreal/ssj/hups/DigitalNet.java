@@ -140,8 +140,9 @@ public class DigitalNet extends PointSet {
    // Variables to be initialized by the constructor subclasses.
    protected int b = 0; // Base.
    protected int numCols = 0; // The number of columns in each C_j. (= k)
-   protected int numRows = 0; // The number of rows in each C_j. (= r)
-   protected int outDigits = 0; // Number of output digits (= w)
+   protected int numRows = 0; // The number of nonzero rows in the original C_j. (= r)
+                               // This r is used sometimes to save computations. 
+   protected int outDigits = 0; // Number of output digits (= w >= r)
    private int[][] originalMat; // Original gen. matrices without randomization
    protected transient int[][] genMat; // The current generator matrices.
    // genMat[j*numCols+c][l] is element in column c and row l of C_j.
@@ -150,7 +151,7 @@ public class DigitalNet extends PointSet {
                                    // for 0 <= l < outDigits.
    protected double normFactor; // To convert output to (0,1); 1/b^outDigits.
    protected double[] factor; // Lookup table in ascending order: factor[i]
-                              // = 1/b^{i+1} for 0 <= i < outDigits.
+                               // = 1/b^{i+1} for 0 <= i < outDigits.
    protected int interlacing = 1; // Interlacing factor.
 
    // primes gives the first index in array FaureFactor
@@ -160,6 +161,7 @@ public class DigitalNet extends PointSet {
 
    // Factors on the diagonal corresponding to base b = prime[i] ordered by
    // increasing Bounds.
+   // Warning:  Every `DigitalNet` holds this large array !!!  Do we need this here?  *****
    private int[][] FaureFactor = { { 1 }, { 1, 2 }, { 2, 3, 1, 4 }, { 2, 3, 4, 5, 1, 6 },
          { 3, 4, 7, 8, 2, 5, 6, 9, 1, 10 }, { 5, 8, 3, 4, 9, 10, 2, 6, 7, 11, 1, 12 },
          { 5, 7, 10, 12, 3, 6, 11, 14, 4, 13, 2, 8, 9, 15, 1, 16 },
@@ -369,7 +371,7 @@ public class DigitalNet extends PointSet {
       return sb.toString();
    }
 
-   // Print matrices M for dimensions 0 to N-1.
+   // Print matrices A for dimensions 0 to N-1.
    protected void printMat(int N, int[][][] A, String name) {
       for (int i = 0; i < N; i++) {
          System.out.println("-------------------------------------" + PrintfFormat.NEWLINE + name + "   dim = " + i);
@@ -384,7 +386,7 @@ public class DigitalNet extends PointSet {
       System.out.println("");
    }
 
-   // Print matrix M
+   // Print matrix A
    protected void printMat0(int[][] A, String name) {
       System.out.println("-------------------------------------" + PrintfFormat.NEWLINE + name);
       int l, c; // row l, column c for A[l][c].
@@ -486,12 +488,12 @@ public class DigitalNet extends PointSet {
       int j, l, c; // dimension j, row l, column c.
 
       // If genMat contains the original gen. matrices, copy to originalMat.
-      if (originalMat == null) {
+      if (originalMat == null) {  // This is done only once.
          originalMat = genMat;
          genMat = new int[dim * numCols][numRows];
       }
-
       // Constructs the lower-triangular scrambling matrices M_j, r by r.
+      // *** Pierre: We should avoid creating and storing these matrices!  *****
       int[][][] scrambleMat = new int[dim][numRows][numRows];
       for (j = 0; j < dim; j++) {
          for (l = 0; l < numRows; l++) {
@@ -505,7 +507,6 @@ public class DigitalNet extends PointSet {
             }
          }
       }
-
       // Multiply M_j by the generator matrix C_j for each j.
       for (j = 0; j < dim; j++)
          leftMultiplyMat(j, scrambleMat[j]);
@@ -513,7 +514,8 @@ public class DigitalNet extends PointSet {
 
    /**
     * Similar to #leftMatrixScramble except that all the off-diagonal elements of
-    * the @f$\mathbf{M}_j@f$ are 0.
+    * the @f$\mathbf{M}_j@f$ are 0.  
+    * In base b=2, M_j must be the identity, so this scramble does nothing!
     * 
     * @param stream random number stream used to generate the randomness
     */
@@ -525,7 +527,6 @@ public class DigitalNet extends PointSet {
          originalMat = genMat;
          genMat = new int[dim * numCols][numRows];
       }
-
       // Constructs the diagonal scrambling matrices M_j, r by r.
       int[][][] scrambleMat = new int[dim][numRows][numRows];
       for (j = 0; j < dim; j++) {
@@ -534,11 +535,10 @@ public class DigitalNet extends PointSet {
                if (c == l) // No zero on the diagonal.
                   scrambleMat[j][l][c] = stream.nextInt(1, b - 1);
                else
-                  scrambleMat[j][l][c] = 0; // Diagonal matrix;
+                  scrambleMat[j][l][c] = 0; // Only 0 elsewhere.
             }
          }
       }
-
       // Multiply M_j by the generator matrix C_j for each j.
       for (j = 0; j < dim; j++)
          leftMultiplyMatDiag(j, scrambleMat[j]);
