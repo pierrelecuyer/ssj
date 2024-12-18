@@ -45,8 +45,8 @@ public abstract class ConditionalDensityEstimator extends DensityEstimatorDouble
       double Ninv = 1.0 / (double) N;
       for (int i = 0; i < N; i++) {
          dens += evalEstimator(x, data[i]);
-         dens *= Ninv;
       }
+      dens *= Ninv;
       return dens;
    }
 
