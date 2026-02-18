@@ -426,7 +426,7 @@ public class DigitalNetBase2 extends DigitalNet {
       int[][] int_output = new int[numPoints][dim];
       nestedUniformScramble(stream, int_output, numBits);
       for (int j = 0; j < dim; ++j) {
-         for (int i = 1; i < numPoints; i++) {
+         for (int i = 0; i < numPoints; i++) {
             output[i][j] = int_output[i][j] * normFactor + EpsilonHalf;
          }
       }

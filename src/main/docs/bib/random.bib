@@ -257,6 +257,26 @@
 	YEAR={1978},
 	PAGES={675--686}  }
 
+@ARTICLE {rASO05a,
+	AUTHOR="D. Asotsky and I. M. Sobol'",
+	TITLE="On sequences of points for the evaluation of improper
+         integrals by quasi-{Monte Carlo} methods",
+	JOURNAL={Comput. Math. Math. Phys.},
+	VOLUME={45},
+	NUMBER={3},
+	YEAR={2005},
+	PAGES={394--398}  }
+
+@ARTICLE {rASO06a,
+	AUTHOR="D. Asotsky and E. Myshetskaya and I. M. Sobol'",
+	TITLE="The average dimension of a multidimensional function for 
+	    quasi-{Monte Carlo} estimates of an integral",
+	JOURNAL={Comput. Math. Math. Phys.},
+	VOLUME={46},
+	NUMBER={12},
+	YEAR={2006},
+	PAGES={2061--2067}  }
+
 @ARTICLE {rATK80a,
 	AUTHOR="A. C. Atkinson",
 	TITLE="Tests of Pseudo-Random Numbers",
@@ -678,7 +698,7 @@ pages={309--326}
 	PAGES={827--830}  }
 
 @unpublished{rBLA18a,
-  author    = {D. Blackman and S. Vigna},
+  author    = {D. BlackmanBlackman and S. Vigna},
   title     = {Scrambled Linear Pseudorandom Number Generators},
   Xjournal   = {},
   Xvolume    = {},
@@ -693,10 +713,11 @@ pages={309--326}
   author    = {D. Blackman and S. Vigna},
   title     = {Scrambled Linear Pseudorandom Number Generators},
   journal   = {ACM Transactions on mathematical Software},
-  Xvolume    = {},
+  volume    = {47},
+	number =    {4},
+	pages =     {Article 36},
   year      = {2021},
-  url       = {http://arxiv.org/abs/1805.01407},
-	note      = {To appear},
+  url       = {https://doi.org/10.1145/3460772},
   Xeprint    = {1805.01407},
 }
 
@@ -740,6 +761,16 @@ pages={309--326}
 	VOLUME={6},
 	NUMBER={2},
 	PAGES={97--108}}
+
+@ARTICLE {rBON25a,
+	AUTHOR="Nicolas Bonneel and David Coeurjolly and Jean-Claude Iehl and Victor Ostromoukhov",
+	TITLE="Sobol' Sequences with Guaranteed-Quality {2D} Projections",
+	JOURNAL={ACM Transactions on Computer Graphics},
+	YEAR={2025},
+	VOLUME={44},
+	NUMBER={4},
+	URL={https://doi.org/10.1145/3730821},
+	PAGES={16 pages}}
 
 @UNPUBLISHED {rBOP88a,
 	AUTHOR="R. B. Boppana and R. Hirschfeld",
@@ -1291,8 +1322,8 @@ publisher="Springer",
 @inproceedings{rCLA13a,
  author = {K. Claessen and M. H. Pa{\l}ka},
  title = {Splittable pseudorandom number generators using cryptographic hashing},
- booktitle = {Proceedings of the 2013 ACM SIGPLAN symposium on Haskell},
- series = {Haskell'13},
+ booktitle = {Proc. of the 2013 ACM SIGPLAN symposium on Haskell},
+ OPTseries = {Haskell'13},
  year = {2013},
  pages = {47--58},
  publisher = {ACM}
@@ -1524,8 +1555,8 @@ pages={Article 156}}
 	AUTHOR="R. Couture and P. L'Ecuyer",
 	TITLE="Lattice Computations for Random Numbers",
 	JOURNAL={Mathematics of Computation},
-        VOLUME={69},
-        NUMBER={230},
+  VOLUME={69},
+  NUMBER={230},
 	YEAR={2000},
 	PAGES={757--765}  }
 
@@ -1830,11 +1861,39 @@ pages={289--296}
  author = {L.-Y. Deng and J.-J. H. Shiau and H. H.-S. Lu},
  title = {Efficient Computer Search of Large-Order Multiple Recursive
           Pseudo-Random Number Generators},
- journal = {Journal of Computational and Applied Mathematics},
+ Xjournal = {Journal of Computational and Applied Mathematics},
+ journal = {J. of Comput. and Applied Math.},
  volume = {236},
  number = {13},
  year = {2012},
  pages = {3228--3237}
+}
+
+@article{rDEN23a,
+ author = {Lih-Yuan Deng and Bryan R. Winter and Jyh-Jen Horng Shiau and 
+           Henry Horng-Shing Lu and Nirman Kumar and Ching-Chi Yang},
+ title = {Parallelizable efficient large order multiple recursive generators},
+ journal = {Parallel Computing},
+ volume = {117},
+ pages = {103036},
+ year = {2023},
+ doi = {https://doi.org/10.1016/j.parco.2023.103036},
+ Xurl = {https://www.sciencedirect.com/science/article/pii/S016781912300042X},
+ keywords = {Automatic generation method (AGM), Equi-distribution, 
+             Matrix congruential generator (MCG), Spectral test},
+}
+
+@article{rDEN25a},
+  author = {Lih-Yuan Deng, Bryan R. Winter, Jyh-Jen Horng Shiau, 
+	          Henry Horng-Shing Lu, Nirman Kumar and Ching-Chi Yang},
+  title = {Efficient spectral tests for multiple recursive generators},
+  journal = {Communications in Statistics---Theory and Methods},
+  volume = {54},
+  number = {4},
+  pages = {1100--1115},
+  year = {2025},
+  OPTpublisher = {Taylor \& Francis},
+  doi = {10.1080/03610926.2024.2329772}
 }
 
 @article{rDER09a,
@@ -2050,6 +2109,15 @@ Xdoi = {10.1137/120893677},
   pages = "113062",
   year = "2021",
   Xdoi = "https://doi.org/10.1016/j.cam.2020.113062",
+}
+
+@book {rDIC22a,
+   author    = {J. Dick and P. Kritzer and F. Pillichshammer},
+   title     = {Lattice Rules:
+                Numerical Integration, Approximation, and Discrepancy},
+   publisher = {Springer},
+   OPTaddress   = {},
+   year      = {2022},
 }
 
 @ARTICLE {rDIE71a,
@@ -2709,7 +2777,7 @@ Xurl="http://dx.doi.org/10.1007/978-3-319-04696-9_10"
 @unpublished {rENT95b,
 	author = {K. Entacher},
 	title = {Selected Random Number Generators in the Run Test},
-        note  = {Manuscript, Dept.~of Mathematics, University of Salzburg},
+  note  = {Manuscript, Dept.~of Mathematics, University of Salzburg},
 	year = {1995} }
 
 @phdthesis {rENT95c,
@@ -2723,7 +2791,7 @@ Xurl="http://dx.doi.org/10.1007/978-3-319-04696-9_10"
 	author = {K. Entacher},
 	title = {A Collection of Selected Pseudorandom Number Generators
                  with Linear Structures},
-        institution = {pLab Report, Institut f\"ur Mathematik,
+  institution = {pLab Report, Institut f\"ur Mathematik,
                  Universit\"at Salzburg},
 	year = {1997} }
 
@@ -2753,7 +2821,7 @@ Xurl="http://dx.doi.org/10.1007/978-3-319-04696-9_10"
 	TITLE="Bad Subsequences of Well-Known Linear Congruential
                Pseudorandom Number Generators",
 	JOURNAL={ACM Transactions on Modeling and Computer Simulation},
-        VOLUME={8},
+  VOLUME={8},
 	NUMBER={1},
 	YEAR={1998},
 	PAGES={61--70}  }
@@ -2765,7 +2833,8 @@ Xurl="http://dx.doi.org/10.1007/978-3-319-04696-9_10"
     volume={1557},
     series={Lecture Notes in Computer Science},
     editor={P. Zinterhof and M. Vajter\v{s}ic and A. Uhl},
-    title={Parallel Random Number Generation: Long-Range Correlations Among Multiple Processors},
+    title={Parallel Random Number Generation: 
+		       Long-Range Correlations Among Multiple Processors},
     publisher={Springer Berlin Heidelberg},
     author={K. Entacher and A. Uhl and S. Wegenkittl},
     pages={107--116}
@@ -2819,6 +2888,15 @@ Xurl="http://dx.doi.org/10.1007/978-3-319-04696-9_10"
         address = {Rotterdam},
         YEAR = {2001},
         PAGES = {27--34}  }
+
+@article {rENT02a,
+	author = {K. Entacher and T. Schell and A. Uhl},
+	TITLE="Efficient lattice assessment for {LCG} and
+         {GLP} parameter searches",
+	JOURNAL={Mathematics of Computation},
+  VOLUME={71},
+	YEAR={2002},
+	PAGES={1231--1242}  }
 
 @article{rENT03a,
   author = {K. Entacher and T. Schell and W. C. Schmid and A. Uhl},
@@ -2960,6 +3038,32 @@ Xurl="http://dx.doi.org/10.1007/978-3-319-04696-9_10"
   address =	 {Berlin},
   publisher =	 {Springer-Verlag},
 }
+
+@article{rFAU09a,
+    author = "H. Faure and C. Lemieux",
+    title = "Generalized {H}alton Sequences in 2008: A Comparative Study",
+    journal = "{ACM} Transactions on Modeling and Computer Simulation",
+    year =   {2009},
+    volume =  {19},
+    number = {4},
+    pages =	 {Article 15}
+}
+
+@ARTICLE{rFAU16a,
+ AUTHOR={H. Faure and C. Lemieux},
+ TITLE={Irreducible {S}obol' Sequences in Prime Power Bases},
+ JOURNAL={Acta Arithmetica},
+ VOLUME={173},
+ YEAR={2016},
+ PAGES={59--80}}
+
+@ARTICLE{rFAU17a,
+ AUTHOR={H.~Faure and C.~Lemieux},
+ TITLE={Implementation of irreducible Sobol' sequences in prime power bases},
+ JOURNAL={Mathematics and Computers in Simulation},
+ VOLUME={161},
+ YEAR= {2019},
+ PAGES={13--22}}
 
 @ARTICLE {rFER92a,
 	AUTHOR="A. M. Ferrenberg and D. P. Landau and Y. J. Wong",
@@ -3429,7 +3533,7 @@ Xurl="http://dx.doi.org/10.1007/s00013-014-0698-1"
 
 @incollection{rGOD19a,
   author={T. Goda and K. Suzuki},
-  title={Recent advances in higher order quasi-Monte Carlo methods},
+  title={Recent advances in higher order quasi-{Monte Carlo} methods},
   booktitle={Discrepancy Theory},
 	editors={D. Bilyk and J. Dick and F. Pillichshammer},
   publisher = {De Gruyter}, 
@@ -3440,7 +3544,8 @@ Xurl="http://dx.doi.org/10.1007/s00013-014-0698-1"
 @article{rGOD22a,
       title={Construction-free median quasi-{Monte Carlo} rules for function spaces with unspecified 
 			       smoothness and general weights}, 
-      author={Takashi Goda and Pierre L'Ecuyer},
+      author={T. Goda and P. L'Ecuyer},
+			journal={{SIAM} Journal on Scientific Computing},
       year={2022},
 			volume={44},
 			number={4},
@@ -3448,13 +3553,31 @@ Xurl="http://dx.doi.org/10.1007/s00013-014-0698-1"
       arXiv={2201.09413},
 }
 
+@article{rGOD24a,
+      title={A universal median quasi-{Monte Carlo} integration}, 
+      author={T. Goda and K. Suzuki and M. Matsumoto},
+			journal={{SIAM} Journal on Numerical Analysis},
+      year={2024},
+			volume={62},
+			number={1},
+			pages={533--566},
+}
+
+@article{rGOD24b,
+      title={A simple universal algorithm for high-dimensional integration}, 
+      author={T. Goda and D. Krieg},
+			journal={{SIAM} Journal on Numerical Analysis},
+      year={2024},
+			note={Preprint},
+}
+
 @Book{rGOL67a,
   author =	 {S. W. Golomb},
   title = 	 {Shift-Register Sequences},
-  publisher = 	 {Holden-Day},
-  year = 	 {1967},
+  publisher = {Holden-Day},
+  year = {1967},
   address =	 {San Francisco},
-  OPTannote = 	 {}
+  OPTannote = {}
 }
 
 @ARTICLE {rGOL86a,
@@ -3756,6 +3879,25 @@ Xurl="http://dx.doi.org/10.1007/s00013-014-0698-1"
   publisher =    {Springer-Verlag}
 }
 
+@article{rHAR15a,
+   author={S. Harase},
+   title={Quasi-{Monte Carlo} point sets with small t-values and {WAFOM}},
+   journal={Applied Math. and Computation},
+   volume={254},
+   year={2015},
+   pages={318--326} 
+}
+
+@article{rHAR16a,
+ author = {S. Harase},
+ title = {A search for extensible low-{WAFOM} point sets},
+ journal = {Monte Carlo Methods and Applications},
+ pages = {349--357},
+ volume = {22},
+ number = {4},
+ year = {2016},
+}
+
 @InProceedings{rHAR18a,
    author="Haramoto, Hiroshi  and Matsumoto, Makoto",
    editor="Owen, Art B. and Glynn, Peter W.",
@@ -3768,6 +3910,7 @@ Xurl="http://dx.doi.org/10.1007/s00013-014-0698-1"
 }
 
 @article{rHAR19a,
+author = "Hiroshi Haramoto and Makoto Matsumoto",
 title = "Checking the quality of approximation of $p$-values in statistical tests 
          for random number generators by using a three-level test",
 journal = "Mathematics and Computers in Simulation",
@@ -3775,7 +3918,6 @@ volume = "161",
 pages = "66--75",
 year = "2019",
 url = "http://www.sciencedirect.com/science/article/pii/S0378475418302039",
-author = "Hiroshi Haramoto and Makoto Matsumoto",
 keywords = "Statistical testing, Pseudorandom number generations, Three-level test",
 }
 
@@ -3964,6 +4106,16 @@ keywords = "Statistical testing, Pseudorandom number generations, Three-level te
    year      = {1998},
    series    = {Lecture Notes in Statistics}
   }
+
+@article{rHEL02a,
+author = {Hellekalek, Peter},
+title = {Digital $(t,m,s)$-nets and the spectral test},
+journal = {Acta Arithmetica},
+volume = {105},
+number={2},
+year = {2002},
+pages = {197--204},
+}
 
 @ARTICLE {rHEL03a,
 	AUTHOR="P. Hellekalek and S. Wegenkittl",
@@ -4807,7 +4959,7 @@ keywords={OpenMP; MPI; Multicore; Rstream},
 	TITLE="Unique Extrapolation of Polynomial Recurrences",
 	JOURNAL={SIAM Journal on Computing},
 	VOLUME={17},
-        NUMBER={2},
+  NUMBER={2},
 	YEAR={1988},
 	PAGES={342--362}  }
 
@@ -4816,7 +4968,7 @@ keywords={OpenMP; MPI; Multicore; Rstream},
 	TITLE="Pseudorandom Numbers",
 	JOURNAL={Statistical Science},
 	VOLUME={8},
-        NUMBER={1},
+  NUMBER={1},
 	YEAR={1993},
 	PAGES={31--39}  }
 
@@ -4959,15 +5111,15 @@ Xurl="https://doi.org/10.1023/A:1023605123264"
 @TECHREPORT {rLEC88c,
 	AUTHOR="P. L'Ecuyer and F. Blouin",
 	TITLE="Generalized Linear Congruential Generators",
-        NUMBER={DIUL-RT-8814},
+  NUMBER={DIUL-RT-8814},
 	INSTITUTION={Compter Science Department, Laval University},
 	ADDRESS={Ste-Foy (Que.), Canada},
 	YEAR={1988},
-        NOTE={Also presented at ORSA/TIMS St-Louis, 1987} }
+  NOTE={Also presented at ORSA/TIMS St-Louis, 1987} }
 
 @TECHREPORT {rLEC88e,
 	AUTHOR="P. L'Ecuyer and F. Blouin",
-	TITLE="BonGCL, un Lociciel pour la Recherche de Bons
+	TITLE="{BonGCL}, un Lociciel pour la Recherche de Bons
 	  G\'{e}n\'{e}rateurs {\`a} Congruence Lin{\'e}aire",
   LANGUAGE={French},
   NUMBER={DIUL-RT-8803},
@@ -5044,8 +5196,8 @@ Xurl="https://doi.org/10.1023/A:1023605123264"
 	AUTHOR="P. L'Ecuyer",
 	TITLE="Uniform Random Number Generation",
 	JOURNAL={Annals of Operations Research},
-        VOLUME={53},
-        PAGES={77--120},
+  VOLUME={53},
+  PAGES={77--120},
 	YEAR={1994} }
 
 @INCOLLECTION {rLEC94b,
@@ -5359,7 +5511,7 @@ Xurl="https://doi.org/10.1023/A:1023605123264"
   NUMBER={225},
   PAGES={249--260},
 	YEAR={1999},
-	note={Errata at 
+	Xnote={Errata at 
 	   \url{http://www.iro.umontreal.ca/~lecuyer/myftp/papers/latrules99Errata.pdf}}
 }
 
@@ -5403,11 +5555,11 @@ Xurl="https://doi.org/10.1023/A:1023605123264"
 	TITLE={Fast Combined Multiple Recursive Generators with Multipliers
                of the Form $a = \pm 2^q \pm 2^r$},
 	BOOKTITLE={Proceedings of the 2000 Winter Simulation Conference},
-  editor = {J. A. Joines and R. R. Barton and K. Kang
+  XXeditor = {J. A. Joines and R. R. Barton and K. Kang
                   and P. A. Fishwick},
-	xPUBLISHER="{IEEE} Press",
+	PUBLISHER="{IEEE} Press",
   xADDRESS= {Piscataway, NJ},
-	publisher = {Piscataway, New Jersey: Institute of Electrical and Electronics Engineers, Inc.},
+	XXpublisher = {Piscataway, New Jersey: Institute of Electrical and Electronics Engineers, Inc.},
 	YEAR={2000},
 	PAGES={683--689}  }
 
@@ -5706,7 +5858,9 @@ Xurl="https://doi.org/10.1023/A:1023605123264"
       ADDRESS={Chicester, UK},
       YEAR={2011},
       volume = {Part 21},
-      PAGES = {1625--1630}
+      PAGES = {1625--1630},
+    doi="10.1007/978-3-642-04898-2_602",
+    url="https://doi.org/10.1007/978-3-642-04898-2_602"
 }
 
 @INCOLLECTION {rLEC11b,
@@ -5718,7 +5872,8 @@ Xurl="https://doi.org/10.1023/A:1023605123264"
       ADDRESS={Chicester, UK},
       YEAR={2011},
       volume = {Part 14},
-      PAGES = {991--995}
+      PAGES = {991--995},
+			URL={https://doi.org/10.1007/978-3-642-04898-2_408}
 }
 
 @INCOLLECTION {rLEC12a,
@@ -5763,11 +5918,11 @@ Xurl="https://doi.org/10.1023/A:1023605123264"
   author = "P. L'Ecuyer",
   title = "Random Number Generation with Multiple Streams for Sequential and Parallel Computers",
   booktitle = 	 {Proceedings of the 2015 Winter Simulation Conference},
-  editor = 	 {L. Yilmaz and W. K. V. Chan and I. Moon and T. M. K. Roeder and 
+  Xeditor = 	 {L. Yilmaz and W. K. V. Chan and I. Moon and T. M. K. Roeder and 
 	            C. Macal and M. D. Rossetti},
   year =	 {2015},
-  Xpublisher =	 {IEEE Press},
-	publisher = {Piscataway, New Jersey: Institute of Electrical and Electronics Engineers, Inc.},
+  publisher =	 {IEEE Press},
+	Xpublisher = {Piscataway, New Jersey: Institute of Electrical and Electronics Engineers, Inc.},
   pages =	 {31--44},
   OPTannote =  {}
 }
@@ -5803,10 +5958,10 @@ year = {2015},
   author = "P. L'Ecuyer",
   title = "History of Uniform Random Number Generation",
   booktitle = 	 {Proceedings of the 2017 Winter Simulation Conference},
-  editor = 	 {W. K. V. Chan and A. D'Ambrogio and G. Zacharewicz and N. Mustafee and G. Wainer and E. Page},
+  XXeditor = 	 {W. K. V. Chan and A. D'Ambrogio and G. Zacharewicz and N. Mustafee and G. Wainer and E. Page},
   year =	 {2017},
-  Xpublisher =	 {IEEE Press},
-	publisher = {Piscataway, New Jersey: Institute of Electrical and Electronics Engineers, Inc.},
+  publisher =	 {IEEE Press},
+	XXpublisher = {Piscataway, New Jersey: Institute of Electrical and Electronics Engineers, Inc.},
   pages =	 {202--230},
   OPTannote =  {history paper}
 }
@@ -5849,6 +6004,33 @@ year = {2015},
   pages =	 {1--16},
 	doi={10.1109/WSC52266.2021.9715397},
   OPTnote =  {see \url{https://www-labs.iro.umontreal.ca/~lecuyer/myftp/papers/wsc21rng.pdf}}
+}
+
+@INCOLLECTION {rLEC24a,
+      AUTHOR = {P. L'Ecuyer},
+      TITLE={Uniform Random Number Generators},
+      BOOKTITLE={International Encyclopedia of Statistical Science},
+      EDITOR={M. Lovric},
+      PUBLISHER={Springer-Verlag},
+			EDITION={second},
+      xxxADDRESS={Chicester, UK},
+      YEAR={2024},
+      xxxvolume = {Part 21},
+      XXXPAGES = {},
+			note = {forthcoming}
+}
+
+@INCOLLECTION {rLEC24b,
+      AUTHOR = {P. L'Ecuyer},
+      TITLE={Non-Uniform Random Variate Generation},
+      BOOKTITLE={International Encyclopedia of Statistical Science},
+      EDITOR={M. Lovric},
+      PUBLISHER={Springer-Verlag},
+      ADDRESS={Chicester, UK},
+      YEAR={2024},
+      OPTvolume = {Part 14},
+      XXXPAGES = {},
+			note = {forthcoming}
 }
 
 @inproceedings{rLEE94a,
@@ -6009,12 +6191,12 @@ author = "JunKyu Lee and Yu Bi and G. D. Peterson and R. J. Hinde and R. J. Harr
 
 @ARTICLE {rLEW69a,
 	AUTHOR="P. A. W. Lewis and A. S. Goodman and J. M. Miller",
-	TITLE="A Pseudo-random Number Generator for the System/360",
+	TITLE="A Pseudo-random Number Generator for the {System/360}",
 	JOURNAL={{IBM} System's Journal},
 	VOLUME={8},
 	YEAR={1969},
 	PAGES={136--143},
-        annote = {The 16807 multiplier}
+  annote = {The 16807 multiplier}
   }
 
 @ARTICLE {rLEW73a,
@@ -6772,7 +6954,7 @@ Xlanguage={English}
 @ARTICLE{rMAT98c,
    author = {J. Matous\v{e}k},
    title = {On the {$L_2$}-discrepancy for Anchored Boxes},
-   journal = {J. of Complexity},
+   journal = {Journal of Complexity},
    volume = {14},
    pages = {527--556},
    year = {1998}}
@@ -6825,7 +7007,7 @@ Xlanguage={English}
   booktitle = 	 {{M}onte {C}arlo and Quasi-{M}onte {C}arlo Methods 2012}, 
   pages =	       {569--579},
   year =         {2013},
-  OPTeditor =     	 {},
+  editor =       {Josef Dick and Frances Y. Kuo and Gareth W. Peters and Ian H. Sloan},
   address =	     {Heidelberg},
   publisher =    {Springer},
 }
@@ -6834,10 +7016,20 @@ Xlanguage={English}
 	AUTHOR="M. Matsumoto and M. Saito and K. Matoba",
 	TITLE="A Computable Figure of Merit for Quasi-{Monte Carlo} Point Sets",
 	JOURNAL={Mathematics and Computers in Simulation},
-         VOLUME={83},
+  VOLUME={83},
 	NUMBER={287},
 	YEAR={2014},
 	PAGES={1233--1250}  }
+
+@InProceedings{rMAT16a,
+  author="M. Matsumoto and R. Ohori",
+  editor="Cools, Ronald and Nuyens, Dirk",
+  title="{Walsh} Figure of Merit for Digital Nets: An Easy Measure for Higher Order Convergent {QMC}",
+  booktitle="Monte Carlo and Quasi-Monte Carlo Methods 2014",
+  year="2016",
+  publisher="Springer",
+  pages="143--160",
+}
 
 @ARTICLE {rMAU92a,
 	AUTHOR="U. M. Maurer",
@@ -7763,6 +7955,21 @@ PUBLISHER = {Cambridge Univ. Press},
   note =  "See \url{https://docs.nvidia.com/cuda/pdf/CURAND_Library.pdf}"
 } 
 
+@mastersthesis{rOHO15a,
+  author      = {Ohori, R.},
+  title       = {Efficient Quasi-{Monte Carlo} Integration by Adjusting the 
+	               Derivation-Sensitivity Parameter of {Walsh} Figure of Merit},
+  school      = {University of Tokyo},
+  year        = {2015},
+  type        = {Master's Thesis},
+}
+
+@misc{rOHO16a,
+      title={{W}alsh Figure of Merit is efficiently approximable}, 
+      author={R. Ohiori and T. Yoshiki},
+      note={In preparation ???  },
+}
+
 @article{rOKA21a,
   author =     {K. Okada and P. E. Brumby and K. Yasuoka},
   title =      {The influence of random number generation in dissipative particle 
@@ -7789,12 +7996,20 @@ PUBLISHER = {Cambridge Univ. Press},
     title = "{PCG}: A Family of Simple Fast Space-Efficient Statistically 
 		          Good Algorithms for Random Number Generation",
     author = "M. E. O'Neill",
-    institution = "Harvey Mudd College",
+    institution = "H. Mudd College",
     address = "Claremont, CA",
     number = "HMC-CS-2014-0905",
     year = "2014",
     Xmonth = Sep,
     xurl = "https://www.cs.hmc.edu/tr/hmc-cs-2014-0905.pdf",
+}
+
+@inproceedings {rOST24a,
+	AUTHOR="Victor Ostromoukhov and Nicolas Bonneel and David Coeurjolly and Jean-Claude Iehl",
+	TITLE="Quad-Optimized Low-Discrepancy Sequences",
+	booktitle={ACM SIGGRAPH 2024 Conference Papers},
+	YEAR={2024},
+	note={Denver, CO, USA},
 }
 
 @INCOLLECTION {rOWE95a,
@@ -7818,6 +8033,18 @@ PUBLISHER = {Cambridge Univ. Press},
   pages={466--489},
   year={1998},
   Xpublisher={Elsevier}
+}
+
+@article{rOWE06a,
+  author       = {Art B. Owen},
+  title        = {Halton Sequences Avoid the Origin},
+  journal      = {{SIAM} Review},
+  volume       = {48},
+  number       = {3},
+  pages        = {487--503},
+  year         = {2006},
+  url          = {https://doi.org/10.1137/S0036144504441573},
+  doi          = {10.1137/S0036144504441573},
 }
 
 @ARTICLE {rPAC85a,
@@ -7966,7 +8193,6 @@ PUBLISHER = {Cambridge Univ. Press},
 }
 
 @article{rPAN10a,
-   old = {rPAN07a},
   author = 	 {F. Panneton and P. L'Ecuyer},
   title = 	 {Resolution-Stationary Random Number Generators},
   journal = {Mathematics and Computers in Simulation},
@@ -8079,6 +8305,16 @@ pages={3383--3398},
 Xnote={\url{doi:10.1002/cpe.3214}}
 }
 
+@INPROCEEDINGS{rPAS21a,
+  author={Pasiah, Kenneth B. and Deng, Lih-Yuan and Bowman, Dale and Yang, Ching-Chi},
+  booktitle={2021 Annual Modeling and Simulation Conference {(ANNSIM)}}, 
+  title={Searching for Large-Order Multiple Recursive Generators}, 
+  year={2021},
+  pages={1--12},
+  keywords={Computational modeling; Approximation algorithms; Generators; Batteries;
+	          MRGs; GMP; Super-order generators},
+  doi={10.23919/ANNSIM52504.2021.9552067}}
+
 @ARTICLE {rPAT62a,
 	AUTHOR="R. K. Pathria",
 	TITLE="A Statistical Study of Randomness Among the First 10,000 Digits of $\pi$",
@@ -8183,6 +8419,15 @@ author = "C. L. Phillips and J. A. Anderson and S. C. Glotzer"
 	VOLUME={2},
 	YEAR={1985},
 	PAGES={317--322}  }
+
+@book {rPIL14a,
+   author    = {F. Pillichshammer and G. Leobacher},
+   title     = {Introduction to Quasi-{Monte Carlo} Integration and Applications},
+   year      = {2014},
+   publisher = {Birkh\"auser Cham},
+   OPTaddress   = {},
+	 comments  = {Math undergraduate-level introductory book},
+}
 
 @inproceedings{rPIL19a,
   author =       {F. Pillichshammer},
@@ -8407,6 +8652,16 @@ Xurl="http://dx.doi.org/10.1007/978-1-4757-3240-5_34"
   year={1995},
 }
 
+@misc{rROB25a,
+      title={Digits of pi: limits to the seeming randomness {II}}, 
+      author={Paula Nataniela Roba and Karlis Podnieks},
+      year={2025},
+      eprint={2504.10394},
+      archivePrefix={arXiv},
+      primaryClass={math.NT},
+      url={https://arxiv.org/abs/2504.10394}, 
+}
+
 @ARTICLE {rROS07a,
    AUTHOR = "M. Rosenbluh and Y. Aviad and E. Cohen and L. Khaykovich and
                       W. Kinzel and E. Kopelowitz and P. Yoskovits and I. Kanter",
@@ -8621,7 +8876,7 @@ doi = {10.3390/e22060630},
  booktitle = {Proceedings of the 2011 International Conference for High Performance Computing,
               Networking, Storage and Analysis},
  year = {2011},
- isbn = {978-1-4503-0771-0},
+ Xisbn = {978-1-4503-0771-0},
  Xlocation = {Seattle, Washington},
  pages = {16:1--16:12},
  articleno = {16},
@@ -8776,6 +9031,15 @@ Xurl = "http://www.sciencedirect.com/science/article/pii/S0960077916301576",
  pages = {249--257}
 }
 
+@article{rSCH01b,
+ author = {W. Ch. Schmid},
+ title = {Projections  of  digital  nets  and  sequences},
+ journal = {Mathematics and Computers in Simulation},
+ volume = {55},
+ number = {1-3},
+ year = {2001},
+ pages = {239--247}
+}
 
 @unpublished {rSCH05a,
 	AUTHOR={W. Ch. Schmid and R. Sch{\"u}rer},
@@ -8989,6 +9253,14 @@ Xurl = "http://www.sciencedirect.com/science/article/pii/S0960077916301576",
   NOTE = "In Russian",
   YEAR = "1969"}
 
+@ARTICLE{rSOB98a,
+	author	={I. M. Sobol'},
+	title	={On quasi-{Monte-Carlo} integration},
+	journal ={Mathematics and Computers in Simulation},
+	volume	={47},
+	pages	={103--112},
+	year	={1998} }
+
 @ARTICLE {rSOB72a,
 	AUTHOR="J. S. Sobolewski",
 	TITLE="Pseudonoise with Arbitrary Amplitude Distribution---Part {I}: Theory",
@@ -9052,6 +9324,16 @@ Xurl = "http://www.sciencedirect.com/science/article/pii/S0960077916301576",
  Xurl = {http://dx.doi.org/10.1016/S0378-4754(02)00228-8},
  Xdoi = {10.1016/S0378-4754(02)00228-8},
  keywords = {Monte Carlo method, numerical integration, quasi-Monte Carlo method, quasi-random sequence},
+} 
+
+@article{rSOB11a,
+ author = {Sobol, I. M. and Asotsky, D. I. and Kreinen, A. and Kucherenko, S.},
+ title = {Construction and Comparison of High-Dimensional {S}obol' Generators},
+ journal = {Wilmott},
+ volume = {56},
+ year = {2011},
+ pages = {64--79},
+ url = {https://www.broda.co.uk/projects.html#sobolseq1024},
 } 
 
 @ARTICLE {rSOK72a,
@@ -10400,6 +10682,16 @@ pages={460--464}
       eprint={2201.06604},
       archivePrefix={arXiv},
       primaryClass={stat.CO}
+}
+
+@article{rYOS17a,
+      author={T. Yoshiki},
+      title={Bounds on {W}alsh coefficients by dyadic difference and a new 
+			       {Koksma-Hlawka} type inequality for quasi-{Monte Carlo} integration},
+      journal = {Hiroshima Mathematical Journal},
+			volume = {47},
+			pages = {155--179},
+      year={2017},
 }
 
 @ARTICLE {rYUE77a,

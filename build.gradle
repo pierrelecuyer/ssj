@@ -3,14 +3,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.ysb33r.gradle:doxygen-gradle-plugin:0.7.0'
+        classpath 'org.ysb33r.gradle:doxygen-gradle-plugin:2.0.0'
     }
 }
 
 plugins {
     id 'java-library'
     id 'c'
-    id 'org.ysb33r.doxygen' version '0.7.0'
+    id 'org.ysb33r.doxygen' version '2.0.0' 
     id 'distribution'
     id 'maven-publish'
     id 'eclipse'
@@ -22,14 +22,13 @@ repositories {
 
 group = 'ca.umontreal.iro.simul'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+//sourceCompatibility = 1.8
+//targetCompatibility = 1.8
 
 version = '3.3.2'
 
 dependencies {
     implementation     'org.jfree:jcommon:1.0.24'
-//    implementation     'org.jfree:jfreechart:1.0.12'
     implementation     'org.jfree:jfreechart:1.5.3'
     implementation     'colt:colt:1.2.0'
     implementation     'com.github.rwl:optimization:1.3'
@@ -71,18 +70,26 @@ publishing {
 // ****************************** DOCS ******************************
 
 doxygen {
-    generate_html true
-    outputDir new File("$buildDir/docs")
-
-    project_name "SSJ"
-    project_number project.version
-
-    source projectDir
-    include 'src/main/java/'
-    include 'src/main/docs/examples/tutorial/tutorial.dox'
+  sourceSets {
+    main {
+      option 'generate_html', true
+//     option 'generate_html', true
+//    generate_html true
+      outputDir new File(buildDir,'build/docs')
+//     outputDir new File("$buildDir/docs")
+      //source new File(projectDir,'src/main/java')
+      // source 'src/main/java/'
+      //project_name "SSJ"
+      //project_number project.version
+    }
+  }
+    // source 'src/main/java/'
+    // include 'src/main/java/'
+    // include 'src/main/docs/examples/tutorial/tutorial.dox'
     // image_path new File(projectDir, 'src/main/docs/images')   Already in Doxyfile.
  
-    template 'src/main/docs/Doxyfile'
+//    template 'src/main/docs/Doxyfile'
+//    template 'Doxyfile'
 }
 
 tasks.withType(Javadoc) {
@@ -121,7 +128,7 @@ sourceSets {
         java {
             srcDirs = ['src/main/docs/examples']
             exclude 'markovchainrqmc/**' // FIXME: broken examples
-//            exclude 'ift6561examples/**'
+            exclude 'ift6561examples/**'
             exclude 'latnetbuilder/**'  // We do not want this dependence.
             exclude 'umontreal.ssj.latnetbuilder/LatNetBuilderTest.java'  
             exclude 'tutorial/Collision.java'
@@ -226,7 +233,7 @@ distributions {
     }
 }
 distTar.compression = 'bzip2'
-distTar.extension = 'tar.bz2'
+// distTar.extension = 'tar.bz2'
 
 
 // ****************************** WRAPPER ******************************
