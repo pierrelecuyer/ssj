@@ -44,3 +44,5 @@
  * @ref umontreal.ssj.stat.list.ArrayOfObservationListener can register as an
  * observer.
  */
+
+package umontreal.ssj.stat.list;

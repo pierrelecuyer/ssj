@@ -72,3 +72,4 @@
  * `Double` wrapper object before the observation value can be extracted.
  */
  
+package umontreal.ssj.stat;

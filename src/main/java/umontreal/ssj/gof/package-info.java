@@ -109,3 +109,5 @@
  * or theoretical distribution function, by creating a data file that
  * contains a graphic plot in a format compatible with a given software.
  */
+
+package umontreal.ssj.gof;

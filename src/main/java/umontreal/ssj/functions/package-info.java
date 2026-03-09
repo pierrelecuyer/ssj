@@ -10,3 +10,5 @@
  * generic functions. There are also a few basic utilities for numerical differentiation
  * and integration.
  */
+
+package umontreal.ssj.functions;

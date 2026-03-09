@@ -39,3 +39,5 @@
  * very similarly and the class provides the same methods as for common density estimators.
  * 
  */
+
+package umontreal.ssj.stat.density;

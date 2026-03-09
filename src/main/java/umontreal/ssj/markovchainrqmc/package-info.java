@@ -154,3 +154,5 @@
  * @anchor REF_markovchainrqmc_overview_lst_BrownianTestOutput
  * @include markovchainrqmc/BrownianTest.txt
  */
+
+package umontreal.ssj.markovchainrqmc;

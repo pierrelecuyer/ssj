@@ -5,3 +5,5 @@
  * These sorts are useful in particular for the Array-RQMC method for Markov chains.
  *
  */
+
+package umontreal.ssj.util.multidimsort;

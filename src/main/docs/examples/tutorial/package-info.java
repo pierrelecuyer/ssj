@@ -1,8 +1,7 @@
 /**
- * @page tutorial <H2> SSJ introduction and tutorial by examples </H2>
- * 
- * 
- * @section REF_examples_sec_01 Introduction
+ * @page Tutorial
+ *
+ * @section REF_examples_sec_01 SSJ introduction and tutorial by examples 
  * 
  * 
  * This document provides an introduction to SSJ via a series of examples.
@@ -1309,3 +1308,6 @@
  * can be found in @cite ccBUI05a, @cite iBUI12a. 
  * 
  */
+
+ package tutorial;
+ 

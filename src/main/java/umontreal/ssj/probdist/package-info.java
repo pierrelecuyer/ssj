@@ -114,31 +114,6 @@
  * observations, in most cases based on the maximum likelihood method.
  */
 
-
-/**
- * @defgroup probdist_general [probdist] General Classes
- */
+package umontreal.ssj.probdist;
 
 
-
-/**
- * @defgroup probdist_discrete [probdist] Discrete Distributions over Integers
- */
-
-
-
-/**
- * @defgroup probdist_discretereal [probdist] Discrete Distributions over Real Numbers
- */
-
-
-
-/**
- * @defgroup probdist_continuous [probdist] Continuous Distributions
- */
-
-
-
-/**
- * @defgroup probdist_edf [probdist] Empirical Distribution Functions (EDF)
- */

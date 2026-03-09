@@ -61,7 +61,7 @@
  *
  * The packages currently offered are the following.
  * 
- *  **Probability distributions, random number and random variate generation, and quasi-Monte Carlo:**
+ *  **Probability distributions, random number and random variate generation:**
  * 
  *  @ref umontreal.ssj.probdist 
  *  contains a set of Java classes providing
@@ -286,3 +286,5 @@
  * NATEQ-Québec grant No. 02ER3218, a Killam fellowship, and a Canada
  * Research Chair to P. L'Ecuyer.
  */
+
+package umontreal.ssj;

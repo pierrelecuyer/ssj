@@ -125,3 +125,5 @@
  * @ref BatchMeansSim can be used for simulating a
  * stationary model using the batch means technique.
  */
+
+package umontreal.ssj.simexp;

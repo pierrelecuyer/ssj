@@ -8,3 +8,5 @@
  * some adaptations along the road.
  *
  **/
+
+package umontreal.ssj.util;

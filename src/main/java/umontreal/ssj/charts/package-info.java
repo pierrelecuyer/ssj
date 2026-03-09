@@ -1570,3 +1570,5 @@
  * box-plot@anchor REF_charts_overview_fig_boxchart_res</center>
  * </center>
  */
+
+package umontreal.ssj.charts;

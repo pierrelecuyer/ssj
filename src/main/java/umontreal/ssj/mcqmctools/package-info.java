@@ -32,3 +32,5 @@
  * (and in some cases the bias) converges as a function of `n`, and perhaps plot it in log-log scale.
  * 
  */
+
+package umontreal.ssj.mcqmctools;

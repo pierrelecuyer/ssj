@@ -65,3 +65,5 @@
  * estimate the @f$\boldsymbol{\beta}_{\mathrm{f}}@f$ vector minimizing the
  * variance of the function of averages.
  */
+
+package umontreal.ssj.stat.list.lincv;

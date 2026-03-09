@@ -20,3 +20,5 @@
  * but only under Linux or in Windows in a virtual machine; see the `LatNet Builder` documentation.
  * 
  */
+
+package umontreal.ssj.latnetbuilder;

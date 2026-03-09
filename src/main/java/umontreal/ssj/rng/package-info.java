@@ -138,3 +138,5 @@
  *
  */
  
+ package umontreal.ssj.rng;
+ 

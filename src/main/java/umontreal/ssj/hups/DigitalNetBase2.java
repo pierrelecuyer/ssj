@@ -59,7 +59,7 @@ public class DigitalNetBase2 extends DigitalNet {
    private transient int[] originalMat; // Original matrices, without randomization.
    protected int[] genMat; // The current generator matrix.
    protected transient int[] digitalShift; // Stores the digital shift vector.
-   // recall that `outdigits = 31`. 
+   // recall that `outdigits = 31.  It is initialized in the constructors.  
     
    public double getCoordinate(int i, int j) {
       int res;
@@ -165,7 +165,7 @@ public class DigitalNetBase2 extends DigitalNet {
       super.clearRandomShift();
       digitalShift = null;
    }
-
+   
    // Left-multiplies lower-triangular matrix Mj by original C_j,
    // where original C_j is in originalMat and result is in genMat.
    // Mj[d] is assumed to contain the d-th subdiagonal of matrix Mj,
@@ -214,7 +214,7 @@ public class DigitalNetBase2 extends DigitalNet {
    }
 
    /** This is a version of LMS in which each column of the lower-triangular 
-    * scrambling matrix is represented as an integer less than `w`, just like for Cj.
+    * scrambling matrix is represented as an integer less than `2^w`, just like for Cj.
     * The nonzero part of L_j will be r x numRows, i.e., the scrambled generating 
     * matrices will have `r` nonzero rows only.  They are put in `genMat`.
     * The algo is described in the document "latnetbuider notes".
@@ -227,20 +227,48 @@ public class DigitalNetBase2 extends DigitalNet {
       // If genMat contains the original gen. matrices, copy to originalMat.
       // Normally, we do this only once!
       if (originalMat == null) {  // This is only if `originalMat` was never created.
+         // System.out.println("Copying genMat to originalMat \n");
          originalMat = genMat;
          genMat = new int[dim * numCols]; // Creates a new object, but only once.
       }
-      // Constructs the lower-triangular scrambling matrices L_j, w by w.
-      // scrambleMat[j][l] contains column l of L_j as a single integer.
+      for (d = 0; d < dim * numCols; d++) genMat[d] = 0;
       for (j = 0; j < dim; j++) {
-         jk = j * numCols;
+         jk = j * numCols;        // Number of columns to skip
          for (c = 0; c < numRows; c++) {
+            // colc is column c of L_j, which has numRows columns.
             int colc = (tworm1 + stream.nextInt(0, tworm1-1)) >> (c + wmr);
+            // System.out.println("colc = " + colc + "\n");
             for (d = 0; d < numCols; d++)   // Column d for coordinate j.
                genMat[jk + d] ^= ((originalMat[jk + d] >> (outDigits-1-c)) & 1) * colc;
          }
       }
    }
+   
+   /*
+   public void leftMatrixScramble (RandomStream stream) {
+      int j, c, d; // dimension j, column c of original Cj, column d of new Cj.
+      int jk;
+      final int tworm1 = 1 << (outDigits - 1); // 2^{r-1}
+      // If genMat contains the original gen. matrices, copy to originalMat.
+      // Normally, we do this only once!
+      if (originalMat == null) {  // This is only if `originalMat` was never created.
+         System.out.println("Copying genMat to originalMat" + PrintfFormat.NEWLINE);
+         originalMat = genMat;
+         genMat = new int[dim * numCols]; // Creates a new object, but only once.
+      }
+      for (d = 0; d < dim * numCols; d++) genMat[d] = 0;
+      for (j = 0; j < dim; j++) {
+         jk = j * numCols;    // Number of columns to skip
+         for (c = 0; c < numRows; c++) {
+            // colc is column c of L_j, which has numRows columns.
+            int colc = (tworm1 + stream.nextInt(0, tworm1-1)) >> c;  // Column c of L_j
+            // System.out.println("colc = " + colc + "\n");
+            for (d = 0; d < numCols; d++)   // Column d for coordinate j.
+               genMat[jk + d] ^= ((originalMat[jk + d] >> (outDigits-1-c)) & 1) * colc;
+         }
+      }
+   }
+  */
    
    /**
     * By default, the matrices L_j have r = w rows.
@@ -249,7 +277,31 @@ public class DigitalNetBase2 extends DigitalNet {
       leftMatrixScramble (outDigits, stream);
    }
 
-   
+/*
+   // This is a version of LMS in which each subdiagonal of the lower-triangular   
+   public void leftMatrixScramble(RandomStream stream) {
+      int j, d;  // dimension j, subdiagonal d.
+      final int allOnes = (1 << outDigits) - 1;    // outDigits ones.
+
+      // If genMat contains the original gen. matrices, copy to originalMat.
+      if (originalMat == null) {
+         originalMat = genMat;
+         genMat = new int[dim * numCols];
+      }
+      // Constructs the lower-triangular scrambling matrices M_j, w by w.
+      // scrambleMat[j][l] contains row l in a single integer (binary repres.)
+      int[][] scrambleMat = new int[dim][outDigits];
+      for (j = 0; j < dim; j++) {
+         scrambleMat[j][0] = allOnes;
+         for (d = 1; d < outDigits; d++)
+            scrambleMat[j][d] = (stream.nextInt(0, allOnes >> d)) << d;
+      }
+      // Multiply M_j by the generator matrix C_j for each j.
+      for (j = 0; j < dim; j++)
+         leftMultiplyMat(j, scrambleMat[j]);
+   }
+*/
+
    // This is a version of LMS in which each subdiagonal of the lower-triangular 
    // scrambling matrix is represented as an integer. 
    // It is equivalent to `leftMatrixScrambleSubdiag (0, stream)`.
@@ -635,6 +687,20 @@ public class DigitalNetBase2 extends DigitalNet {
          System.out.println("dim = " + (j + 1) + PrintfFormat.NEWLINE);
          for (int c = 0; c < numCols; c++)
             System.out.println(genMat[j * numCols + c]);
+         System.out.println("----------------------------------");
+      }
+   }
+
+   /**
+    * Prints the generating matrices in the standard format, one integer per column,
+    * for dimensions 1 to @f$s@f$.
+    */
+   public void printOriginalMatrices(int s) {
+      // column c, dimension j.
+      for (int j = 0; j < s; j++) {
+         System.out.println("dim = " + (j + 1) + PrintfFormat.NEWLINE);
+         for (int c = 0; c < numCols; c++)
+            System.out.println(originalMat[j * numCols + c]);
          System.out.println("----------------------------------");
       }
    }
