@@ -1,0 +1,251 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.ysb33r.gradle:doxygen-gradle-plugin:2.1.1'
+    }
+}
+
+plugins {
+    id 'java-library'
+    id 'c'
+    id("org.ysb33r.doxygen") version '2.1.1' 
+    id 'distribution'
+    id 'maven-publish'
+    id 'eclipse'
+}
+
+repositories {
+    mavenCentral()
+}
+
+group = 'ca.umontreal.iro.simul'
+
+// sourceCompatibility = 1.8
+// targetCompatibility = 1.8
+
+version = '3.3.2'
+
+dependencies {
+    implementation     'org.jfree:jcommon:1.0.24'
+    implementation     'org.jfree:jfreechart:1.5.3'
+    implementation     'colt:colt:1.2.0'
+    implementation     'com.github.rwl:optimization:1.3'
+    implementation     'org.apache.commons:commons-math3:3.6.1'
+    implementation     'com.google.code.gson:gson:2.8.6'
+    testImplementation 'junit:junit:4.+'
+}
+
+defaultTasks 'build'
+
+compileJava {
+    options.encoding="UTF-8"
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'ca.umontreal.iro.simul'
+            artifactId = 'ssj'
+            version = '3.3.2'
+            from components.java				
+						
+            // Populate the pom file
+            pom {
+                name = 'SSJ'
+                description = 'Stochastic Simulation in Java'
+                url = 'http://umontreal-simul.github.io/ssj/'
+            }
+        }
+    }
+}
+
+
+// ****************************** DOCS ******************************
+
+doxygen {
+  sourceSets {
+    main {
+      option 'generate_html', true
+      // generate_html true
+      outputDir = new File(buildDir,'build/docs')
+      // outputDir = new File("$buildDir/docs")
+      sources new File(projectDir,'src/main/java')
+      // sources 'src/main/java/'
+      sources new File(projectDir,'src/main/docs/examples/tutorial/tutorial.dox')
+      // imagePath 'src/main/docs/images'  // All of this is already in Doxyfile.
+      // projectName "SSJ"
+      // projectNumber project.version
+      // doxyfile file('src/main/docs/Doxyfile')
+      }
+    }
+    //include 'src/main/java/'
+    // imagePath new File(projectDir, 'src/main/docs/images')  // Already in Doxyfile.
+    // template file('src/main/docs/Doxyfile')
+    // outputDir = new File(buildDir,'build/docs')
+  }
+
+tasks.withType(Javadoc) {
+      failOnError = false
+      options.addStringOption('Xdoclint:none', '-quiet')
+      options.addStringOption('encoding', 'UTF-8')
+      options.addStringOption('charSet', 'UTF-8')
+}
+
+// task generateAPIDocs(type: Javadoc) {
+//   options.header = '<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>';
+// }
+
+
+// ****************************** DATA ******************************
+
+// generated data files in hups
+//task dataHups(type: Copy) {
+//    from sourceSets.main.allSource.asFileTree.matching {
+//        include '**/hups/dataSer/**/*.ser'
+//        include '**/hups/dataLFSR/**/*.dat'
+//    }
+//    into sourceSets.classesDirs
+//}
+
+// data meta-task
+// task data(dependsOn: [dataHups]) {
+//    description 'Generates the data files.'
+//}
+
+
+// ****************************** TEST ******************************
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ['src/main/docs/examples']
+            exclude 'markovchainrqmc/**' // FIXME: broken examples
+            exclude 'ift6561examples/**'
+            exclude 'latnetbuilder/**'  // We do not want this dependence.
+            exclude 'umontreal.ssj.latnetbuilder/LatNetBuilderTest.java'  
+            exclude 'tutorial/Collision.java'
+        }
+    }
+}
+
+test {
+//    dependsOn data
+    ignoreFailures = true
+    useJUnit()
+    workingDir = file(sourceSets.test.java.srcDirs[-1].path)
+    exclude 'ExamplesTest.class'
+    exclude 'LatNetBuilderTest.java'   // Remove: We do not want this dependence...
+//    if (!project.hasProperty('ssjutil.jni.build'))
+//        exclude 'ChronoTest.class'
+//    if (!project.hasProperty('randvar.jni.build'))
+//        exclude 'UnuranTest.class'
+}
+
+task examples(type: Test) {
+    ignoreFailures = true
+    description = 'Runs the example programs.'
+    outputs.upToDateWhen { false }
+    dependsOn compileTestJava
+    useJUnit()
+    workingDir = temporaryDir
+    include 'ExamplesTest.class'
+    exclude 'LatNetBuilderTest.java'   // To be removed...
+    doFirst {
+        workingDir.mkdir()
+    }
+}
+
+
+// ****************************** JAR ******************************
+
+jar {
+//    dependsOn data, jniCopy
+    manifest {
+        attributes(
+            "Extension-Name":           "SSJ",
+            "Specification-Title":      "Stochastic Simulation in Java",
+            "Specification-Version":    version,
+            "Specification-Vendor":     "DIRO, Université de Montréal",
+            "Implementation-Title":     "SSJ",
+            "Implementation-Version":   version,
+            "Implementation-Vendor":    "DIRO, Université de Montréal",
+            "Class-Path":               configurations.runtimeClasspath.files.collect { it.getName() }.join(' ')
+        )
+    }
+    metaInf {
+        from('.') {
+            include 'LICENSE.md'
+            include 'NOTICE'
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    metaInf {
+        from('.') {
+            include 'LICENSE.md'
+            include 'NOTICE'
+        }
+    }
+}
+
+task docsJar(type: Jar) {
+    from doxygen
+}
+
+
+// ****************************** DISTRIBUTION ******************************
+
+distributions {
+    main {
+        contents {
+            into('lib') {
+                from(jar)
+                from(configurations.runtimeClasspath)
+            }
+            into('doc') {
+                if (project.hasProperty('buildDocs')) {
+                    from('$buildDir/docs') {
+                        include 'html/**'
+                    }
+                }
+                from('src/main/docs') {
+                    include 'examples/**'
+                }
+                from('.') {
+                    include 'README.md'
+                    include 'LICENSE.md'
+                    include 'NOTICE'
+                }
+            }
+            // Contents is also included in the JNI section above,
+            // with `tasks.whenTaskAdded`
+        }
+    }
+}
+
+plugins.withType(DistributionPlugin) {
+    distTar {
+        compression = Compression.BZIP2 // Sets the compression type
+        archiveExtension.set('tar.bz2') // Sets the file extension in newer Gradle versions
+    }
+}
+
+
+// ****************************** WRAPPER ******************************
+
+//task wrapper(type: Wrapper) {
+//    gradleVersion = '7.2'
+//}
+
+task showClasspath(dependsOn: configurations.runtimeClasspath) {
+    println sourceSets.main.runtimeClasspath.asPath
+}

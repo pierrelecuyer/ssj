@@ -1,0 +1,12 @@
+.gradle
+build
+/.nb-gradle
+.nb-gradle-properties
+hs_err*
+/bin
+.settings
+.project
+.classpath
+/out
+.html
+/target/
