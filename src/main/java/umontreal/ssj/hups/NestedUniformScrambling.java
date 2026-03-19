@@ -30,11 +30,12 @@ import java.lang.IllegalArgumentException;
  * This @ref PointSetRandomization class provides the nested uniform scrambling
  * (NUS) randomization proposed by Owen (\cite vOWE95a, \cite vOWE03a) for
  * digital nets. Since the scrambled points are all stored explicitly, it can
- * only be applied to a @ref CachedPointSet that contains a @ref
+ * only be applied to a @ref CachedPointSet.  
+ * The actual implementation is in @ref DigitalNetBase2.nestedUniformScramble().
+ * For this reason, it only works if the CachedPointSet contains a @ref
  * DigitalNetBase2. The proper way to use it is to construct a @ref
  * CachedPointSet `p` that contains the digital net, and call @ref
- * NestedUniformScrambling.randomize(p) to randomize. The actual implementation
- * is in @ref DigitalNetBase2.nestedUniformScramble().
+ * NestedUniformScrambling.randomize(p) to randomize. 
  *
  * Note that calling CachedPointSet.randomize() with an instance of
  * NestedUniformScrambling as its arguments will not work, because
@@ -96,7 +97,8 @@ public class NestedUniformScrambling implements PointSetRandomization {
    /**
     * Scrambles the points of the @ref DigitalNetBase2 contained in the @ref
     * CachedPointSet `p` and caches the scrambled points in `p`. This `p` must be
-    * a @ref CachedPointSet of a @ref DigitalNetBase2.
+    * a @ref CachedPointSet of a @ref DigitalNetBase2, or a `ContainerPointSet` that
+    * contains such a `CachedPointSet`.
     * 
     * @param p Point set to randomize
     */
@@ -108,10 +110,13 @@ public class NestedUniformScrambling implements PointSetRandomization {
             return;
          }
       }
-      throw new IllegalArgumentException(
+      else if (p instanceof ContainerPointSet)
+         randomize(((ContainerPointSet) p).getOriginalPointSet()); 
+      else
+         throw new IllegalArgumentException(
             "NestedUniformScrambling" + " can only randomize a CachedPointSet of a DigitalNetBase2");
    }
-
+   
    /**
     * Returns a descriptor of this object.
     */

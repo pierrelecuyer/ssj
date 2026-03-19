@@ -53,10 +53,11 @@ public class LMScrambleShift extends RandomShift {
    }
 
    /**
-    * This method calls
+    * If `p` is a @ref umontreal.ssj.hups.DigitalNet, this method calls
     * umontreal.ssj.hups.DigitalNet.leftMatrixScramble(RandomStream), then
-    * umontreal.ssj.hups.DigitalNet.addRandomShift(RandomStream). If `p` is not
-    * a @ref umontreal.ssj.hups.DigitalNet, an IllegalArgumentException is thrown.
+    * umontreal.ssj.hups.DigitalNet.addRandomShift(RandomStream). 
+    * If `p` is a `ContainerPointSet` that contains a `DigitalNet cp`, it does that to `cp`.
+    * In other cases, a @ref umontreal.ssj.hups.DigitalNet, an IllegalArgumentException is thrown.
     * 
     * @param p Point set to randomize
     */
@@ -64,6 +65,9 @@ public class LMScrambleShift extends RandomShift {
       if (p instanceof DigitalNet) {
          ((DigitalNet) p).leftMatrixScramble(stream);
          ((DigitalNet) p).addRandomShift(stream);
+      }
+      else if (p instanceof ContainerPointSet) {
+         randomize(((ContainerPointSet) p).getOriginalPointSet()); 
       } else {
          throw new IllegalArgumentException("LMScrambleShift" + " can only randomize a DigitalNet");
       }

@@ -33,7 +33,7 @@ import umontreal.ssj.probdist.*;
  * This class implements *Beta* random variate generators using the stratified
  * rejection/patchwork rejection method from @cite rSAK83a,
  * 
- * @cite rSTA93a&thinsp;. This method draws one uniform from the main stream and
+ * @cite rSTA93a. This method draws one uniform from the main stream and
  *       uses the auxiliary stream for any additional uniform variates that
  *       might be needed.
  *
@@ -84,11 +84,10 @@ public class BetaStratifiedRejectionGen extends BetaGen {
 
    /**
     * Creates a beta random variate generator with parameters
-    * 
     * @f$\alpha=@f$ `alpha` and @f$\beta=@f$ `beta`, over the interval
     * @f$(0,1)@f$, using main stream `s` and auxiliary stream `aux`. The auxiliary
-    *              stream is used when a random number of uniforms is required for
-    *              a rejection-type generation method.
+    * stream is used when a random number of uniforms is required for
+    * a rejection-type generation method.
     */
    public BetaStratifiedRejectionGen(RandomStream s, RandomStream aux, double alpha, double beta) {
       super(s, null);
@@ -99,7 +98,6 @@ public class BetaStratifiedRejectionGen extends BetaGen {
 
    /**
     * Creates a beta random variate generator with parameters
-    * 
     * @f$\alpha=@f$ `alpha` and @f$\beta=@f$ `beta`, over the interval
     * @f$(0,1)@f$, using stream `s`.
     */

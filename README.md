@@ -26,9 +26,9 @@ and the package names have changed from `umontreal.iro.lecuyer.*` to `umontreal.
 
 ## Documentation and tutorial
 
-The [SSJ User's Guide](http://umontreal-simul.github.io/ssj/docs/master)
+The [SSJ User's Guide](http://umontreal-simul.github.io/ssj/docs/master/)
 includes:
-- the [API documentation](http://umontreal-simul.github.io/ssj/docs/master/namespaces.html); and
+- the [API documentation](http://umontreal-simul.github.io/ssj/docs/master/index.html); and
 - [a tutorial with documented examples](http://umontreal-simul.github.io/ssj/docs/master/examples.html).
 
 
@@ -216,13 +216,15 @@ The generated binary archives can be found under `build/distributions`.
 
 The SSJ library uses [Doxygen](http://www.stack.nl/~dimitri/doxygen/) as its
 documentation system.
-If Doxygen is available on your system, you can tell Gradle to build the
-documentation by adding the following line in `gradle.properties`:
+If Doxygen is available on your system, one can build the documentation simply 
+with the command `doxygen` from the main `ssj` directory. 
+The `html` documentation will be built in the directory `ssj/build/docs/html`.
+You can also tell Gradle to build the documentation by adding line
 
     buildDocs
 
-Then, run Gradle [as explained above](#using-gradle).
-You may want (or need) to change some Doxygen environments variables in the file Doxyfile.
+in `gradle.properties`, then run Gradle [as explained above](#using-gradle).
+Before that, you may want (or need) to change some Doxygen environments variables in the file `Doxyfile`.
 
 
 ### JNI classes

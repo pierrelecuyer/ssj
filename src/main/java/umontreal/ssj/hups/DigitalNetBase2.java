@@ -763,7 +763,7 @@ public class DigitalNetBase2 extends DigitalNet {
    }
 
    /**
-    * Interlaces the matrices from a digital net.
+    * Interlaces the generating matrices from a digital net.
     *
     * This function returns a new digital net, whose dimension equals
     * getDimension() / getInterlacing(), and whose generating matrices are
