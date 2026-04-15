@@ -87,14 +87,6 @@ public class BakerTransformedStream implements RandomStream {
    }
 
    /**
-    * Generates a random integer in @f$\{i,...,j\}@f$ via #nextDouble (in which the
-    * baker transformation is applied).
-    */
-   public int nextInt(int i, int j) {
-      return i + (int) (nextDouble() * (j - i + 1.0));
-   }
-
-   /**
     * Calls `nextArrayOfDouble (u, start, n)` for the base stream, then applies the
     * baker transformation.
     * 
@@ -112,6 +104,14 @@ public class BakerTransformedStream implements RandomStream {
    }
 
    /**
+    * Generates a random integer in @f$\{i,...,j\}@f$ via #nextDouble (in which the
+    * baker transformation is applied).
+    */
+   public int nextInt(int i, int j) {
+      return i + (int) (nextDouble() * (j - i + 1.0));
+   }
+
+   /**
     * Fills up the array by calling `nextInt (i, j)`.
     * 
     * @param i     the smallest possible integer to put in `u`
@@ -123,6 +123,28 @@ public class BakerTransformedStream implements RandomStream {
    public void nextArrayOfInt(int i, int j, int[] u, int start, int n) {
       for (int ii = start; ii < start + n; ii++)
          u[ii] = nextInt(i, j);
+   }
+
+   /**
+    * Generates a random integer in @f$\{i,...,j\}@f$ via #nextDouble (in which the
+    * baker transformation is applied).
+    */
+   public long nextLong(long i, long j) {
+      return i + (long) (nextDouble() * (j - i + 1.0));
+   }
+
+   /**
+    * Fills up the array by calling `nextInt (i, j)`.
+    * 
+    * @param i     the smallest possible integer to put in `u`
+    * @param j     the largest possible integer to put in `u`
+    * @param u     the array in which the numbers will be stored
+    * @param start the first index of `u` to be used
+    * @param n     the number of random numbers to put in `u`
+    */
+   public void nextArrayOfLong(long i, long j, long[] u, int start, int n) {
+      for (int ii = start; ii < start + n; ii++)
+         u[ii] = nextLong(i, j);
    }
 
 }

@@ -268,4 +268,13 @@ public class RandomStreamWithCache implements RandomStream {
       for (int x = start; x < start + n; x++)
          u[x] = nextInt(i, j);
    }
+
+   public long nextLong(long i, long j) {
+      return i + (long) (nextDouble() * (j - i + 1));
+   }
+
+   public void nextArrayOfLong(long i, long j, long[] u, int start, int n) {
+      for (int x = start; x < start + n; x++)
+         u[x] = nextLong(i, j);
+   }
 }

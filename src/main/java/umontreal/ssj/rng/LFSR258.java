@@ -159,6 +159,9 @@ public class LFSR258 extends RandomStreamBase {
     * fifth integers of `seed` must be either negative, or greater than or equal to
     * 2, 512, 4096, 131072 and 8388608 respectively.
     * 
+    * WARNING: This is to be verified carefully. 
+    * The nextInt function may return negative numbers in some cases, because too large for a `int`.  
+    * 
     * @param seed array of 5 elements representing the seed
     */
    public static void setPackageSeed(long seed[]) {
@@ -314,7 +317,6 @@ public class LFSR258 extends RandomStreamBase {
       z3 = (((z3 & 0xFFFFFFFFFFFE0000L) << 23) ^ b);
       b = (((z4 << 3) ^ z4) >>> 33);
       z4 = (((z4 & 0xFFFFFFFFFF800000L) << 8) ^ b);
-
       return (z0 ^ z1 ^ z2 ^ z3 ^ z4);
    }
 
@@ -340,6 +342,21 @@ public class LFSR258 extends RandomStreamBase {
       } while (res >= 0x4000000000000000L - r);
 
       return i + (int) (res / q);
+   }
+
+
+   public long nextLong(long i, long j) {
+      if (i > j)
+         throw new IllegalArgumentException(i + " is larger than " + j + ".");
+      long d = j - i + 1;
+      long q = 0x4000000000000000L / d;
+      long r = 0x4000000000000000L % d;
+      long res;
+      do {
+         res = nextNumber() >>> 2;
+      } while (res >= 0x4000000000000000L - r);
+
+      return i + (res / q);
    }
 
    /*

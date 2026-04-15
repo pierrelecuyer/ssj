@@ -22,8 +22,9 @@
  * limitations under the License.
  *
  */
-package umontreal.ssj.hups;
+package umontreal.ssj.hups64;
 
+// import umontreal.ssj.hups64TODO.ContainerPointSet;
 import umontreal.ssj.rng.RandomStream;
 import java.lang.IllegalArgumentException;
 
@@ -53,26 +54,25 @@ public class LMScrambleShift extends RandomShift {
    }
 
    /**
-    * If `p` is a @ref umontreal.ssj.hups.DigitalNet, this method calls
+    * This method calls
     * umontreal.ssj.hups.DigitalNet.leftMatrixScramble(RandomStream), then
-    * umontreal.ssj.hups.DigitalNet.addRandomShift(RandomStream). 
-    * If `p` is a `ContainerPointSet` that contains a `DigitalNet cp`, it does that to `cp`.
-    * In other cases, a @ref umontreal.ssj.hups.DigitalNet, an IllegalArgumentException is thrown.
+    * umontreal.ssj.hups.DigitalNet.addRandomShift(RandomStream). If `p` is not
+    * a @ref umontreal.ssj.hups.DigitalNet, an IllegalArgumentException is thrown.
     * 
     * @param p Point set to randomize
     */
    public void randomize(PointSet p) {
-      if (p instanceof DigitalNetBase2) {
-         ((DigitalNetBase2) p).leftMatrixScramble(stream);
-         // System.out.println("The points immediately after LMS");
-         // System.out.println(p.formatPoints());
+      if (p instanceof DigitalNet) {
+         ((DigitalNet) p).leftMatrixScramble(stream);
          ((DigitalNet) p).addRandomShift(stream);
+         // System.out.println("The points immediately after LMS + shift");
+         // System.out.println(p.formatPoints());
       }
       else if (p instanceof ContainerPointSet) {
          randomize(((ContainerPointSet) p).getOriginalPointSet()); 
-      } else {
+      } 
+      else
          throw new IllegalArgumentException("LMScrambleShift" + " can only randomize a DigitalNet");
-      }
    }
 
    /**

@@ -318,7 +318,7 @@ public class LFSR113 extends RandomStreamBase {
       do {
          res = nextNumber();
       } while (res >= 0x100000000L - r);
-
+      // System.out.println("LFSR, res = " + res + ", res/q = " + res/q);
       return (int) (res / q) + i;
    }
 

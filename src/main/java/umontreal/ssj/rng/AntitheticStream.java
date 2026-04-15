@@ -77,14 +77,6 @@ public class AntitheticStream implements RandomStream {
    }
 
    /**
-    * Returns `j - i - s.nextInt(i, j)` where `s` is the base stream.
-    */
-   public int nextInt(int i, int j) {
-      // pas (j - st.nextInt(0,j-i)), au cas ou le resultat varie.
-      return j - i - st.nextInt(i, j);
-   }
-
-   /**
     * Calls `nextArrayOfDouble (u, start, n)` for the base stream, then replaces
     * each `u[i]` by `1.0 - u[i]`.
     * 
@@ -99,6 +91,14 @@ public class AntitheticStream implements RandomStream {
    }
 
    /**
+    * Returns `j - i - s.nextInt(i, j)` where `s` is the base stream.
+    */
+   public int nextInt(int i, int j) {
+      // pas (j - st.nextInt(0,j-i)), au cas ou le resultat varie.
+      return j - i - st.nextInt(i, j);
+   }
+
+   /**
     * Calls `nextArrayOfInt (i, j, u, start, n)` for the base stream, then replaces
     * each `u[i]` by `j - i - u[i]`.
     * 
@@ -110,6 +110,30 @@ public class AntitheticStream implements RandomStream {
     */
    public void nextArrayOfInt(int i, int j, int[] u, int start, int n) {
       st.nextArrayOfInt(i, j, u, start, n);
+      for (int ii = start; ii < start + n; ii++)
+         u[ii] = j - i - u[ii];
+   }
+
+   /**
+    * Returns `j - i - s.nextInt(i, j)` where `s` is the base stream.
+    */
+   public long nextLong(long i, long j) {
+      // pas (j - st.nextInt(0,j-i)), au cas ou le resultat varie.
+      return j - i - st.nextLong(i, j);
+   }
+
+   /**
+    * Calls `nextArrayOfInt (i, j, u, start, n)` for the base stream, then replaces
+    * each `u[i]` by `j - i - u[i]`.
+    * 
+    * @param i     the smallest possible integer to put in `u`
+    * @param j     the largest possible integer to put in `u`
+    * @param u     the array in which the numbers will be stored
+    * @param start the first index of `u` to be used
+    * @param n     the number of random numbers to put in `u`
+    */
+   public void nextArrayOfLong(long i, long j, long[] u, int start, int n) {
+      st.nextArrayOfLong(i, j, u, start, n);
       for (int ii = start; ii < start + n; ii++)
          u[ii] = j - i - u[ii];
    }

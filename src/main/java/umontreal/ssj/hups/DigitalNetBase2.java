@@ -153,6 +153,8 @@ public class DigitalNetBase2 extends DigitalNet {
          maxj = 2147483647;
       for (int i = d1; i < d2; i++)
          digitalShift[i] = stream.nextInt(0, maxj);
+      // System.out.println("Random shift, d1 = " + d1 + ", dim = " + dim + ", maxj = " + maxj);
+      // System.out.println("New random shift = " + digitalShift[0]);
       dimShift = d2;
       shiftStream = stream;
    }
@@ -224,24 +226,29 @@ public class DigitalNetBase2 extends DigitalNet {
       int jk;
       final int tworm1 = 1 << (r - 1); // 2^{r-1}
       final int wmr = outDigits - r;
+      // System.out.println("tworm1 = " + tworm1);
       // If genMat contains the original gen. matrices, copy to originalMat.
       // Normally, we do this only once!
       if (originalMat == null) {  // This is only if `originalMat` was never created.
          // System.out.println("Copying genMat to originalMat \n");
          originalMat = genMat;
          genMat = new int[dim * numCols]; // Creates a new object, but only once.
+         // System.out.println("new genMat, numCols = " + numCols);
       }
       for (d = 0; d < dim * numCols; d++) genMat[d] = 0;
       for (j = 0; j < dim; j++) {
+         // System.out.println("new LMSscramble, numRows = " + numRows + ", numCols = " + numCols + ", outDigits = " + outDigits);
          jk = j * numCols;        // Number of columns to skip
          for (c = 0; c < numRows; c++) {
             // colc is column c of L_j, which has numRows columns.
-            int colc = (tworm1 + stream.nextInt(0, tworm1-1)) >> (c + wmr);
-            // System.out.println("colc = " + colc + "\n");
+            int colc = (tworm1 + stream.nextInt(0, tworm1-1)) >> (c - wmr);
+            // System.out.println("lower = " + (tworm1 >> c)  );
+            // System.out.println("colc  = " + colc);
             for (d = 0; d < numCols; d++)   // Column d for coordinate j.
                genMat[jk + d] ^= ((originalMat[jk + d] >> (outDigits-1-c)) & 1) * colc;
          }
       }
+      // printGenMatrices(1);
    }
    
    /*
@@ -308,15 +315,18 @@ public class DigitalNetBase2 extends DigitalNet {
    public void leftMatrixScrambleSubdiag (RandomStream stream) {
       int j, d; // dimension j, subdiagonal d.
       final int allOnes = (1 << outDigits) - 1; // outDigits ones.
+      System.out.println("allOnes = " + allOnes);
 
       // If genMat contains the original gen. matrices, copy to originalMat.
       // This is done only once.
       if (originalMat == null) {
          originalMat = genMat;
          genMat = new int[dim * numCols];
+         System.out.println("new GenMat, numCols = " + numCols);
       }
       // Constructs the lower-triangular scrambling matrices M_j, w by w.
       int[][] scrambleMat = new int[dim][outDigits];  // This creates a big object!
+      System.out.println("new scrambleMat, outDigits = " + outDigits);
       for (j = 0; j < dim; j++) {
          scrambleMat[j][0] = allOnes;   // This is the diagonal of a w x w matrix.
          for (d = 1; d < outDigits; d++)
@@ -334,15 +344,18 @@ public class DigitalNetBase2 extends DigitalNet {
    public void leftMatrixScrambleSubdiag (int r, RandomStream stream) {
       int j, d; // dimension j, subdiagonal d.
       final int allOnes = (1 << r) - 1; // `outDigits` ones.
+      System.out.println("allOnes = " + allOnes);
 
       // If genMat contains the original gen. matrices, copy to originalMat.
       if (originalMat == null) {
          originalMat = genMat;
          genMat = new int[dim * numCols];   // Creates a new object!
+         System.out.println("new GenMat, numCols = " + numCols);
       }
       // Constructs the lower-triangular scrambling matrices M_j, w by w.
       // scrambleMat[j][l] contains row l in a single integer (binary repres.)
       int[][] scrambleMat = new int[dim][outDigits];
+      System.out.println("new scrambleMat, outDigits = " + outDigits);
       for (j = 0; j < dim; j++) {
          scrambleMat[j][0] = allOnes << (outDigits - r);
          for (d = 1; d < r; d++)
@@ -474,7 +487,7 @@ public class DigitalNetBase2 extends DigitalNet {
       assert output.length == numPoints;
       assert output.length > 0;
       assert output[0].length == dim;
-
+      normFactor = 1.0 / Math.abs((double) (1 << outDigits));
       int[][] int_output = new int[numPoints][dim];
       nestedUniformScramble(stream, int_output, numBits);
       for (int j = 0; j < dim; ++j) {
@@ -542,7 +555,6 @@ public class DigitalNetBase2 extends DigitalNet {
             bv ^= bv2;
             output[poslist[i]][j] = bvlist[i] ^ bv;
          }
-
       }
    }
 
@@ -785,6 +797,7 @@ public class DigitalNetBase2 extends DigitalNet {
       int r, j; // Row r, dimension j.
       for (j = 0; j < result.dim; ++j) {
          for (r = 0; r < result.numRows; ++r) {
+            // This copies all the columns for row r.
             interlacedMatrices[j][r] = nonInterlacedMatrices[j * interlacing + r % interlacing][r / interlacing];
          }
       }

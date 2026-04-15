@@ -272,8 +272,10 @@ public class NormalDist extends ContinuousDistribution {
       double y, z, v, w;
       double x = u;
 
-      if (u < 0.0 || u > 1.0)
-         throw new IllegalArgumentException("u is not in [0, 1]");
+      if (u < 0.0 || u > 1.0) {
+         System.out.println("NormalDist.inverse01, u = " + u);
+         throw new IllegalArgumentException("inverse01: u is not in [0, 1]");
+      }
       if (u <= 0.0)
          return Double.NEGATIVE_INFINITY;
       if (u >= 1.0)

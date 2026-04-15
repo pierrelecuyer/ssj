@@ -187,19 +187,44 @@ public abstract class RandomStreamBase implements CloneableRandomStream, Seriali
    }
 
    /**
-    * Use the `toString` method.
+    * Calls `nextDouble` once to create one integer between `i` and `j`. This
+    * method always uses the highest order bits of the random number. It should be
+    * overridden if a faster implementation exists for the specific generator.
+    * 
+    * @param i the smallest possible returned integer
+    * @param j the largest possible returned integer
+    * @return a random integer between i and j
     */
-   @Deprecated
-   public String formatState() {
-      return toString();
+   public long nextLong(long i, long j) {
+      if (i > j)
+         throw new IllegalArgumentException(i + " is larger than " + j + ".");
+      // This works even for an interval [0, 2^31 - 1]. It would not with
+      // return i + (int)(nextDouble() * (j - i + 1));
+      return i + (long) (nextDouble() * (j - i + 1.0));
    }
 
    /**
-    * Use the `toStringFull` method.
+    * Calls `nextInt` `n` times to fill the array `u`. This method should be
+    * overridden if a faster implementation exists for the specific generator.
+    * 
+    * @param i     the smallest possible integer to put in `u`
+    * @param j     the largest possible integer to put in `u`
+    * @param u     the array in which the numbers will be stored
+    * @param start the first index of `u` to be used
+    * @param n     the number of random numbers to put in `u`
     */
-   @Deprecated
-   public String formatStateFull() {
-      throw new UnsupportedOperationException("   call the toStringFull() method instead.");
+   public void nextArrayOfLong(long i, long j, long[] u, int start, int n) {
+      if (u == null)
+         throw new NullPointerException("The array must be " + "initialized.");
+      if (u.length < n + start)
+         throw new IndexOutOfBoundsException("The array is too small.");
+      if (start < 0)
+         throw new IndexOutOfBoundsException("Must start at a " + "non-negative index.");
+      if (n < 0)
+         throw new IllegalArgumentException("Must have a non-negative " + "number of elements.");
+
+      for (int ii = start; ii < start + n; ii++)
+         u[ii] = nextLong(i, j);
    }
 
    /**

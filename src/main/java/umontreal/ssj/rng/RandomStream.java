@@ -211,4 +211,29 @@ public interface RandomStream {
     */
    public void nextArrayOfInt(int i, int j, int[] u, int start, int n);
 
+   /**
+    * Returns a (pseudo)random number from the discrete uniform distribution over
+    * the integers @f$\{i,i+1,…,j\}@f$, using this stream. (Calls `nextDouble`
+    * once.)
+    * 
+    * @param i smallest integer that can be generated
+    * @param j greatest integer that can be generated
+    * @return the generated integer
+    */
+   public long nextLong(long i, long j);
+
+   /**
+    * Generates `n` (pseudo)random numbers from the discrete uniform distribution
+    * over the integers @f$\{i,i+1,…,j\}@f$, using this stream and stores the
+    * result in the array `u` starting at index `start`. (Calls `nextInt` `n`
+    * times.)
+    * 
+    * @param i     smallest integer that can be generated
+    * @param j     greatest integer that can be generated
+    * @param u     array that will contain the generated values
+    * @param start starting index, in the array `u`, to write integers from
+    * @param n     number of values being generated
+    */
+   public void nextArrayOfLong(long i, long j, long[] u, int start, int n);
+
 }

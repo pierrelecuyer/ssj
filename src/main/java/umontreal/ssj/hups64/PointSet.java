@@ -22,7 +22,7 @@
  * limitations under the License.
  *
  */
-package umontreal.ssj.hups;
+package umontreal.ssj.hups64;
 
 import java.util.NoSuchElementException;
 import umontreal.ssj.rng.RandomStream;
@@ -99,12 +99,12 @@ import umontreal.ssj.util.PrintfFormat;
 public abstract class PointSet {
 
    /**
-    * Since Java has no unsigned type, the 32nd bit cannot be used efficiently, so
-    * we have only 31 bits. This mainly affects digit scrambling and bit vectors.
+    * Since Java has no unsigned type, the 64nd bit cannot be used efficiently, so
+    * we have only 63 bits. This mainly affects digit scrambling and bit vectors.
     * This also limits the maximum number of columns for the generating matrices of
     * digital nets in base 2.
     */
-   protected static final int MAXBITS = 31; // Max number of usable bits.
+   protected static final int MAXBITS = 63; // Max number of usable bits.
 
    /**
     * To avoid 0 for nextCoordinate when random shifting, we add this to each
@@ -126,7 +126,7 @@ public abstract class PointSet {
     * Current dimension of the shift. This is useful mostly for the case where the
     * points have an unlimited number of coordinates.
     */
-   // **Pierre:** Maybe this could be defined only in `CycleBasedPointSet` ???
+   // **Pierre:** Maybe this could be defined only in `CycleBasedPointSet`.
    protected int dimShift = 0;
 
    /**
@@ -777,7 +777,7 @@ public abstract class PointSet {
             u[k] = nextLong(i, j);
       }
       
-      /**
+    /**
        * @return a printable `String` that gives the current point index and current
        *         coordinate index.
        */
