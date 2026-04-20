@@ -179,9 +179,8 @@ public class InverseGaussianProcessMSH extends InverseGaussianProcess {
 
    /**
     * NonRandomStream: Given a double array, this class will return those values as
-    * if it where a random stream. Careful: Will not hard copy the array given as
-    * input. And not checking for end of array for the time being. And not checking
-    * j>i.
+    * if it where a random stream. Careful: Will not hardcopy the array given as
+    * input. And not checking for end of array for the time being. And not checking if j>i.
     */
    protected class NonRandomStream implements RandomStream {
       double[] array;
@@ -212,8 +211,18 @@ public class InverseGaussianProcessMSH extends InverseGaussianProcess {
             u[start + ii] = i + (int) Math.round(diff * array[position++]);
       }
 
+      public void nextArrayOfLong(long i, long j, long[] u, int start, int n) {
+         double diff = (double) (j - i);
+         for (int ii = 0; ii < n; ii++)
+            u[start + ii] = i + (long) Math.round(diff * array[position++]);
+      }
+
       public int nextInt(int i, int j) {
          return (int) Math.round((double) (j - i) * array[position]);
+      }
+
+      public long nextLong(long i, long j) {
+         return (long) Math.round((double) (j - i) * array[position]);
       }
 
       public void resetNextSubstream() {

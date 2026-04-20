@@ -85,7 +85,7 @@ public class RunExperiments {
 	}
 
 	/**
-	 * Runs batches of RQMC experiments with LatNet Builder. One experiment corresponds to the choice of:
+	 * Runs batches of RQMC rqmcexperiments with LatNet Builder. One experiment corresponds to the choice of:
 	 *   - an integrand.
 	 *   - a point set (either pre-defined, e.g. Joe & Kuo's Sobol, or through a call to LatNet Builder).
 	 *   - a randomization method.
@@ -94,12 +94,12 @@ public class RunExperiments {
 	 * for each file, the experiment is computed.
 	 * 
 	 * Must be provided the following arguments:
-	 * args[0]: name of the batch of experiments. (e.g. "myNewExperiment").
+	 * args[0]: name of the batch of rqmcexperiments. (e.g. "myNewExperiment").
 	 * args[1]: path to LatNet Builder executable (in string format).
 	 * args[2]: path to result folder (in string format).
 	 * args[3]: path to Joe & Kuo direction numbers file (in string format).
-	 * args[4]: boolean, whether to create the batch of experiments.
-	 * args[5]: boolean, whether to run the batch of experiments.
+	 * args[4]: boolean, whether to create the batch of rqmcexperiments.
+	 * args[5]: boolean, whether to run the batch of rqmcexperiments.
 	 */
 	public static void main(String[] args) throws IOException {
 		String experimentName = args[0];

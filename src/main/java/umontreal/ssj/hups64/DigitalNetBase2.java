@@ -55,13 +55,20 @@ public class DigitalNetBase2 extends DigitalNet {
    private transient long[] originalMat; // Original matrices, without randomization.
    protected long[] genMat; // The current generator matrix.
    protected transient long[] digitalShift; // Stores the digital shift vector.
+
+   
+   // Variables used in case we add a random tail, i.e., independent random bits
+   // beyong the first `k` bits, for all the points.
+   RandomStream streamTail;  // Stream used for those `outputDigits - k` random bits.
+   
    
    // These are used to store deterministic information for NUS.
    protected RandomStream streamNUS; // Stream used for NUS.
    protected double normFactorNUS;   // Normalization used for NUS.
    protected int numBitsNUS;         // Number of bits randomized by NUS.
-   protected int[][] poslistNUS;  //  = new int[2 * numPoints];
-   protected long[][] bvlistNUS;  //  = new long[2 * numPoints];
+   protected int[][] poslistNUS;     //  = new int[2 * numPoints][dim];
+   protected int[][] poslistInvNUS;  //  = new int[numPoints][dim];
+   protected long[][] bvlistNUS;     //  = new long[2 * numPoints][dim];
 
    /**
     * Returns the generator matrices in the natural format, which is a
@@ -213,19 +220,15 @@ public class DigitalNetBase2 extends DigitalNet {
     * This is an iterator for NUS points that are not cached. 
     */
    public PointSetIterator iteratorNUS(RandomStream stream) {
-      System.out.println(stream.toString());
+      // System.out.println(stream.toString());
       return new DigitalNetBase2IteratorNUS(stream);
    }
+   
 
    public String toString() {
       StringBuffer sb = new StringBuffer("DigitalNetBase2: ");
       sb.append(super.toString());
       return sb.toString();
-   }
-
-   public void clearRandomShift() {
-      super.clearRandomShift();
-      digitalShift = null;
    }
 
    public void addRandomShift(int d1, int d2, RandomStream stream) {
@@ -261,6 +264,28 @@ public class DigitalNetBase2 extends DigitalNet {
       addRandomShift(0, dim, stream);
    }
 
+
+   public void clearRandomShift() {
+      super.clearRandomShift();
+      digitalShift = null;
+   }
+
+   
+   /**
+    * After setting this, each iterator will add `outDigits - k` independent random bits
+    * after the first `k` bits of each coordinate of each point.
+    * Note that NUS already does this by default. We can do it for other methods as well.
+    */   
+   public void addRandomTail(RandomStream stream) {
+      streamTail = stream;
+   }
+
+
+   public void clearRandomTail() {
+      streamTail = null;
+   }
+    
+   
    // Left-multiplies lower-triangular matrix Mj by original C_j,
    // where original C_j is in originalMat and result is in genMat.
    // Mj[d] is assumed to contain the d-th subdiagonal of matrix Mj,
@@ -622,6 +647,8 @@ public class DigitalNetBase2 extends DigitalNet {
             bv2 ^= bvlist[i];
             bv2 = randomBitVectorInt(stream, numBits) & ((int) (1 << (int) Num.log2((double) bv2)) - 1);
             bv ^= bv2;
+            // Here, the value of `poslist[i]` differs for the different coordinates j.
+            // This makes it much more difficult to avoid storing the points. 
             output[poslist[i]][j] = (bvlist[i] ^ bv) * localNormFactor + EpsilonHalf;
             // System.out.println("bv2 = " + Integer.toBinaryString(bv2));
          }
@@ -712,7 +739,7 @@ public class DigitalNetBase2 extends DigitalNet {
             //System.out.println("bv2 = " + Long.toBinaryString(bv2));
             bv2 = (stream.nextLong(0, (1L << numBits)-1) << (outDigits - numBits))
                   & ((1L << (long) Num.log2((double) bv2)) - 1);
-            //System.out.println("bv2 = " + Long.toBinaryString(bv2));
+            // System.out.println("bv2 = " + Long.toBinaryString(bv2));
             bv ^= bv2;
             output[poslist[i]][j] = (bvlistL ^ bv) * localNormFactor + EpsilonHalf;
             // System.out.println("bv2 = " + Long.toBinaryString(bv2));
@@ -724,11 +751,10 @@ public class DigitalNetBase2 extends DigitalNet {
    /**
     * Creates and computes the structures `postlistNUS` and `bvlistNUS` used for NUS,
     * which are set to randomize the first `numBits` bits. This uses no randomness.
-    * These structures are used to generate and randomize the points on the fly via
-    * an iterator of type ``DigitalNetBase2Iterator`.  They must be recomputed whenever
-    * `numBits` or `numPoints` or `dim` is changed. 
+    * These structures can be used later to generate the randomized the points.
+    * They must be recomputed whenever `numBits` or `numPoints` or `dim` is changed. 
     */
-   public void setupNUS64(RandomStream stream, int numBits) {
+   public void setupNUS64(int numBits) {
       assert outDigits <= 62;  // Maximum allowed in this version.
       assert numBits <= outDigits;
       if (numBits == 0)
@@ -736,10 +762,11 @@ public class DigitalNetBase2 extends DigitalNet {
       else
          numBitsNUS = numBits;
       normFactorNUS = 1.0 / Math.abs((double) (1L << (outDigits)));
-      streamNUS = stream;
+      // streamNUS = stream;
       // System.out.println("NUS: outDigits = " + outDigits);
       // System.out.println("normFactor = " + localNormFactor);
       poslistNUS = new int[2 * numPoints][dim];
+      poslistInvNUS = new int[numPoints][dim];
       bvlistNUS = new long[2 * numPoints][dim];
       int[] counts = new int[256];
       int[] binpos = new int[256];
@@ -780,6 +807,8 @@ public class DigitalNetBase2 extends DigitalNet {
                poslistNUS[k][j] = poslistNUS[m + i][j];
             }
          }
+         for (int i = 0; i < numPoints; i++) 
+            poslistInvNUS[poslistNUS[i][j]][j] = i;
       }
    }
          
@@ -1024,7 +1053,7 @@ public class DigitalNetBase2 extends DigitalNet {
 
       // Coordinates of the current point stored (cached) as integers.
       // Initially contains zeros, because first point is always zero.
-      // Incorporates the random shift, except for the first point.
+      // Incorporates the random digital shift, except for the first point.
       // There is one more dimension for the points because of the
       // shift iterators children of DigitalNetBase2Iterator.
       // dimS = dim, except for the shift iterator children where
@@ -1055,10 +1084,13 @@ public class DigitalNetBase2 extends DigitalNet {
       public double nextCoordinate() {
          if (curPointIndex >= numPoints || curCoordIndex >= dimS)
             outOfBounds();
+         long x = cachedCurPoint[curCoordIndex++];
+         if (streamTail != null)
+            x = x ^ streamTail.nextLong(0, (1L << outDigits-numCols)-1);
          if (digitalShift == null)
-            return cachedCurPoint[curCoordIndex++] * normFactor;
+            return x * normFactor;
          else
-            return cachedCurPoint[curCoordIndex++] * normFactor + EpsilonHalf;
+            return x * normFactor + EpsilonHalf;
       }
 
       protected void addShiftToCache() {
@@ -1177,22 +1209,29 @@ public class DigitalNetBase2 extends DigitalNet {
 
    }
    
-   
+
    // *******************************************************************
+   //                  DOES NOT WORK
+   // 
+   // This was an attempt to implement an iterator for when we apply NUS and do not
+   // want to store all the points in a cache point set.  
+   // Unfortunately, this does not work, because in the correct implementation of NUS,
+   // the points are permuted in a different order for their different coordinates.
+   //    
    protected class DigitalNetBase2IteratorNUS extends DigitalNetBase2Iterator {
 
-      // This is a version of the iterator used for when we apply NUS and do not
+      // This was  a version of the iterator used for when we apply NUS and do not
       // want to store all the points in a cache point set. 
       // Here, the points are randomized by the iterator, using `streamNUS`.
 
       protected double[] cachedCurPointD;   // Redefined: Coords of the current point,
       protected long[] bv;
-      RandomStream streamIterNUS;
+      // RandomStream streamIterNUS;
 
       public DigitalNetBase2IteratorNUS(RandomStream stream) {
          super();     
          // System.out.println("Allo IteratorNUS \n" + stream.toString());
-         this.streamIterNUS = stream; 
+         streamNUS = stream; 
          initNUS();
       }
 
@@ -1218,8 +1257,8 @@ public class DigitalNetBase2 extends DigitalNet {
          // System.out.println("resetCurPointIndex, dim = " + dim);
          // System.out.println(streamIterNUS.toString());
          for (int j = 0; j < dim; j++) {
-            bv[j] = (streamIterNUS.nextLong(0, (1L << numBitsNUS)-1) << (outDigits - numBitsNUS));
-            long bvlistL = (bvlistNUS[0][j]) << (outDigits - 31);
+            bv[j] = (streamNUS.nextLong(0, (1L << numBitsNUS)-1) << (outDigits - numBitsNUS));
+            long bvlistL = (bvlistNUS[poslistInvNUS[0][j]][j]) << (outDigits - 31);
             // System.out.println("bvlistL = " + bvlistL);
             // System.out.println("bv[j] = " + bv[j]);
             cachedCurPointD[j] = (bvlistL ^ bv[j]) * normFactorNUS + EpsilonHalf; 
@@ -1238,16 +1277,21 @@ public class DigitalNetBase2 extends DigitalNet {
 
       public int resetToNextPoint() {
          curPointIndex++;
+         if (curPointIndex >= numPoints)
+            return curPointIndex;
          // System.out.println("\nStart resetToNextPoint, curPointIndex = " + curPointIndex + ", dim = " + dim);
          for (int j = 0; j < dim; j++) {
-            long bv2 = (bvlistNUS[curPointIndex - 1][j]) << (outDigits - 31);
-            long bvlistL = (bvlistNUS[curPointIndex][j]) << (outDigits - 31);
+            // The following does not work because when we apply `poslistInv`, we no longer have
+            // successive coordinates.   ********
+            long bv2 = (bvlistNUS[poslistInvNUS[curPointIndex - 1][j]][j]) << (outDigits - 31);
+            long bvlistL = (bvlistNUS[poslistInvNUS[curPointIndex][j]][j]) << (outDigits - 31);
             bv2 ^= bvlistL;
-            //System.out.println("bv2 = " + Long.toBinaryString(bv2));
-            bv2 = (streamIterNUS.nextLong(0, (1L << numBitsNUS)-1) << (outDigits - numBitsNUS))
+            // System.out.println("bv2 = " + Long.toBinaryString(bv2));
+            bv2 = (streamNUS.nextLong(0, (1L << numBitsNUS)-1) << (outDigits - numBitsNUS))
                   & ((1L << (long) Num.log2((double) bv2)) - 1);
-            //System.out.println("bv2 = " + Long.toBinaryString(bv2));
+            // System.out.println("bv2 = " + Long.toBinaryString(bv2));
             bv[j] ^= bv2;
+            // The following is incorrect, because these dim coordinates belong to different points!!!
             cachedCurPointD[j] = (bvlistL ^ bv[j]) * normFactorNUS + EpsilonHalf;        
          }
          curCoordIndex = 0;

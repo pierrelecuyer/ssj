@@ -3,7 +3,7 @@
  *
  * Provides tools to generate and randomize *highly uniform point sets*
  * (HUPS), alias *quasi-Monte Carlo* (QMC) or *low-discrepancy* points, 
- * for use in place of independent random numbers in Monte Carlo experiments.
+ * for use in place of independent random numbers in Monte Carlo rqmcexperiments.
  *
  * ## Monte Carlo and quasi-Monte Carlo
  *
@@ -549,9 +549,9 @@
  * point sets.
  * The recommended way of using RQMC in SSJ is to construct a 
  * @ref PointSet and a compatible @ref PointSetRandomization, combine them into an 
- * @ref RQMCPointSet, and use the latter to run the RQMC experiments.
+ * @ref RQMCPointSet, and use the latter to run the RQMC rqmcexperiments.
  * The class @ref umontreal.ssj.mcqmctools.RQMCExperiment offers methods that 
- * perform such experiments for simple Monte Carlo models.
+ * perform such rqmcexperiments for simple Monte Carlo models.
  * Examples are given in the tutorial. 
  *
  * Conceptually, one could think of the @ref PointSetRandomization objects as filters
