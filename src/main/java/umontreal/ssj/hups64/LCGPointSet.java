@@ -36,7 +36,7 @@ import cern.colt.list.*;
  */
 public class LCGPointSet extends CycleBasedPointSet {
 
-   private int a; // Multiplier.
+   private long a; // Multiplier.
 
    /**
     * Constructs and stores the set of cycles for an LCG with modulus
@@ -47,7 +47,7 @@ public class LCGPointSet extends CycleBasedPointSet {
     * @param n required number of points and modulus of the LCG
     * @param a generator @f$a@f$ of the LCG
     */
-   public LCGPointSet(int n, int a) {
+   public LCGPointSet(int n, long a) {
       this.a = a;
       double invn = 1.0 / (double) n; // 1/n
       DoubleArrayList c; // Array used to store the current cycle.
@@ -64,11 +64,11 @@ public class LCGPointSet extends CycleBasedPointSet {
          c = new DoubleArrayList();
          c.add(startState * invn);
          // We use the fact that a "long" has 64 bits in Java.
-         currentState = (startState * (long) a) % (long) n;
+         currentState = (startState * a) % (long) n;
          while (currentState != startState) {
             stateVisited[(int) currentState] = true;
             c.add(currentState * invn);
-            currentState = (currentState * (long) a) % (long) n;
+            currentState = (currentState * a) % (long) n;
          }
          addCycle(c);
          for (i = startState + 1; i < n; i++)
@@ -82,7 +82,7 @@ public class LCGPointSet extends CycleBasedPointSet {
     * Constructs and stores the set of cycles for an LCG with modulus @f$n = b^e +
     * c@f$ and multiplier @f$a@f$.
     */
-   public LCGPointSet(int b, int e, int c, int a) {
+   public LCGPointSet(int b, int e, int c, long a) {
       this(computeModulus(b, e, c), a);
    }
 
@@ -108,7 +108,7 @@ public class LCGPointSet extends CycleBasedPointSet {
    /**
     * Returns the value of the multiplier @f$a@f$.
     */
-   public int geta() {
+   public long geta() {
       return a;
    }
 }

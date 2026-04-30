@@ -321,7 +321,6 @@ public class LFSR258 extends RandomStreamBase {
    }
 
    protected double nextValue() {
-
       long res = nextNumber();
       if (res <= 0)
          return (res * NORM + MAX);
@@ -333,15 +332,14 @@ public class LFSR258 extends RandomStreamBase {
       if (i > j)
          throw new IllegalArgumentException(i + " is larger than " + j + ".");
       long d = j - i + 1;
-      long q = 0x4000000000000000L / d;
-      long r = 0x4000000000000000L % d;
+      long q = 0x100000000L / d;    // 0x100000000L = 2^{32} in hexadecimal.
+      long r = 0x100000000L % d;
       long res;
-
       do {
-         res = nextNumber() >>> 2;
-      } while (res >= 0x4000000000000000L - r);
-
-      return i + (int) (res / q);
+         res = nextNumber() >>> 33;  // 31-bit integer.  Should take lower bits instead ????
+      } while (res >= 0x100000000L - r);
+      // System.out.println("LFSR, res = " + res + ", res/q = " + res/q);
+      return (int) (res / q) + i;
    }
 
 
@@ -349,11 +347,11 @@ public class LFSR258 extends RandomStreamBase {
       if (i > j)
          throw new IllegalArgumentException(i + " is larger than " + j + ".");
       long d = j - i + 1;
-      long q = 0x4000000000000000L / d;
+      long q = 0x4000000000000000L / d;  // 0x4000000000000000L = 2^{62} in hexadecimal.
       long r = 0x4000000000000000L % d;
       long res;
       do {
-         res = nextNumber() >>> 2;
+         res = nextNumber() >>> 2;   // Integer smaller than 2^{62}.
       } while (res >= 0x4000000000000000L - r);
 
       return i + (res / q);

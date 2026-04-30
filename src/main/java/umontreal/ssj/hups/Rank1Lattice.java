@@ -51,8 +51,11 @@ public class Rank1Lattice extends PointSet {
    private void initN(int n) {
       numPoints = n;
       normFactor = 1.0 / (double) n;
+   }
+
+   private void initA() {
       for (int j = 0; j < dim; j++) {
-         int amod = (genAs[j] % n) + (genAs[j] < 0 ? n : 0);
+         int amod = (genAs[j] % numPoints) + (genAs[j] < 0 ? numPoints : 0);
          v[j] = normFactor * amod;
       }
    }
@@ -73,17 +76,61 @@ public class Rank1Lattice extends PointSet {
          genAs[j] = a[j];
       }
       initN(n);
+      initA();
    }
 
    /**
+    * In this version, @f$nf$ and @f$a@f$ are not specified.  
+    * They can be given later.
+    */
+   public Rank1Lattice(int s) {
+      dim = s;
+      genAs = new int[s];
+      v = new double[s];
+   }
+   
+    /**
     * Resets the number of points of the lattice to @f$n@f$. The dimension
-    * 
     * @f$s@f$ and the @f$a_j@f$ are unchanged.
     */
    public void setNumPoints(int n) {
       initN(n);
    }
 
+   /**
+    * Sets the number of points @f$n@f$ and generating vector@f$\bm a@f$. 
+    * The dimension @f$s@f$ remains unchanged.
+    */
+   public void setParams(int n, int[] a) {
+      for (int j = 0; j < dim; j++)
+         genAs[j] = a[j] % n;
+      initN(n);
+      initA();
+   }
+
+   /**
+    * Selects the generating vector @f$\bm a@f$ at random, under the 
+    * assumption that @f$n@f$ is prime.
+    * The dimension @f$s@f$ and the number of points @f$n@f$ remain unchanged.
+    */
+   public void setRandomAPrimen(RandomStream stream) {
+      for (int j = 0; j < dim; j++)
+         genAs[j] = stream.nextInt(1, numPoints-1);
+      initA();      
+   }
+
+   /**
+    * Selects the generating vector @f$\bm a@f$ at random, under the 
+    * assumption that @f$n@f$ is a power of 2.
+    * The @f$a_j@f$ are selected at random among the odd numbers less than @f$n@f$.
+    * The dimension @f$s@f$ and the number of points @f$n@f$ remain unchanged.
+    */
+   public void setRandomAPow(RandomStream stream) {
+      for (int j = 0; j < dim; j++)
+         genAs[j] = 2 * stream.nextInt(1, (numPoints-1)/2) - 1;
+      initA();      
+   }
+   
    /**
     * Returns the generator @f$a_j@f$ of the lattice. (The original ones before
     * they are reset to @f$a_j \bmod n@f$). Its components are returned as

@@ -159,6 +159,28 @@ public class TallyStore extends Tally {
    }
 
    /**
+    * Recomputes and returns the variance from the observations contained in this tally.
+    */
+   public double variance2() {
+      return cern.jet.stat.Descriptive.sampleVariance(getDoubleArrayList(), average());
+   }
+  
+   /**
+    * Returns the sample skewness of the observations contained in this tally.
+    */
+   public double skewness() {
+      return cern.jet.stat.Descriptive.sampleSkew(getDoubleArrayList(), average(), standardDeviation());
+   }
+  
+
+   /**
+    * Returns the sample excess kurtosis of the observations contained in this tally.
+    */
+   public double kurtosis() {
+      return cern.jet.stat.Descriptive.kurtosis(getDoubleArrayList(), average(), standardDeviation());
+   }
+   
+   /**
     * Returns the sample covariance of the observations contained in this tally,
     * and the other tally `t2`. Both tallies must have the same number of
     * observations. This returns `Double.NaN` if the tallies do not contain the
@@ -184,7 +206,6 @@ public class TallyStore extends Tally {
                "This tally, with name " + getName() + ", contains " + numberObs() + " observation");
          return Double.NaN;
       }
-
       return cern.jet.stat.Descriptive.covariance(getDoubleArrayList(), t2.getDoubleArrayList());
    }
 

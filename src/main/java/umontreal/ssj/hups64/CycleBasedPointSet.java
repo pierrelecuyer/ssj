@@ -51,7 +51,7 @@ import cern.colt.list.*;
 public abstract class CycleBasedPointSet extends PointSet {
 
    protected int numCycles = 0; // Total number of cycles.
-   // dim = Integer.MAX_VALUE; // Dimension is infinite.
+   int dim = Integer.MAX_VALUE; // Dimension is infinite.
    private double[] shift; // Random shift, initially null.
                            // Entry j is for dimension j.
    protected ObjectArrayList cycles = new ObjectArrayList(); // List of cycles.
@@ -69,6 +69,18 @@ public abstract class CycleBasedPointSet extends PointSet {
 //      return curCycleD[coordinate];
       double x = ((DoubleArrayList) curCycle).get(coordinate);
       return x;
+   }
+
+   /**
+    * Resets the internal dimension of this point set to `dim`.
+    * The true dimension of a `CycleBasedPointSet` is actually infinite, but this causes
+    * a problem when the `randomize` function of a `PointSetRandomization` calls 
+    * `addRandomShift()` internally with no parameters. Changing the dimension to `dim`
+    * can solve this problem: the shoft will then be created only for `dim` dimensions. 
+    * Nothing else will be changed in the point set.
+    */
+   public void setDimension(int dim) {
+      this.dim = dim;
    }
 
    /**
@@ -120,8 +132,11 @@ public abstract class CycleBasedPointSet extends PointSet {
       numPoints += c.size();
    }
 
+   /**
+    * This must be redefined if we want to call `addRandomShift()`.
+    */
    public int getDimension() {
-      return Integer.MAX_VALUE;
+      return dim;    // Integer.MAX_VALUE;
    }
 
    public PointSetIterator iterator() {

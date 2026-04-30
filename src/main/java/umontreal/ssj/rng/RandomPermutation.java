@@ -31,6 +31,9 @@ import java.util.RandomAccess;
 
 /**
  * Provides methods to randomly shuffle arrays or lists using a random stream.
+ * 
+ * Note: Could they be just arrays of `Object`, to avoid having implementations
+ * for different types of objects?   ******
  *
  * <div class="SSJ-bigskip"></div>
  */

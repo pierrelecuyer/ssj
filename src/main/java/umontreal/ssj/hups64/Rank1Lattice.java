@@ -44,15 +44,18 @@ import umontreal.ssj.rng.RandomStream;
  */
 public class Rank1Lattice extends PointSet {
 
-   protected long[] genAs; // Lattice generator: a[i]
+   protected int[] genAs; // Lattice generator: a[i]
    protected double[] v; // Lattice vector: v[i] = a[i]/n
    protected double normFactor; // 1/n.
 
    private void initN(int n) {
       numPoints = n;
       normFactor = 1.0 / (double) n;
+   }
+
+   private void initA() {
       for (int j = 0; j < dim; j++) {
-         long amod = (genAs[j] % n) + (genAs[j] < 0 ? n : 0);
+         int amod = (genAs[j] % numPoints) + (genAs[j] < 0 ? numPoints : 0);
          v[j] = normFactor * amod;
       }
    }
@@ -65,19 +68,29 @@ public class Rank1Lattice extends PointSet {
     * @param a the lattice vector
     * @param s dimension of the lattice vector a
     */
-   public Rank1Lattice(int n, long[] a, int s) {
+   public Rank1Lattice(int n, int[] a, int s) {
       dim = s;
       v = new double[s];
-      genAs = new long[s];
+      genAs = new int[s];
       for (int j = 0; j < s; j++) {
          genAs[j] = a[j];
       }
       initN(n);
+      initA();
    }
 
    /**
+    * In this version, @f$nf$ and @f$a@f$ are not specified.  
+    * They can be given later.
+    */
+   public Rank1Lattice(int s) {
+      dim = s;
+      genAs = new int[s];
+      v = new double[s];
+   }
+   
+    /**
     * Resets the number of points of the lattice to @f$n@f$. The dimension
-    * 
     * @f$s@f$ and the @f$a_j@f$ are unchanged.
     */
    public void setNumPoints(int n) {
@@ -85,14 +98,48 @@ public class Rank1Lattice extends PointSet {
    }
 
    /**
+    * Sets the number of points @f$n@f$ and generating vector@f$\bm a@f$. 
+    * The dimension @f$s@f$ remains unchanged.
+    */
+   public void setParams(int n, int[] a) {
+      for (int j = 0; j < dim; j++)
+         genAs[j] = a[j] % n;
+      initN(n);
+      initA();
+   }
+
+   /**
+    * Selects the generating vector @f$\bm a@f$ at random, under the 
+    * assumption that @f$n@f$ is prime.
+    * The dimension @f$s@f$ and the number of points @f$n@f$ remain unchanged.
+    */
+   public void setRandomAPrimen(RandomStream stream) {
+      for (int j = 0; j < dim; j++)
+         genAs[j] = stream.nextInt(1, numPoints-1);
+      initA();      
+   }
+
+   /**
+    * Selects the generating vector @f$\bm a@f$ at random, under the 
+    * assumption that @f$n@f$ is a power of 2.
+    * The @f$a_j@f$ are selected at random among the odd numbers less than @f$n@f$.
+    * The dimension @f$s@f$ and the number of points @f$n@f$ remain unchanged.
+    */
+   public void setRandomAPow(RandomStream stream) {
+      for (int j = 0; j < dim; j++)
+         genAs[j] = 2 * stream.nextInt(1, (numPoints-1)/2) - 1;
+      initA();      
+   }
+   
+   /**
     * Returns the generator @f$a_j@f$ of the lattice. (The original ones before
     * they are reset to @f$a_j \bmod n@f$). Its components are returned as
     * <tt>a[</tt>@f$j@f$<tt>]</tt>, for @f$j = 0, 1, …, (s-1)@f$.
     */
-   public long[] getAs() {
+   public int[] getAs() {
       return genAs;
-   }
-
+   }   
+ 
    /**
     * Adds a random shift to all the points of the point set, using stream `stream`
     * to generate the random numbers. For each coordinate @f$j@f$ from `d1` to
@@ -191,7 +238,7 @@ public class Rank1Lattice extends PointSet {
    protected class Rank1LatticeIterator extends PointSet.DefaultPointSetIterator {
       
       public double nextCoordinate() {
-         // I tried with long's and with double's. The double version is
+         // We tried with long's and with double's. The double version is
          // 4.5 times faster than the long version.
          if (curPointIndex >= numPoints || curCoordIndex >= dim)
             outOfBounds();

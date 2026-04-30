@@ -25,7 +25,7 @@
 package umontreal.ssj.hups;
 
 import java.util.Arrays;
-
+import umontreal.ssj.hups.DigitalNetBase2;
 import umontreal.ssj.rng.*;
 import umontreal.ssj.util.*;
 
@@ -558,6 +558,10 @@ public class DigitalNetBase2 extends DigitalNet {
       }
    }
 
+   public void nestedUniformScramble64(RandomStream stream, double[][] output, int numBits) {
+      ScrambleError("nestedUniformScramble64");    
+   }
+
    // -----------------------------------------------------------------------
    private void ScrambleError(String method) {
       throw new UnsupportedOperationException(
@@ -673,7 +677,7 @@ public class DigitalNetBase2 extends DigitalNet {
     * Prints the generating matrices bit by bit for dimensions 1 to @f$s@f$.
     * Each matrix has @f$r@f$ rows and @f$k@f$ columns.
     */
-   public void printGeneratorMatrices(int s) {
+   public void printGeneratorMatricesBits(int s) {
       int r, c, j;   // Row r, column c, dimension j.
       int[][][] bitMatrices = genMatricesToBitByBitFormat();
       for (j = 0; j < s; j++) {
@@ -693,7 +697,7 @@ public class DigitalNetBase2 extends DigitalNet {
     * Prints the generating matrices in the standard format, one integer per column,
     * for dimensions 1 to @f$s@f$.
     */
-   public void printGenMatrices(int s) {
+   public void printGeneratorMatricesColumns(int s) {
       // column c, dimension j.
       for (int j = 0; j < s; j++) {
          System.out.println("dim = " + (j + 1) + PrintfFormat.NEWLINE);
@@ -704,7 +708,7 @@ public class DigitalNetBase2 extends DigitalNet {
    }
 
    /**
-    * Prints the generating matrices in the standard format, one integer per column,
+    * Prints the original generating matrices in the standard format, one integer per column,
     * for dimensions 1 to @f$s@f$.
     */
    public void printOriginalMatrices(int s) {
@@ -775,22 +779,22 @@ public class DigitalNetBase2 extends DigitalNet {
    }
 
    /**
-    * Interlaces the generating matrices from a digital net.
+    * Interlaces the generating matrices of this digital net and returns the new
+    * interlaced `DigitalNetBase2`.
     *
     * This function returns a new digital net, whose dimension equals
     * getDimension() / getInterlacing(), and whose generating matrices are
     * interlaced.
-    * ****  Pierre: This seems to be very inefficient!  
     */
-   public DigitalNetBase2 matrixInterlace() {
-      DigitalNetBase2 result = new DigitalNetBase2();
-      result.dim = dim / interlacing;
-      result.interlacing = 1;
-      result.numCols = numCols;
-      result.numRows = Math.min(MAXBITS, numRows * interlacing);
+   public DigitalNetBase2 matrixInterlace(int interlace, int newDim) {
+      assert interlace * newDim <= dim;     
+      DigitalNetBase2 result = new DigitalNetBase2();  // Creates a new interlaced net object.
+      result.dim = newDim;
       result.numPoints = numPoints;
       result.outDigits = outDigits;
       result.normFactor = normFactor;
+      result.numCols = numCols;
+      result.numRows = Math.min(outDigits, numRows * interlace);
 
       int[][][] nonInterlacedMatrices = genMatricesToBitByBitFormat();
       int[][][] interlacedMatrices = new int[result.dim][result.numRows][result.numCols];
@@ -798,13 +802,26 @@ public class DigitalNetBase2 extends DigitalNet {
       for (j = 0; j < result.dim; ++j) {
          for (r = 0; r < result.numRows; ++r) {
             // This copies all the columns for row r.
-            interlacedMatrices[j][r] = nonInterlacedMatrices[j * interlacing + r % interlacing][r / interlacing];
+            interlacedMatrices[j][r] = nonInterlacedMatrices[j * interlace + r % interlace][r / interlace];
          }
       }
       result.genMatricesFromBitByBitFormat(interlacedMatrices);
       return result;
    }
+   
 
+   /**
+    * Interlaces the generating matrices of this digital net and returns the new
+    * interlaced `DigitalNetBase2`.
+    *
+    * This function returns a new digital net, whose dimension equals
+    * getDimension() / getInterlacing(), and whose generating matrices are
+    * interlaced.
+    */
+   public DigitalNetBase2 matrixInterlace() {
+      return matrixInterlace(interlacing, dim / interlacing);
+   }
+      
    
    
    // *******************************************************************

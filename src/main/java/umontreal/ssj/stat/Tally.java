@@ -88,6 +88,13 @@ public class Tally extends StatProbe implements Cloneable {
       this.name = name;
    }
 
+   /**
+    * Get the name of this `Tally`.
+    */
+   public String getName() {
+      return name;
+   }
+
    public void init() {
       maxValue = Double.NEGATIVE_INFINITY;
       minValue = Double.POSITIVE_INFINITY;

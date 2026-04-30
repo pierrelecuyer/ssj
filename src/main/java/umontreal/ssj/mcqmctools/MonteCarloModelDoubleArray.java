@@ -10,9 +10,6 @@ import umontreal.ssj.rng.*;
 
 public interface MonteCarloModelDoubleArray {
 
-   // Optional
-   // public void simulate ();
-
    /**
     * Simulates the model for one run.
     */
@@ -34,8 +31,11 @@ public interface MonteCarloModelDoubleArray {
    public String toString();
 
    /** 
-    * Returns a short model name (tag) to be used in reports.
+    * Returns a short model name (usually a single word) to be used in reports.
+    * This method has a default implementation that returns an empty string.
     */
-   public String getTag();
+   default public String getTag() {
+      return "";
+   }
    
 }

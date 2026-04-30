@@ -71,6 +71,9 @@ public class LMScrambleShift extends RandomShift {
       else if (p instanceof ContainerPointSet) {
          randomize(((ContainerPointSet) p).getOriginalPointSet()); 
       } 
+      else if (p instanceof CachedPointSet) {
+         randomize(((CachedPointSet) p).getParentPointSet()); 
+      } 
       else
          throw new IllegalArgumentException("LMScrambleShift" + " can only randomize a DigitalNet");
    }

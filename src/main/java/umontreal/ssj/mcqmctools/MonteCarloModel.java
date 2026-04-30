@@ -11,9 +11,6 @@ import umontreal.ssj.rng.*;
 
 public interface MonteCarloModel<E> {
 
-   // Optional
-   // public void simulate ();
-
    /**
     * Simulates the model for one run, using the given `stream`.
     */
@@ -26,12 +23,16 @@ public interface MonteCarloModel<E> {
 
    /**
     * Returns a description of the model and its parameters.
+    * This method has a default implementation that returns an empty string.
     */
    public String toString();
-
+   
    /** 
     * Returns a short model name (usually a single word) to be used in reports.
+    * This method has a default implementation that returns an empty string.
     */
-   public String getTag();
+   default public String getTag() {
+      return "";
+   }
    
 }

@@ -34,7 +34,6 @@ import umontreal.ssj.rng.RandomStream;
  * This container class caches a point set by precomputing and storing all the
  * points locally in an array. Its primary usage is for the situations in which
  * the points *must* be stored explicitly; see, e.g., @ref LatinHypercube,
- * 
  * @ref StratifiedUnitCube, and @ref NestedUniformScambling. Some types of point
  *      sets are implemented directly as subclasses of this one, without having
  *      a contained point set `p`. It may also be used to speed up computations

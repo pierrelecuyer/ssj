@@ -35,7 +35,6 @@ import java.io.*;
  * F_2@f$ denote the finite field with two elements (say, 0 and 1). Let @f$P(z)
  * = z^k - a_1 z^{k-1} - \cdots- a_k@f$ be a polynomial with coefficients
  * in @f$\mathbb F_2@f$, and consider the recurrence
- * 
  * @anchor REF_hups_CycleBasedLFSR_mrg @f[ x_n = a_1 x_{n-1} + \cdots+ a_k
  *         x_{n-k}, \tag{mrg} @f] whose characteristic polynomial is @f$P(z)@f$.
  *         It should be understood that in ({@link REF_hups_CycleBasedLFSR_mrg

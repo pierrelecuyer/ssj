@@ -24,6 +24,10 @@
  */
 package umontreal.ssj.hups;
 
+import umontreal.ssj.hups.CachedPointSet;
+import umontreal.ssj.hups.ContainerPointSet;
+import umontreal.ssj.hups.DigitalNet;
+import umontreal.ssj.hups.PointSet;
 import umontreal.ssj.rng.RandomStream;
 import java.lang.IllegalArgumentException;
 
@@ -62,17 +66,20 @@ public class LMScrambleShift extends RandomShift {
     * @param p Point set to randomize
     */
    public void randomize(PointSet p) {
-      if (p instanceof DigitalNetBase2) {
-         ((DigitalNetBase2) p).leftMatrixScramble(stream);
-         // System.out.println("The points immediately after LMS");
-         // System.out.println(p.formatPoints());
+      if (p instanceof DigitalNet) {
+         ((DigitalNet) p).leftMatrixScramble(stream);
          ((DigitalNet) p).addRandomShift(stream);
+         // System.out.println("The points immediately after LMS + shift");
+         // System.out.println(p.formatPoints());
       }
       else if (p instanceof ContainerPointSet) {
          randomize(((ContainerPointSet) p).getOriginalPointSet()); 
-      } else {
+      } 
+      else if (p instanceof CachedPointSet) {
+         randomize(((CachedPointSet) p).getParentPointSet()); 
+      } 
+      else
          throw new IllegalArgumentException("LMScrambleShift" + " can only randomize a DigitalNet");
-      }
    }
 
    /**
