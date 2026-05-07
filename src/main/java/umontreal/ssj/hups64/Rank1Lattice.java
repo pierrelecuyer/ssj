@@ -26,6 +26,7 @@ package umontreal.ssj.hups64;
 
 import umontreal.ssj.util.PrintfFormat;
 import umontreal.ssj.rng.RandomStream;
+import umontreal.ssj.rng.RandomPrime;
 
 /**
  * This class implements point sets specified by integration lattices of rank 1.
@@ -134,14 +135,12 @@ public class Rank1Lattice extends PointSet {
    /**
     * Selects both the number of points (the modulus) @f$n@f$ and the 
     * generating vector @f$\bm a@f$ at random, as follows.
-    * 
-    * under the 
-    * assumption that @f$n@f$ is prime.
-    * The dimension @f$s@f$ and the number of points @f$n@f$ remain unchanged.
+    * For @f$n@f$, we generate a prime number uniformly between `nmin` and `nmax`.
+    * Then the generating vector is generated randomly exactly as in 
+    * `setRandomAforPrimen`.
     */
-   public void setRandomAandn(RandomStream stream) {
-      //  Here we need to generate a random prime n = numPoints  between nmin and nmax. 
-      
+   public void setRandomAandn(int nmin, int nmax, RandomStream stream) {
+      numPoints = RandomPrime.randomPrime24 (nmin+1, nmax-1, stream); 
       for (int j = 0; j < dim; j++)
          genAs[j] = stream.nextInt(1, numPoints-1);
       initA();      
