@@ -19,19 +19,21 @@ package umontreal.ssj.hups64;
 import umontreal.ssj.rng.RandomStream;
 
 /**
- * This type of randomization applies to a lattice rule of rank 1.
- * It permit one to randomize the generating vector and perhaps also the 
- * number of points of the lattice rule. 
- * The randomization itself is always performed by `randomize(PointSet)`,
- * where `PointSet` must be a `Rank1Lattice`.
+ * This type of randomization applies to a lattice rule of rank 1. It permit one
+ * to randomize the generating vector and perhaps also the number of points of
+ * the lattice rule. The randomization itself is always performed by
+ * `randomize(PointSet)`, where `PointSet` must be a `Rank1Lattice`.
  * 
- * ...  to be continued and implemented.  
+ * ... to be continued and implemented.
  *
  * <div class="SSJ-bigskip"></div><div class="SSJ-bigskip"></div>
  */
 public class RandomLatticeParams implements PointSetRandomization {
 
    protected RandomStream stream;
+   protected int nmin = 0, nmax = 0; // Bounds for n when generated as a random prime.
+   protected boolean nPow2 = false; // True when n is a power of 2.
+   protected boolean randShift = true;
 
    /**
     * Empty constructor: No stream is passed here for the randomization; one must
@@ -52,14 +54,62 @@ public class RandomLatticeParams implements PointSetRandomization {
    }
 
    /**
-    * This method calls
-    * {@link umontreal.ssj.hups.PointSet.addRandomShift(RandomStream)
-    * addRandomShift(stream)}.
+    * This constructor also sets the boolean `nPow2` for the case when `n` is a
+    * fixed power of 2, so all the coordinates of the generating vector will have
+    * to be odd numbers.
+    * 
+    * @param stream stream to use in the randomization
+    */
+   public RandomLatticeParams(boolean nPow2, RandomStream stream) {
+      this.nPow2 = nPow2;
+      this.stream = stream;
+   }
+
+   /**
+    * This constructor is for when we want to generate the number of points as a
+    * random prime number strictly between `nmin` and `nmax`,
+    * 
+    * @param stream stream to use in the randomization
+    */
+   public RandomLatticeParams(int nmin, int nmax, RandomStream stream) {
+      this.stream = stream;
+      this.nmin = nmin;
+      this.nmax = nmax;
+   }
+
+   /**
+    * Randomize the point set according to the selected options.
     * 
     * @param p Point set to randomize
     */
    public void randomize(PointSet p) {
-      p.addRandomShift(stream);
+      if (p instanceof Rank1Lattice) {
+         if (nPow2)
+            ((Rank1Lattice) p).setRandomAforPow2n(stream);
+         else {
+            if (nmax == 0)
+               ((Rank1Lattice) p).setRandomAforPrimen(stream);
+            else
+               ((Rank1Lattice) p).setRandomAandn(nmin, nmax, stream);
+         }
+         if (randShift)
+            ((Rank1Lattice) p).addRandomShift(stream);
+      } else if (p instanceof ContainerPointSet) {
+         randomize(((ContainerPointSet) p).getOriginalPointSet());
+      } else if (p instanceof CachedPointSet) {
+         randomize(((CachedPointSet) p).getParentPointSet());
+      } else
+         throw new IllegalArgumentException("RandomLatticeParams" + " can only randomize a Rank1Lattice");
+   }
+
+   /**
+    * Sets the internal `randShift` of this object. A random shift will be applied
+    * iff it is set to `true`, which is the default value.
+    * 
+    * @param boolean randShift indicates if we use a random shift or not.
+    */
+   public void setRandShift(boolean randShift) {
+      this.randShift = randShift;
    }
 
    /**
