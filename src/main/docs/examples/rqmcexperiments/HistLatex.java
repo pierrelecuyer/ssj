@@ -33,7 +33,24 @@ public class HistLatex {
       hist.fillFromFile(directory + "SmoothPerB4-8-Sob-LMS-RDS-16-1000000.dat");
       // ScaledHistogram histScaled = new ScaledHistogram(hist, 1.0);
       // String histStr = histScaled.toLatex(false, true);
-      System.out.println((new ScaledHistogram(hist, 1.0)).toLatex(true, false));
+      ScaledHistogram scHist = new ScaledHistogram(hist, 1.0);
+      scHist.setAxisOptions(
+    		   "title={SmoothPerB4-8-Sob-LMS-RDS-16}, " +
+    		   "title style={font=\\scriptsize}, " +
+    		   "xlabel={$x$}, ylabel={Density}, " +
+    		   "width=8cm, height=5cm, " +
+    		   "scaled y ticks=false, " +
+    		   "x tick label style={font=\\scriptsize}, " +
+    		   "every x tick scale label/.append style={font=\\scriptsize\\bfseries\\boldmath}, " +
+    		   "legend entries={{\\shortstack[l]{xmin=" + xmin +
+    		   "\\\\ xmax=" + xmax +
+    		   "\\\\ numBins=" + numBins + "}}}, " +
+    		   "legend image code/.code={}, " +
+    		   "legend style={draw=black, fill=white, font=\\scriptsize, cells={anchor=west}}, " +
+    		   "legend pos=north east"
+    		);
+      scHist.setAddPlotOptions("fill=red!30, draw=black");
+      System.out.println(scHist.toLatex(true, false));
       
       xmax = 1.25E-6;
       xmin = -xmax;
@@ -41,6 +58,25 @@ public class HistLatex {
       hist.fillFromFile(directory + "MC2-8-Sob-LMS-RDS-16-1000000.dat");
       // histScaled = new ScaledHistogram(hist, 1.0);
       // histStr = histScaled.toLatex(false, true);
-      System.out.println((new ScaledHistogram(hist, 1.0)).toLatex(true, true));
+      scHist = new ScaledHistogram(hist, 1.0);
+
+      scHist.setAxisOptions(
+    		   "title={MC2-8-Sob-LMS-RDS-16}, " +
+    		   "title style={font=\\scriptsize}, " +
+    		   "xlabel={$x$}, ylabel={Density}, " +
+    		   "width=8cm, height=5cm, " +
+    		   "scaled y ticks=false, " +
+    		   "x tick label style={font=\\scriptsize}, " +
+    		   "every x tick scale label/.append style={font=\\scriptsize\\bfseries\\boldmath}, " +
+    		   "legend entries={{\\shortstack[l]{xmin=" + xmin +
+    		   "\\\\ xmax=" + xmax +
+    		   "\\\\ numBins=" + numBins + "}}}, " +
+    		   "legend image code/.code={}, " +
+    		   "legend style={draw=black, fill=white, font=\\scriptsize, cells={anchor=west}}, " +
+    		   "legend pos=north east"
+    		);
+    		
+      scHist.setAddPlotOptions("fill=blue!30, thick");
+      System.out.println(scHist.toLatex(false, true));
    }
 }
