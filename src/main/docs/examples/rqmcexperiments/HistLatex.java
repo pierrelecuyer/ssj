@@ -17,7 +17,7 @@ public class HistLatex {
    public static void main(String[] args) throws IOException {
 
       // String directory = "C:/Users/Lecuyer/Dropbox/samo25/paperdat/";  // For testing
-      String directory = "\"C:/Users/Lecuyer/Dropbox/wsc23/test/\"";      // For testing
+      String directory = "C:/Users/Lecuyer/Dropbox/wsc23/test/";      // For testing
       
       // double xmin = -5.2E-12;
       // double xmax =  5.2E-12;
