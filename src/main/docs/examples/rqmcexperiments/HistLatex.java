@@ -24,7 +24,7 @@ public class HistLatex {
       double xmin = -1.4E-4;
       double xmax =  1.4E-4;
       int numBins = 40;
-      // int numObs  = 1000000; 
+      // int numObs  = 1000000;
      
       xmax = 1.1E-4;
       xmin = -xmax;
