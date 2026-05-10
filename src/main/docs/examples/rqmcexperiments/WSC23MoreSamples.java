@@ -73,16 +73,23 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
     * Performs m independent RQMC replications and save the sorted output in the
     * `statReps` collector.
     */
+   
+   // Note: the randomization is applied to the point set at each replication,
+   //which can change the number of points n, as with random prime n. 
+   //So we create the iterator and get n inside the loop, after randomization.
+   //Maybe it's better to do it only for the random prime n case ??
    public static void simulRepsRQMCSort(MonteCarloModelDouble model, PointSet p, 
          PointSetRandomization rand, int m, TallyStore statReps) throws IOException {
       statReps.init();
-      int n = p.getNumPoints();
+      //int n = p.getNumPoints(); // Moved in the loop in case the randomization changes n, as with random prime n.
       Tally statValue = new Tally();
-      PointSetIterator stream = p.iterator();
+      //PointSetIterator stream = p.iterator(); // Moved in the loop ??
       Chrono timer = new Chrono();
       for (int rep = 0; rep < m; rep++) {
          statValue.init();
          rand.randomize(p);
+         int n = p.getNumPoints(); // In case the randomization changes n, as with random prime n.
+         PointSetIterator stream = p.iterator(); // Create a new iterator for the (possibly) new point set after randomization.
          stream.resetStartStream(); // This stream iterates over the points.
          simulateRuns(model, n, stream, statValue);
          statReps.add(statValue.average()); // For the estimator of the mean.
@@ -120,10 +127,10 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       RandomShift randShift = new RandomShift(stream);
       BakerTransformedPointSet ptent = new BakerTransformedPointSet(pLat);
 
-      // Lat-RS
-      System.out.println("*   Lattice points with RS");
-      statReps.setName(modelTag + "-" + s + "-Lat-RS-" + k + "-" + m);      
-      simulRepsRQMCSort(model, pLat, randShift, m, statReps);
+//      // Lat-RS
+//      System.out.println("*   Lattice points with RS");
+//      statReps.setName(modelTag + "-" + s + "-Lat-RS-" + k + "-" + m);      
+//      simulRepsRQMCSort(model, pLat, randShift, m, statReps);
 
       // Lat-RSB
       System.out.println("*   Lattice points with RS + tent transform");
@@ -131,16 +138,78 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       simulRepsRQMCSort(model, ptent, randShift, m, statReps);
 
       // Lat-RvRS, random a
-      //System.out.println("*   Lattice points with random gen vector a and RS");
-      //statReps.setName(modelTag + "-" + s + "-Lat-RS-" + k + "-" + m);      
-      //simulRepsRQMCSort(model, pLat, randShift, m, statReps);
+//      System.out.println("*   Lattice points with random gen vector a and RS");
+//      statReps.setName(modelTag + "-" + s + "-Lat-RS-" + k + "-" + m);      
+//      simulRepsRQMCSort(model, pLat, randShift, m, statReps);
      
       // Lat-RvRSB, random a
-      //System.out.println("*   Lattice points with random gen vector a and RS + tent");
-      //statReps.setName(modelTag + "-" + s + "-Lat-RS-" + k + "-" + m);      
-      //simulRepsRQMCSort(model, pLat, randShift, m, statReps);
+//      System.out.println("*   Lattice points with random gen vector a and RS + tent");
+//      statReps.setName(modelTag + "-" + s + "-Lat-RS-" + k + "-" + m);      
+//      simulRepsRQMCSort(model, pLat, randShift, m, statReps);
+      
+      
+      
+      
+      
+      //The rest of Lattice cases is added by Otman:
+      
+      
+      
+      // Lat-RvRS: random generating vector a + random shift
+//      System.out.println("*   Lattice points with random gen vector a and RS"); 
+//      Rank1Lattice pLatRvRS = new Rank1Lattice(n, a18, s); // Create a rank-1 lattice with n points, initial vector a18, and dimension s.
+        RandomLatticeParams randLatP = new RandomLatticeParams(true, stream); // Create a randomization that will randomly replace the lattice vector a for power-of-2 n, and also apply a random shift.
+//      statReps.setName(modelTag + "-" + s + "-Lat-RvRS-" + k + "-" + m); 
+//      simulRepsRQMCSort(model, pLatRvRS, randLatP, m, statReps); // Run m replications; at each replication, randomize a, apply random shift
 
-      // -------------      
+
+      // Lat-RvRSB: random generating vector a + random shift + tent transform
+      System.out.println("*   Lattice points with random gen vector a and RS + tent transform"); 
+      Rank1Lattice pLatRvRST = new Rank1Lattice(n, a18, s); // Create a rank-1 lattice with n points, initial vector a18, and dimension s.
+      BakerTransformedPointSet ptentRvRST = new BakerTransformedPointSet(pLatRvRST); // Wrap the lattice with a baker/tent transform.
+      statReps.setName(modelTag + "-" + s + "-Lat-RvRST-" + k + "-" + m); 
+      simulRepsRQMCSort(model, ptentRvRST, randLatP, m, statReps); // Run m replications; at each replication, randomize a, apply random shift, then use the tent-transformed points.
+
+
+//      // Lat-Rv: random generating vector a, no random shift
+//      System.out.println("*   Lattice points with random gen vector a, no shift"); 
+//      Rank1Lattice pLatRv = new Rank1Lattice(n, a18, s); // Create a rank-1 lattice with n points, initial vector a18, and dimension s.
+//      randLatP.setRandShift(false); // Disable the random shift, so only the generating vector a is randomized.
+//      statReps.setName(modelTag + "-" + s + "-Lat-Rv-" + k + "-" + m); 
+//      simulRepsRQMCSort(model, pLatRv, randLatP, m, statReps); // Run m replications; at each replication, randomize a only, compute one estimator value, and store it.
+
+      // ------------- 
+   // Random prime n between 2^(k-1) and 2^k. 
+      int nmin = n / 2;//2^k
+      int nmax = n;//2^(k-1)
+
+
+      randLatP = new RandomLatticeParams(nmin, nmax, stream);
+
+//	  // Lat-RpvRS: random prime n + random a + random shift
+//	  System.out.println("*   Lattice points with random prime n, random gen vector a, and RS");
+//	  Rank1Lattice pLatRpvRS = new Rank1Lattice(n, a18, s);
+//	  statReps.setName(modelTag + "-" + s + "-Lat-RpvRS-" + k + "-" + m);
+//	  simulRepsRQMCSort(model, pLatRpvRS, randLatP, m, statReps);
+
+	  // Lat-RpvRSB: random prime n + random a + random shift + tent transform
+	  System.out.println("*   Lattice points with random prime n, random gen vector a, RS + tent transform");
+	  Rank1Lattice pLatRpvRST = new Rank1Lattice(n, a18, s);
+	  BakerTransformedPointSet ptentRpvRST = new BakerTransformedPointSet(pLatRpvRST);
+	  statReps.setName(modelTag + "-" + s + "-Lat-RpvRST-" + k + "-" + m);
+	  simulRepsRQMCSort(model, ptentRpvRST, randLatP, m, statReps);
+//	
+//	  // Lat-Rpv: random prime n + random a, no random shift
+//	  randLatP.setRandShift(false);
+//	  System.out.println("*   Lattice points with random prime n and random gen vector a, no shift");
+//	  Rank1Lattice pLatRpv = new Rank1Lattice(n, a18, s);
+//	  statReps.setName(modelTag + "-" + s + "-Lat-Rpv-" + k + "-" + m);
+//	  simulRepsRQMCSort(model, pLatRpv, randLatP, m, statReps);
+	  
+	  // End of code Added by Otman.
+	       
+	  /**
+	  // -------------
       // Sobol' points
       System.out.println("*** Sobol points ");
       DigitalNetBase2 p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
@@ -185,7 +254,7 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       simulRepsRQMCSort(model, cp, nus, m, statReps);
 
       
-/*
+
       // Sob-Int2    Sob-interlaced-order2
       System.out.println("*   Interlaced Sobol points with LMS+RDS");
       DigitalNetBase2 p2 = new SobolSequence(k, 60, 2*s);     // n = 2^{k} points in 2s dim.
@@ -194,7 +263,8 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       // System.out.println(p.formatPoints());
       // simulRepsRQMCSort(model, pitl, nus, m, statReps);
       // simulRepsRQMCSort(model, ptent, nus, m, statReps);
-*/
+	   */
+      
       System.out.println(
             "Total time for simulRepsAllTypes: " + timer.format() + "\n=========================================== \n");
    }
