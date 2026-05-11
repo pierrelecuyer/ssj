@@ -24,14 +24,15 @@
  */
 package umontreal.ssj.rng;
 
-import java.util.RandomAccess;
+// import java.util.RandomAccess;
 
 /**
  * To generate random prime numbers in some range.
  * The function `randomPrime24` generates random integers until a prime number is found.  
  * Primality is checked by checking for prime factors taken from a list.
+ * 
  * For larger numbers, it uses the Rabin-Miller probabilistic primality test
- * (not yet implemented).
+ * @todo: not yet implemented.
  *
  * <div class="SSJ-bigskip"></div>
  */
@@ -45,7 +46,7 @@ public class RandomPrime {
    public static boolean isPrime24 (int p) {
       if (p  >= (1 << 24)) return false;
       for (int i = 0; (i < 564); i++) {
-         int pi = primes4096[i];
+         int pi = PRIMES4096[i];
          if (pi * pi > p) return true;
          if (p % pi == 0) return false;
       }
@@ -71,7 +72,7 @@ public class RandomPrime {
    }
    
    
-   protected static final int primes4096[] = // all primes less than 4096
+   protected static final int PRIMES4096[] = // all primes less than 4096
       {  2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53,
     	   59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131,
     	   137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223,
@@ -108,6 +109,5 @@ public class RandomPrime {
     	   3803, 3821, 3823, 3833, 3847, 3851, 3853, 3863, 3877, 3881, 3889, 3907, 3911, 3917, 3919, 3923,
     	   3929, 3931, 3943, 3947, 3967, 3989, 4001, 4003, 4007, 4013, 4019, 4021, 4027, 4049, 4051, 4057,
     	   4073, 4079, 4091, 4093};
-
 
 }
