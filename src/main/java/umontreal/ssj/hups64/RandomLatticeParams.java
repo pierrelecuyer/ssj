@@ -31,8 +31,8 @@ import umontreal.ssj.rng.RandomStream;
 public class RandomLatticeParams implements PointSetRandomization {
 
    protected RandomStream stream;
-   protected int nmin = 0, nmax = 0; // Bounds for n when generated as a random prime.
-   protected boolean nPow2 = false; // True when n is a power of 2.
+   protected int nmin = 0, nmax = 0;  // Bounds for n when generated as a random prime.
+   protected boolean nPow2 = false;  // True when n is a power of 2.
    protected boolean randShift = true;
 
    /**
@@ -130,6 +130,15 @@ public class RandomLatticeParams implements PointSetRandomization {
       return stream;
    }
 
+   /**
+    * Resets the parameter `nPow2`.
+    * 
+    * @param stream stream to use in the randomization
+    */
+   public void setPow2(boolean nPow2) {
+      this.nPow2 = nPow2;
+   }
+   
    /**
     * Returns a descriptor of this object.
     */
