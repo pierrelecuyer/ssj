@@ -74,29 +74,28 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
 
    /**
     * Performs m independent RQMC replications and save the sorted output in the
-    * `statReps` collector.
+    * `statReps` collector. We assume that the randomization may change the number
+    * of points `n`, as it sometimes happens.
     */
-
-   // Note: the randomization is applied to the point set at each replication,
-   // which can change the number of points n, as with random prime n.
-   // So we create the iterator and get n inside the loop, after randomization.
-   // Maybe it's better to do it only for the random prime n case ??
    public static void simulRepsRQMCSort(MonteCarloModelDouble model, PointSet p, PointSetRandomization rand, int m,
          TallyStore statReps) throws IOException {
       statReps.init();
       // int n = p.getNumPoints(); // Moved in the loop in case the randomization
       // changes n, as with random prime n.
       Tally statValue = new Tally();
-      // PointSetIterator stream = p.iterator(); // Moved in the loop ??
+      PointSetIterator stream = p.iterator();
       Chrono timer = new Chrono();
       for (int rep = 0; rep < m; rep++) {
          statValue.init();
          rand.randomize(p);
-         int n = p.getNumPoints(); // In case the randomization changes n, as with random prime n.
-         PointSetIterator stream = p.iterator(); // Create a new iterator for the (possibly) new point set after
-                                                 // randomization.
+         // Here, n is reset after the randomization because it may have changed,
+         // e.g., when it is drawn as a random prime.
+         // int n = p.getNumPoints(); // In case the randomization changes n, as with
+         // random prime n.  The iterator does not need to know the size of p.
+         // In the code, it asks p for its size when needed. 
+         // PointSetIterator stream = p.iterator(); // Create a new iterator  --> not needed.
          stream.resetStartStream(); // This stream iterates over the points.
-         simulateRuns(model, n, stream, statValue);
+         simulateRuns(model, p.getNumPoints(), stream, statValue);
          statReps.add(statValue.average()); // For the estimator of the mean.
       }
       System.out.println(statReps.report());
@@ -130,8 +129,8 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       Rank1Lattice pLat = new Rank1Lattice(n, a18, s);
       RandomShift randShift = new RandomShift(stream);
       BakerTransformedPointSet ptent = new BakerTransformedPointSet(pLat);
-      RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream);     // Randomizes a.
-      RandomLatticeParams randLatPar2 = new RandomLatticeParams(n/2, n, stream);  // This one also randomizes n.
+      RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n =
+      RandomLatticeParams randLatPar2 = new RandomLatticeParams(n / 2, n, stream); // This one also randomizes n.
 
       // Lat-RS
       System.out.println("*   Lattice with RS");
@@ -177,57 +176,55 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       statReps.setName(modelTag + "-" + s + "-Lat-RpvRSB-" + k + "-" + m);
       simulRepsRQMCSort(model, ptent, randLatPar2, m, statReps);
 
-     // ------------------------- 
-     // Objects for Sobol' points 
-     System.out.println("*** Sobol points ");
-     DigitalNetBase2 p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim. 
-     ptent = new BakerTransformedPointSet(p); 
-     PointSetRandomization norand = new EmptyRandomization(); // No randomization 
-     PointSetRandomization rds = new RandomShift(stream); // Digital shift 
-     PointSetRandomization lms = new LMScramble(stream); 
-     PointSetRandomization lmsrds = new LMScrambleShift(stream);
-     
-     // Sob-RDS System.out.println("* Sobol with RDS alone");
-     statReps.setName(modelTag + "-" + s + "-Sob-RDS-" + k + "-" + m);
-     simulRepsRQMCSort(model, p, rds, m, statReps);
-     
-     // Sob-RDST System.out.println("* Sobol with RDS + tent transform");
-     statReps.setName(modelTag + "-" + s + "-Sob-RDST-" + k + "-" + m);
-     simulRepsRQMCSort(model, ptent, rds, m, statReps);
-     
-     // Sob-LMS System.out.println("* Sobol with LMS alone, no shift");
-     statReps.setName(modelTag + "-" + s + "-Sob-LMS-" + k + "-" + m);
-     simulRepsRQMCSort(model, p, lms, m, statReps);
-     
-     // Sob-LMS-RDS System.out.println("* Sobol with LMS+RDS");
-     statReps.setName(modelTag + "-" + s + "-Sob-LMS-RDS-" + k + "-" + m);
-     simulRepsRQMCSort(model, p, lmsrds, m, statReps);
-     
-     // Sob-LMS-RDS-IRB after k 
-     System.out.println("* Sobol with LMS+RDS+IRB (indep random bits after k)"); 
-     statReps.setName(modelTag + "-" + s + "-Sob-LMS-RDS-IRB-" + k + "-" + m); 
-     p.addIndepRandomBits(new LFSR258());
-     simulRepsRQMCSort(model, p, lmsrds, m, statReps); 
-     p.clearIndepRandomBits();
-     
-     // Sob-NUS 
-     System.out.println("* Sobol with NUS"); 
-     statReps.setName(modelTag + "-" + s + "-Sob-NUS-" + k + "-" + m); 
-     CachedPointSet cp = new CachedPointSet(p); 
-     PointSetRandomization nus = new NestedUniformScrambling (stream, 53); 
-     simulRepsRQMCSort(model, cp, nus, m, statReps);
-       
-     /*
-     // Sob-Int2 Sob-interlaced-order2 
-     System.out.println("* Interlaced Sobol points with LMS+RDS"); 
-     DigitalNetBase2 p2 = new SobolSequence(k, 60, 2*s);
-     // n = 2^{k} points in 2s dim. 
-     DigitalNetBase2 pitl = p2.matrixInterlace(2, s);
-     ptent = new BakerTransformedPointSet(p); //
-     // System.out.println(p.formatPoints()); // 
-     simulRepsRQMCSort(model, pitl, nus, m, statReps); 
-     simulRepsRQMCSort(model, ptent, nus, m, statReps);
-     */
+      // -------------------------
+      // Objects for Sobol' points
+      System.out.println("*** Sobol points ");
+      DigitalNetBase2 p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
+      ptent = new BakerTransformedPointSet(p);
+      // PointSetRandomization norand = new EmptyRandomization(); // No randomization
+      PointSetRandomization rds = new RandomShift(stream); // Digital shift
+      PointSetRandomization lms = new LMScramble(stream);
+      PointSetRandomization lmsrds = new LMScrambleShift(stream);
+
+      // Sob-RDS System.out.println("* Sobol with RDS alone");
+      statReps.setName(modelTag + "-" + s + "-Sob-RDS-" + k + "-" + m);
+      simulRepsRQMCSort(model, p, rds, m, statReps);
+
+      // Sob-RDST System.out.println("* Sobol with RDS + tent transform");
+      statReps.setName(modelTag + "-" + s + "-Sob-RDST-" + k + "-" + m);
+      simulRepsRQMCSort(model, ptent, rds, m, statReps);
+
+      // Sob-LMS System.out.println("* Sobol with LMS alone, no shift");
+      statReps.setName(modelTag + "-" + s + "-Sob-LMS-" + k + "-" + m);
+      simulRepsRQMCSort(model, p, lms, m, statReps);
+
+      // Sob-LMS-RDS System.out.println("* Sobol with LMS+RDS");
+      statReps.setName(modelTag + "-" + s + "-Sob-LMS-RDS-" + k + "-" + m);
+      simulRepsRQMCSort(model, p, lmsrds, m, statReps);
+
+      // Sob-LMS-RDS-IRB after k
+      System.out.println("* Sobol with LMS+RDS+IRB (indep random bits after k)");
+      statReps.setName(modelTag + "-" + s + "-Sob-LMS-RDS-IRB-" + k + "-" + m);
+      p.addIndepRandomBits(new LFSR258());
+      simulRepsRQMCSort(model, p, lmsrds, m, statReps);
+      p.clearIndepRandomBits();
+
+      // Sob-NUS
+      System.out.println("* Sobol with NUS");
+      statReps.setName(modelTag + "-" + s + "-Sob-NUS-" + k + "-" + m);
+      CachedPointSet cp = new CachedPointSet(p);
+      PointSetRandomization nus = new NestedUniformScrambling(stream, 53);
+      simulRepsRQMCSort(model, cp, nus, m, statReps);
+
+      /*
+       * // Sob-Int2 Sob-interlaced-order2
+       * System.out.println("* Interlaced Sobol points with LMS+RDS"); DigitalNetBase2
+       * p2 = new SobolSequence(k, 60, 2*s); // n = 2^{k} points in 2s dim.
+       * DigitalNetBase2 pitl = p2.matrixInterlace(2, s); ptent = new
+       * BakerTransformedPointSet(p); // // System.out.println(p.formatPoints()); //
+       * simulRepsRQMCSort(model, pitl, nus, m, statReps); simulRepsRQMCSort(model,
+       * ptent, nus, m, statReps);
+       */
 
       System.out.println(
             "Total time for simulRepsAllTypes: " + timer.format() + "\n=========================================== \n");
@@ -240,6 +237,7 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
     */
    public static void simulRepsAllSizes(MonteCarloModelDouble model, int s, int mink, int maxk, int m)
          throws IOException {
+      // redirectToFile(model.getTag() + "-" + s);
       System.out.println("RQMC replicates with model: " + model.toString() + ", s = " + s + "\n");
       Chrono timer = new Chrono();
       for (int k = mink; k <= maxk; k += 2) { // For each point set size

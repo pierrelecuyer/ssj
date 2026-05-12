@@ -169,15 +169,28 @@ public class TallyStore extends Tally {
     * Returns the sample skewness of the observations contained in this tally.
     */
    public double skewness() {
-      return cern.jet.stat.Descriptive.sampleSkew(getDoubleArrayList(), average(), standardDeviation());
+      return cern.jet.stat.Descriptive.sampleSkew(getDoubleArrayList(), average(), variance());
    }
   
-
+   /**
+    * Returns the sample skewness of the observations contained in this tally.
+    */
+   public double skewnessStandardError() {
+      return cern.jet.stat.Descriptive.sampleSkewStandardError(numberObs());
+   }
+ 
    /**
     * Returns the sample excess kurtosis of the observations contained in this tally.
     */
    public double kurtosis() {
-      return cern.jet.stat.Descriptive.kurtosis(getDoubleArrayList(), average(), standardDeviation());
+      return cern.jet.stat.Descriptive.sampleKurtosis(getDoubleArrayList(), average(), variance());
+   }
+
+   /**
+    * Returns the sample excess kurtosis of the observations contained in this tally.
+    */
+   public double kurtosisStandardError() {
+      return cern.jet.stat.Descriptive.sampleKurtosisStandardError(numberObs());
    }
    
    /**
