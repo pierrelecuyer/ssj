@@ -160,6 +160,7 @@ public class TallyStore extends Tally {
 
    /**
     * Recomputes and returns the variance from the observations contained in this tally.
+    * This uses the function @ref cern.jet.stat.Descriptive.variance.
     */
    public double variance2() {
       return cern.jet.stat.Descriptive.sampleVariance(getDoubleArrayList(), average());
@@ -167,8 +168,10 @@ public class TallyStore extends Tally {
   
    /**
     * Returns the sample skewness of the observations contained in this tally.
+    * This uses the function @ref cern.jet.stat.Descriptive.skew, which makes the standard 
+    * bias correction for the variance, but no bias correction for the skewness estimator.
     */
-   public double skewness() {
+   public double skewness2() {
       return cern.jet.stat.Descriptive.skew(getDoubleArrayList(), average(), standardDeviation());
    }
     
@@ -177,8 +180,8 @@ public class TallyStore extends Tally {
     * Computes an unbiased estimator if `unbiased = true`, otherwise computes the 
     * simplest direct biased estimator. 
     */
-   public double skewness2(boolean biasCorrection) {
-      int n = numObs;
+   public double skewness(boolean biasCorrection) {
+      double n = numberObs();  // We want all computations to be made in double.
       double avg = average();
       double var = variance();
       double sum = 0.0;
@@ -189,19 +192,29 @@ public class TallyStore extends Tally {
          x = x * x * x;
          sum += x;
       }
-      sum /= (var * Math.sqrt(var));
       if (biasCorrection)
-         sum *= n / ((n-1)*(n-2));
-      else
+         sum = sum * n / ((n-1)*(n-2));
+      else {
+         // var *= (n-1) / n;
          sum /= n;
+      }
+      sum /= (var * Math.sqrt(var));
       return sum;      
-      // throw new RuntimeException("TallyStore: skewness2 not yet implemented");
+   }
+   
+   /**
+    * Returns the sample skewness with no bias correction.
+    */
+   public double skewness() {
+      return skewness(false);      
    }
    
    /**
     * Returns the sample excess kurtosis of the observations contained in this tally.
+    * This uses the function @ref cern.jet.stat.Descriptive.kurtosis, which makes the standard 
+    * bias correction for the variance, but no bias correction for the kurtosis estimator.
     */
-   public double kurtosis() {
+   public double kurtosis2() {
       return cern.jet.stat.Descriptive.kurtosis(getDoubleArrayList(), average(), standardDeviation());
    }
  
@@ -209,11 +222,11 @@ public class TallyStore extends Tally {
     * Returns the sample kurtosis @f$\kappa@f$ of the observations contained in this tally.
     * If `biasCorrection = true`, a correction is applied so the returned value is an 
     * unbiased kurtosis estimator but only if the observations are from the normal distribution.
-    * Otherwise the function computes the simplest direct biased estimator. 
-    * If `excess = true`, it returns the *excess kurtosis* @f$\kappa-3@f$.
+    * Otherwise the function computes the simpler direct biased estimator. 
+    * If `excess = true`, it returns an estimate of the *excess kurtosis* @f$\kappa-3@f$.
     */
-   public double kurtosis2(boolean biasCorrection, boolean excess) {
-      int n = numObs;
+   public double kurtosis(boolean biasCorrection, boolean excess) {
+      double n = numberObs();   // We want all computations to be made in double.
       double avg = average();
       double var = variance();
       double sum = 0.0;
@@ -225,18 +238,29 @@ public class TallyStore extends Tally {
          sum += x * x;
       }
       sum /= (var * var);
+      // System.out.println("kurtosis2: n = " + n + ", sum = " + sum);
       if (biasCorrection) {
-         sum *= n * (n+1) / ((n-1)*(n-2)*(n-3));
-         if (excess)
-            sum -= 3 * (n-1) * (n-1) / ((n-2)*(n-3));
+         sum = sum * n * (n+1) / ((n-1) * (n-2) * (n-3));
+         if (excess) 
+            sum -= 3.0 * (n-1) * (n-1) / ((n-2) * (n-3));
       }
-      else
-         sum /= ((n-1)*(n-1)/n) ;
+      else {
+         // sum = sum * n / ((n-1) * (n-1));  // In case we want var *= (n-1) / n;
+         sum /= n;
          if (excess) sum -= 3;
+      }
+      // System.out.println("  sum = " + sum);
       return sum;
-      // throw new RuntimeException("TallyStore: kurtosis2 not yet implemented");
    }
 
+   
+   /**
+    * Returns the sample excess kurtosis with no bias correction.
+    */
+   public double kurtosis() {
+      return kurtosis(false, true);      
+   }
+  
    /**
     * Returns the sample covariance of the observations contained in this tally,
     * and the other tally `t2`. Both tallies must have the same number of

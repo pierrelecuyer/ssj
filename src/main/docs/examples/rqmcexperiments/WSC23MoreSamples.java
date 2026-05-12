@@ -75,35 +75,30 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
    /**
     * Performs m independent RQMC replications and save the sorted output in the
     * `statReps` collector. We assume that the randomization may change the number
-    * of points `n`, as it sometimes happens.
+    * of points, as it sometimes happens when using `RandomLatticeParams` for instance.
     */
    public static void simulRepsRQMCSort(MonteCarloModelDouble model, PointSet p, PointSetRandomization rand, int m,
          TallyStore statReps) throws IOException {
       statReps.init();
-      // int n = p.getNumPoints(); // Moved in the loop in case the randomization
-      // changes n, as with random prime n.
       Tally statValue = new Tally();
       PointSetIterator stream = p.iterator();
       Chrono timer = new Chrono();
       for (int rep = 0; rep < m; rep++) {
          statValue.init();
          rand.randomize(p);
-         // Here, n is reset after the randomization because it may have changed,
-         // e.g., when it is drawn as a random prime.
-         // int n = p.getNumPoints(); // In case the randomization changes n, as with
-         // random prime n.  The iterator does not need to know the size of p.
-         // In the code, it asks p for its size when needed. 
-         // PointSetIterator stream = p.iterator(); // Create a new iterator  --> not needed.
+         // PointSetIterator stream = p.iterator(); // NO need to create a new iterator.
          stream.resetStartStream(); // This stream iterates over the points.
          simulateRuns(model, p.getNumPoints(), stream, statValue);
          statReps.add(statValue.average()); // For the estimator of the mean.
       }
       System.out.println(statReps.report());
       System.out.println("variance = " + statReps.variance());
-      System.out.println("skewness = " + statReps.skewness());
-      // System.out.println("skewness standard deviation = " + statReps.skewnessStandardError());
-      System.out.println("excess kurtosis = " + statReps.kurtosis());
-      // System.out.println("kurtosis standard deviation = " + statReps.kurtosisStandardError());
+      System.out.println("skewness from Colt = " + statReps.skewness2());
+      System.out.println("skewness, bias corrected = " + statReps.skewness(true));
+      System.out.println("skewness, not corrected. = " + statReps.skewness(false));
+      System.out.println("excess kurtosis from Colt = " + statReps.kurtosis2());
+      System.out.println("excess kurtosis, bias corrected = " + statReps.kurtosis(true, true));
+      System.out.println("excess kurtosis, not corrected = " + statReps.kurtosis(false, true));
       System.out.println("CPU time: " + timer.format() + "\n");
       statReps.quickSort();
       dataToFile(statReps);
