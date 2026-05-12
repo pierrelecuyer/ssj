@@ -178,9 +178,24 @@ public class TallyStore extends Tally {
    /**
     * Returns the sample skewness of the observations contained in this tally.
     * Computes an unbiased estimator if `unbiased = true`, otherwise computes the 
-    * simplest direct biased estimator. 
+    * simpler direct biased estimator.  
+    * With @f$n@f$ observations with mean @f$\bar X_n@f$ and variance @f$S_n^2@f$,
+    * the direct estimator is
+    * @f[
+    *   \frac{1}{n S_n^3} sum_{i=1}^n (X_i - \bar X_n)^3.   \tag{sample-skew}
+    * @f]
+    * and the bias-corrected estimator is
+    * @f[
+    *   \frac{n}{(n-1)(n-2) S_n^3} sum_{i=1}^n (X_i - \bar X_n)^3.   \tag{sample-skew-correct}
+    * @f]
+    * Returns `Double.NaN` if the tally contains less than three observations.
     */
    public double skewness(boolean biasCorrection) {
+      if (numberObs() < 3) {
+         log.logp(Level.WARNING, "TallyStore", "skewness", 
+             "Tally " + name + ":  computing skewness() with only " + numObs + " observations");
+         return Double.NaN;
+      }
       double n = numberObs();  // We want all computations to be made in double.
       double avg = average();
       double var = variance();
@@ -224,8 +239,26 @@ public class TallyStore extends Tally {
     * unbiased kurtosis estimator but only if the observations are from the normal distribution.
     * Otherwise the function computes the simpler direct biased estimator. 
     * If `excess = true`, it returns an estimate of the *excess kurtosis* @f$\kappa-3@f$.
+    * With @f$n@f$ observations with mean @f$\bar X_n@f$ and variance @f$S_n^2@f$,
+    * the direct estimator of the excess kurtosis is
+    * @f[
+    *   \frac{1}{n S_n^4} sum_{i=1}^n (X_i - \bar X_n)^4 -3.   \tag{sample-skew}
+    * @f]
+    * For the plain kurtosis (not excess), we remove the @f$-3@f$.
+    * The bias-corrected estimator for the excess kurtosis is
+    * @f[
+    *   \frac{n(n+1)}{(n-1)(n-2)(n-3) S_n^4} sum_{i=1}^n (X_i - \bar X_n)^4
+    *     - \frac{3 (n-1)^2}{(n-2)(n-3)}.                      \tag{sample-skew-correct}
+    * @f]
+    * Returns `Double.NaN` if the tally contains less than four observations.
+    * 
     */
    public double kurtosis(boolean biasCorrection, boolean excess) {
+      if (numberObs() < 4) {
+         log.logp(Level.WARNING, "TallyStore", "kurtosis", 
+             "Tally " + name + ":  computing kurtosis() with only " + numObs + " observations");
+         return Double.NaN;
+      }
       double n = numberObs();   // We want all computations to be made in double.
       double avg = average();
       double var = variance();
