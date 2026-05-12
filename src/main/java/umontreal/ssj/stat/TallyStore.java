@@ -169,30 +169,74 @@ public class TallyStore extends Tally {
     * Returns the sample skewness of the observations contained in this tally.
     */
    public double skewness() {
-      return cern.jet.stat.Descriptive.sampleSkew(getDoubleArrayList(), average(), variance());
+      return cern.jet.stat.Descriptive.skew(getDoubleArrayList(), average(), standardDeviation());
    }
-  
+    
    /**
     * Returns the sample skewness of the observations contained in this tally.
+    * Computes an unbiased estimator if `unbiased = true`, otherwise computes the 
+    * simplest direct biased estimator. 
     */
-   public double skewnessStandardError() {
-      return cern.jet.stat.Descriptive.sampleSkewStandardError(numberObs());
+   public double skewness2(boolean biasCorrection) {
+      int n = numObs;
+      double avg = average();
+      double var = variance();
+      double sum = 0.0;
+      double[] obs = this.getArray();
+      double x;
+      for (int i = 0; i < n; i++) {
+         x = obs[i] - avg;
+         x = x * x * x;
+         sum += x;
+      }
+      sum /= (var * Math.sqrt(var));
+      if (biasCorrection)
+         sum *= n / ((n-1)*(n-2));
+      else
+         sum /= n;
+      return sum;      
+      // throw new RuntimeException("TallyStore: skewness2 not yet implemented");
    }
- 
+   
    /**
     * Returns the sample excess kurtosis of the observations contained in this tally.
     */
    public double kurtosis() {
-      return cern.jet.stat.Descriptive.sampleKurtosis(getDoubleArrayList(), average(), variance());
+      return cern.jet.stat.Descriptive.kurtosis(getDoubleArrayList(), average(), standardDeviation());
+   }
+ 
+   /**
+    * Returns the sample kurtosis @f$\kappa@f$ of the observations contained in this tally.
+    * If `biasCorrection = true`, a correction is applied so the returned value is an 
+    * unbiased kurtosis estimator but only if the observations are from the normal distribution.
+    * Otherwise the function computes the simplest direct biased estimator. 
+    * If `excess = true`, it returns the *excess kurtosis* @f$\kappa-3@f$.
+    */
+   public double kurtosis2(boolean biasCorrection, boolean excess) {
+      int n = numObs;
+      double avg = average();
+      double var = variance();
+      double sum = 0.0;
+      double[] obs = this.getArray();
+      double x;
+      for (int i = 0; i < n; i++) {
+         x = obs[i] - avg;
+         x *= x;
+         sum += x * x;
+      }
+      sum /= (var * var);
+      if (biasCorrection) {
+         sum *= n * (n+1) / ((n-1)*(n-2)*(n-3));
+         if (excess)
+            sum -= 3 * (n-1) * (n-1) / ((n-2)*(n-3));
+      }
+      else
+         sum /= ((n-1)*(n-1)/n) ;
+         if (excess) sum -= 3;
+      return sum;
+      // throw new RuntimeException("TallyStore: kurtosis2 not yet implemented");
    }
 
-   /**
-    * Returns the sample excess kurtosis of the observations contained in this tally.
-    */
-   public double kurtosisStandardError() {
-      return cern.jet.stat.Descriptive.sampleKurtosisStandardError(numberObs());
-   }
-   
    /**
     * Returns the sample covariance of the observations contained in this tally,
     * and the other tally `t2`. Both tallies must have the same number of

@@ -101,7 +101,9 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       System.out.println(statReps.report());
       System.out.println("variance = " + statReps.variance());
       System.out.println("skewness = " + statReps.skewness());
+      // System.out.println("skewness standard deviation = " + statReps.skewnessStandardError());
       System.out.println("excess kurtosis = " + statReps.kurtosis());
+      // System.out.println("kurtosis standard deviation = " + statReps.kurtosisStandardError());
       System.out.println("CPU time: " + timer.format() + "\n");
       statReps.quickSort();
       dataToFile(statReps);
@@ -152,7 +154,7 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       System.out.println("*   Lattice with random n and random gen vector a, no shift");
       randLatPar2.setRandShift(false);
       statReps.setName(modelTag + "-" + s + "-Lat-Rpv-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, randLatPar2, m, statReps);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
 
       // Lat-RvRS, random a and RS
       System.out.println("*   Lattice with random gen vector a and RS");
