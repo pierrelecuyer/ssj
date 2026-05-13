@@ -160,7 +160,7 @@ public class TallyStore extends Tally {
 
    /**
     * Recomputes and returns the variance from the observations contained in this tally.
-    * This uses the function @ref cern.jet.stat.Descriptive.variance.
+    * This uses the function @ref cern.jet.stat.Descriptive.sampleVariance.
     */
    public double variance2() {
       return cern.jet.stat.Descriptive.sampleVariance(getDoubleArrayList(), average());
@@ -242,13 +242,13 @@ public class TallyStore extends Tally {
     * With @f$n@f$ observations with mean @f$\bar X_n@f$ and variance @f$S_n^2@f$,
     * the direct estimator of the excess kurtosis is
     * @f[
-    *   \frac{1}{n S_n^4} sum_{i=1}^n (X_i - \bar X_n)^4 -3.   \tag{sample-skew}
+    *   \frac{1}{n S_n^4} sum_{i=1}^n (X_i - \bar X_n)^4 -3.   \tag{sample-kurtosis}
     * @f]
     * For the plain kurtosis (not excess), we remove the @f$-3@f$.
     * The bias-corrected estimator for the excess kurtosis is
     * @f[
     *   \frac{n(n+1)}{(n-1)(n-2)(n-3) S_n^4} sum_{i=1}^n (X_i - \bar X_n)^4
-    *     - \frac{3 (n-1)^2}{(n-2)(n-3)}.                      \tag{sample-skew-correct}
+    *     - \frac{3 (n-1)^2}{(n-2)(n-3)}.                      \tag{sample-kurtosis-correct}
     * @f]
     * Returns `Double.NaN` if the tally contains less than four observations.
     * 
