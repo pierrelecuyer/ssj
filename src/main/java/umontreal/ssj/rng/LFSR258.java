@@ -328,6 +328,7 @@ public class LFSR258 extends RandomStreamBase {
          return res * NORM;
    }
 
+   /*
    public int nextInt(int i, int j) {
       if (i > j)
          throw new IllegalArgumentException(i + " is larger than " + j + ".");
@@ -341,7 +342,11 @@ public class LFSR258 extends RandomStreamBase {
       // System.out.println("LFSR, res = " + res + ", res/q = " + res/q);
       return (int) (res / q) + i;
    }
+   */
 
+   public int nextInt(int i, int j) {
+      return (int) nextLong ((long)i, (long)j);
+   }
 
    public long nextLong(long i, long j) {
       if (i > j)

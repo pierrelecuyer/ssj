@@ -160,7 +160,7 @@ public class TallyStore extends Tally {
 
    /**
     * Recomputes and returns the variance from the observations contained in this tally.
-    * This uses the function @ref cern.jet.stat.Descriptive.variance.
+    * This uses the function @ref cern.jet.stat.Descriptive.sampleVariance.
     */
    public double variance2() {
       return cern.jet.stat.Descriptive.sampleVariance(getDoubleArrayList(), average());

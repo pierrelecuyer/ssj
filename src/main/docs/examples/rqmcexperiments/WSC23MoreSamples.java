@@ -17,7 +17,7 @@ import umontreal.ssj.util.Num;
  */
 public class WSC23MoreSamples extends RQMCExperiment64 {
 
-   static String directory; // Must be set in main program.
+   static String directory; // Must be set in main program `WSC23MoreReps`.
 
    // Lattice generating vector for n=2^{14} found with gamma_j = 2/(2+j), used for
    // the WSC23 paper.
@@ -93,12 +93,12 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       }
       System.out.println(statReps.report());
       System.out.println("variance = " + statReps.variance());
-      System.out.println("skewness from Colt = " + statReps.skewness2());
+      // System.out.println("skewness from Colt = " + statReps.skewness2());
       System.out.println("skewness, bias corrected = " + statReps.skewness(true));
-      System.out.println("skewness, not corrected. = " + statReps.skewness(false));
-      System.out.println("excess kurtosis from Colt = " + statReps.kurtosis2());
+      System.out.println("skewness, not corrected  = " + statReps.skewness(false));
+      // System.out.println("excess kurtosis from Colt = " + statReps.kurtosis2());
       System.out.println("excess kurtosis, bias corrected = " + statReps.kurtosis(true, true));
-      System.out.println("excess kurtosis, not corrected = " + statReps.kurtosis(false, true));
+      System.out.println("excess kurtosis, not corrected  = " + statReps.kurtosis(false, true));
       System.out.println("CPU time: " + timer.format() + "\n");
       statReps.quickSort();
       dataToFile(statReps);
@@ -234,7 +234,7 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
     */
    public static void simulRepsAllSizes(MonteCarloModelDouble model, int s, int mink, int maxk, int m)
          throws IOException {
-      // redirectToFile(model.getTag() + "-" + s);
+      redirectToFile(model.getTag() + "-" + s + "-" + m);
       System.out.println("RQMC replicates with model: " + model.toString() + ", s = " + s + "\n");
       Chrono timer = new Chrono();
       for (int k = mink; k <= maxk; k += 2) { // For each point set size
