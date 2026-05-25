@@ -5,7 +5,7 @@ import umontreal.ssj.rng.RandomStream;
 import umontreal.ssj.util.Num;
 
 /**
- * Implements the general Genz Gaussian peak function.
+ * Implements the general Genz Gaussian peak function taken from @cite IGEN87a.
  *
  * The function is defined by
  * @f[
@@ -17,23 +17,11 @@ import umontreal.ssj.util.Num;
 public class GenzGaussian implements MonteCarloModelDouble {
 
    private final int s;
-   private final double[] c;
+   private final double[] cSquared; // Precomputed (C_j)^2 for simulate. C_j are needed only for exacte value
    private final double[] w;
    private final double exactMean;
 
    private double sum;
-
-   /**
-    * Constructs a Genz Gaussian peak function in dimension {@code s}.
-    *
-    * The default parameter choice is @f$c_j = j/s@f$ for
-    * @f$j = 1,\dots,s@f$ and @f$w_j = 1/2@f$ for all @f$j@f$.
-    *
-    * @param s dimension of the function
-    */
-   public GenzGaussian(int s) {
-      this(s, defaultC(s), defaultW(s));
-   }
 
    /**
     * Constructs a Genz Gaussian peak function with user-specified parameters.
@@ -48,17 +36,20 @@ public class GenzGaussian implements MonteCarloModelDouble {
       if (c == null || w == null || c.length != s || w.length != s)
          throw new IllegalArgumentException("c and w must have length s");
 
+      this.s = s;
+      this.cSquared = new double[s];
+      this.w = w.clone();
+
       for (int j = 0; j < s; j++) {
          if (c[j] <= 0.0)
             throw new IllegalArgumentException("c[" + j + "] must be positive");
          if (w[j] <= 0.0 || w[j] >= 1.0)
             throw new IllegalArgumentException("w[" + j + "] must be in (0, 1)");
+
+         cSquared[j] = c[j] * c[j];
       }
 
-      this.s = s;
-      this.c = c.clone();
-      this.w = w.clone();
-      this.exactMean = computeExactMean();
+      this.exactMean = computeExactMean(c, w);
    }
 
    /**
@@ -71,7 +62,7 @@ public class GenzGaussian implements MonteCarloModelDouble {
       sum = 0.0;
       for (int j = 0; j < s; j++) {
          double diff = stream.nextDouble() - w[j];
-         sum += c[j] * c[j] * diff * diff;
+         sum += cSquared[j] * diff * diff;
       }
    }
 
@@ -90,11 +81,11 @@ public class GenzGaussian implements MonteCarloModelDouble {
     *
     * @return exact integral over @f$[0,1]^s@f$
     */
-   private double computeExactMean() {
+   private static double computeExactMean(double[] c, double[] w) {
       double integral = 1.0;
       double sqrtPiOver2 = Math.sqrt(Math.PI) / 2.0;
 
-      for (int j = 0; j < s; j++) {
+      for (int j = 0; j < c.length; j++) {
          integral *= sqrtPiOver2
                * (Num.erf(c[j] * w[j]) + Num.erf(c[j] * (1.0 - w[j])))
                / c[j];
@@ -111,39 +102,5 @@ public class GenzGaussian implements MonteCarloModelDouble {
    @Override
    public String getTag() {
       return "GenzGaussian";
-   }
-
-   /**
-    * Creates the default scale parameter vector.
-    *
-    * @param s dimension of the function
-    * @return default scale parameters
-    */
-   private static double[] defaultC(int s) {
-      if (s <= 0)
-         throw new IllegalArgumentException("s must be positive");
-
-      double[] c = new double[s];
-      for (int j = 0; j < s; j++)
-         c[j] = (double) (j + 1) / (double) s;
-
-      return c;
-   }
-
-   /**
-    * Creates the default location parameter vector.
-    *
-    * @param s dimension of the function
-    * @return default location parameters
-    */
-   private static double[] defaultW(int s) {
-      if (s <= 0)
-         throw new IllegalArgumentException("s must be positive");
-
-      double[] w = new double[s];
-      for (int j = 0; j < s; j++)
-         w[j] = 0.5;
-
-      return w;
    }
 }
