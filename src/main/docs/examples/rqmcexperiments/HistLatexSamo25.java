@@ -291,8 +291,8 @@ public class HistLatexSamo25 {
       String title = cleanTitle(file.getName()) + centered;
       
       String legend =
-    		   "\\parbox[c][0.3cm][c]{1.2cm}{\\centering"
-    		   + "\\scalebox{0.58}{\\bfseries\\boldmath"
+    		   "\\parbox[c][0.35cm][c]{1.1cm}{\\centering"
+    		   + "\\scalebox{0.6}{\\bfseries\\boldmath"
     		   + "\\begin{tabular}{@{}l@{}}"
     		   + "$\\sigma^2$=" + sci(hist.variance())
     		   + "\\\\[-1pt]$\\gamma$=" + sci(fileStats.skewness())
@@ -300,8 +300,8 @@ public class HistLatexSamo25 {
     		   + "\\end{tabular}"
     		   + "}}";
       scHist.setAxisOptions(
-    		   "title={" + escapeLatex(title) + "}, " +
-    		   "title style={font=\\tiny}, " + 
+    		   "title={" + escapeLatex(title) + "}, " + 
+    		   "title style={font=\\scriptsize}, " + 
     		   "width=" + AXIS_WIDTH + ", height="+AXIS_HEIGHT+ ","  +
     		   "xmin=" + texNum(xmin) + ", " +
     		   "xmax=" + texNum(xmax) + ", " +
@@ -318,7 +318,7 @@ public class HistLatexSamo25 {
     		      + "line width=0.1pt, "
     		      + "fill=none, "
     		      + "font=\\small, "
-    		      + "cells={anchor=west}, "
+    		      + "cells={anchor=east}, "
     		      + "inner xsep=0pt, "
     		      + "inner ysep=3pt,"
     		   + "}, " +
