@@ -2,54 +2,55 @@ package rqmcexperiments;
 
 import umontreal.ssj.mcqmctools.MonteCarloModelDouble;
 import umontreal.ssj.rng.RandomStream;
-import umontreal.ssj.util.Num;
 
 /**
- * Implements the general Genz Gaussian peak function taken from @cite IGEN87a.
+ * Implements the general Genz product peak function taken from @cite iGEN87a.
  *
  * The function is defined by
  * @f[
  *   f(u_1,\dots,u_s) =
- *   \exp\left(-\sum_{j=1}^s c_j^2 (u_j - w_j)^2\right),
+ *   \prod_{j=1}^s \left(c_j^{-2} + (u_j - w_j)^2\right)^{-1},
  * @f]
  * for @f$\bm u = (u_1,\dots,u_s) \in [0,1]^s@f$.
  */
-public class GenzGaussian implements MonteCarloModelDouble {
+public class GenzProductPeak implements MonteCarloModelDouble {
 
    private final int s;
-   private final double[] cSquared; // Precomputed (C_j)^2 for simulate. C_j are needed only for exacte value
+   private final double[] c;
+   private final double[] cInvSquared;
    private final double[] w;
    private final double exactMean;
 
-   private double sum;
+   private double prod;
 
    /**
-    * Constructs a Genz Gaussian peak function with user-specified parameters.
+    * Constructs a Genz product peak function with user-specified parameters.
     *
     * @param s dimension of the function
     * @param c scale parameters, all strictly positive
     * @param w location parameters, all in the open interval @f$(0,1)@f$
     */
-   public GenzGaussian(int s, double[] c, double[] w) {
+   public GenzProductPeak(int s, double[] c, double[] w) {
       if (s <= 0)
          throw new IllegalArgumentException("s must be positive");
       if (c == null || w == null || c.length != s || w.length != s)
          throw new IllegalArgumentException("c and w must have length s");
 
       this.s = s;
-      this.cSquared = new double[s];
+      this.c = c.clone();
+      this.cInvSquared = new double[s];
       this.w = w.clone();
 
       for (int j = 0; j < s; j++) {
-         if (c[j] <= 0.0)
+         if (!(this.c[j] > 0.0))
             throw new IllegalArgumentException("c[" + j + "] must be positive");
-         if (w[j] <= 0.0 || w[j] >= 1.0)
+         if (!(this.w[j] > 0.0 && this.w[j] < 1.0))
             throw new IllegalArgumentException("w[" + j + "] must be in (0, 1)");
 
-         cSquared[j] = c[j] * c[j];
+         cInvSquared[j] = 1.0 / (this.c[j] * this.c[j]);
       }
 
-      this.exactMean = computeExactMean(c, w);
+      this.exactMean = computeExactMean();
    }
 
    /**
@@ -59,10 +60,10 @@ public class GenzGaussian implements MonteCarloModelDouble {
     */
    @Override
    public void simulate(RandomStream stream) {
-      sum = 0.0;
+      prod = 1.0;
       for (int j = 0; j < s; j++) {
          double diff = stream.nextDouble() - w[j];
-         sum += cSquared[j] * diff * diff;
+         prod *= 1.0 / (cInvSquared[j] + diff * diff);
       }
    }
 
@@ -73,35 +74,32 @@ public class GenzGaussian implements MonteCarloModelDouble {
     */
    @Override
    public double getPerformance() {
-      return Math.exp(-sum) - exactMean;
+      return prod - exactMean;
    }
 
    /**
-    * Computes the exact mean of the Genz Gaussian peak function.
+    * Computes the exact mean of the Genz product peak function.
     *
     * @return exact integral over @f$[0,1]^s@f$
     */
-   private static double computeExactMean(double[] c, double[] w) {
+   private double computeExactMean() {
       double integral = 1.0;
-      double sqrtPiOver2 = Math.sqrt(Math.PI) / 2.0;
 
-      for (int j = 0; j < c.length; j++) {
-         integral *= sqrtPiOver2
-               * (Num.erf(c[j] * w[j]) + Num.erf(c[j] * (1.0 - w[j])))
-               / c[j];
-      }
+      for (int j = 0; j < s; j++)
+         integral *= c[j] * (Math.atan(c[j] * w[j])
+               + Math.atan(c[j] * (1.0 - w[j])));
 
       return integral;
    }
 
    @Override
    public String toString() {
-      return "Genz Gaussian peak function";
+      return "Genz product peak function";
    }
 
    @Override
    public String getTag() {
-      return "GenzGaussian";
+      return "GenzProductPeak";
    }
    
    /////////for test
