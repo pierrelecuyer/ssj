@@ -104,8 +104,4 @@ public class GenzGaussian implements MonteCarloModelDouble {
       return "GenzGaussian";
    }
    
-   /////////for test
-   public double getExactMean() {
-	   return exactMean;
-	}
 }
