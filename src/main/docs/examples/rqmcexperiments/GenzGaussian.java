@@ -103,5 +103,4 @@ public class GenzGaussian implements MonteCarloModelDouble {
    public String getTag() {
       return "GenzGaussian";
    }
-   
 }
