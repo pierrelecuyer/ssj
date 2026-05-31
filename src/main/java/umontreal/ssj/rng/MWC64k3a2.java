@@ -43,26 +43,21 @@ public class MWC64k3a2 extends RandomStreamBase {
    
    /** State components x_{n-1}, x_{n-2}, x_{n-3} and c_{n-1} interpreted as unsigned 64-bit. */
    private long x1, x2, x3, carry;
-
    /** Second coefficient a2. */
    private static final long A2 = 184698970548483715L;
    /** Third coefficient a3. */
-   private static final long A3 = 6028691832887L;
-   
+   private static final long A3 = 6028691832887L;   
 //   private static final long A2 = 0x320fbe97bef0f95L, A3 = 0x4a1849ec18bfa6L; // for jumps comparaison with cpp
 
    /** 2^(-53), used to convert 53 random bits to a double. */
    private static final double NORM53 = 0x1.0p-53;
-
    private static final int STREAM_ADVANCE_EXPONENT = 169;
    private static final int SUBSTREAM_ADVANCE_EXPONENT = 118;
 
    /** Seed used for the next created stream: {x_{n-3}, x_{n-2}, x_{n-1}, carry}. */
    private static long[] nextSeed = {1L, 3L, 4L, 5L};
-
    /** Initial state of this stream. */
    private long[] Ig;
-
    /** Beginning state of the current substream of stream. */
    private long[] Bg;
   
@@ -88,7 +83,6 @@ public class MWC64k3a2 extends RandomStreamBase {
    private static final BigInteger SUBSTREAM_K_X2 = SUBSTREAM_JUMP_MULTIPLIER.multiply(BI_B).mod(BI_M); // K_x2 = J*b mod m
    private static final BigInteger SUBSTREAM_K_X1 = SUBSTREAM_JUMP_MULTIPLIER.multiply(BI_B2).mod(BI_M); // K_x1 = J*b^2 mod m
    private static final BigInteger SUBSTREAM_K_C = SUBSTREAM_JUMP_MULTIPLIER.multiply(BI_B3).mod(BI_M); // K_c = J*b^3 mod m
-   
    
 //   /*For 	A2 = 184698970548483715L;
 //		     A3 = 6028691832887L;
@@ -246,7 +240,6 @@ public class MWC64k3a2 extends RandomStreamBase {
 //      return ((nextNumber() >>> 11) + 0.5) * NORM53;
 //   }
    
-
    /**
     * Returns a random long in [i, j].
     *
@@ -301,7 +294,6 @@ public class MWC64k3a2 extends RandomStreamBase {
          return i + (res / q);
       }
    
-
    // return a block of b bits (int)
    private long nextBitsLong(int b) {
       if (b < 0 || b > 63) {
@@ -394,7 +386,6 @@ public class MWC64k3a2 extends RandomStreamBase {
     */
    public MWC64k3a2 clone() {
       MWC64k3a2 copy = (MWC64k3a2) super.clone();
-
       copy.Ig = Ig.clone();               // Copy stream-start state.
       copy.Bg = Bg.clone();               // Copy substream-start state.
 
@@ -467,7 +458,7 @@ public class MWC64k3a2 extends RandomStreamBase {
 		state[1] = newX2;
 		state[2] = newX1;
 		state[3] = newCarry;
-}	
+   }	
    
    /**
     * Advances the current stream state by n steps.

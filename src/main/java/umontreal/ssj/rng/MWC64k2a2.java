@@ -34,30 +34,23 @@ public class MWC64k2a2 extends RandomStreamBase {
    
    /** State components x_{n-1}, x_{n-2} and c_{n-1} interpreted as unsigned 64-bit. */
    private long x1, x2, carry;
-
    /** First coefficient a1. */
    private static final long A1 = 193154555888013165L;
    /** Second coefficient a2. */
-   private static final long A2 = 1966812196490295L;
-   
+   private static final long A2 = 1966812196490295L;   
 //   private static final long  A1 = 556348944096481337L, A2 = 8250136865355103L; // Used in cpp code for jumps
-
 
    /** 2^(-53), used to convert 53 random bits to a double. */
    private static final double NORM53 = 0x1.0p-53;
-
    /** Stream spacing: 2^113 generated values. */
    private static final int STREAM_ADVANCE_EXPONENT =  113;
-
    /** Substream spacing: 2^62	 generated values. */
    private static final int SUBSTREAM_ADVANCE_EXPONENT = 62;
 
    /** Seed used for the next created stream: {x_{n-2}, x_{n-1}, carry}. */
    private static long[] nextSeed = {12345L, 12345L, 12345L}; 
-
    /** Initial state of this stream. */
    private long[] Ig;
-
    /** Beginning state of the current substream of stream. */
    private long[] Bg;
   
@@ -82,8 +75,6 @@ public class MWC64k2a2 extends RandomStreamBase {
    private static final BigInteger SUBSTREAM_K_X1 = SUBSTREAM_JUMP_MULTIPLIER.multiply(BI_B).mod(BI_M); // K_x1 = J*b mod m
    private static final BigInteger SUBSTREAM_K_C  = SUBSTREAM_JUMP_MULTIPLIER.multiply(BI_B2).mod(BI_M);// K_c = J*b^2 mod m
    
-   
-   
 //   /*For A1 = 193154555888013165L; A2 = 1966812196490295L; STREAM_ADVANCE_EXPONENT = 113; SUBSTREAM_ADVANCE_EXPONENT = 62
 //    * These values are precalculated and hardcoded here 
 //    * */
@@ -93,11 +84,8 @@ public class MWC64k2a2 extends RandomStreamBase {
 //   private static final BigInteger  SUBSTREAM_K_X2 = new BigInteger("253956167587244238733053471042992883266608765200613794");// Ony for the given A1, A2 and the given jumpsizes
 //   private static final BigInteger SUBSTREAM_K_X1 = new BigInteger("334142836076716064087784195971406862825997835485950288");
 //   private static final BigInteger SUBSTREAM_K_C  = new BigInteger("475660625350411904999072789094749200216738394742542956");// Ony for the given A1, A2 and the given jumpsizes
-
-   
+  
    /**
-    * 
-    * 
     * Constructs a new stream.
     */
    public MWC64k2a2() {
@@ -236,7 +224,6 @@ public class MWC64k2a2 extends RandomStreamBase {
 //      return ((nextNumber() >>> 11) + 0.5) * NORM53;
 //   }
    
-
    /**
     * Returns a random long in [i, j].
     *
@@ -293,7 +280,6 @@ public class MWC64k2a2 extends RandomStreamBase {
 	      return i + (res / q);
 	   }
    
-
    // return a block of b bits (int): should be added to interface
    private long nextBitsLong(int b) {
 	    if (b < 0 || b > 63) {
@@ -382,7 +368,6 @@ public class MWC64k2a2 extends RandomStreamBase {
     */
    public MWC64k2a2 clone() {
       MWC64k2a2 copy = (MWC64k2a2) super.clone();
-
       copy.Ig = Ig.clone();               // Copy stream-start state.
       copy.Bg = Bg.clone();               // Copy substream-start state.
 
