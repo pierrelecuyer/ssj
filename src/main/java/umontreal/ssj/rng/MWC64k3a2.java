@@ -295,18 +295,8 @@ public class MWC64k3a2 extends RandomStreamBase {
       }
    
    // return a block of b bits (int)
-   private long nextBitsLong(int b) {
-      if (b < 0 || b > 63) {
-         throw new IllegalArgumentException("b must be between 0 and 63");
-      }
-
-      if (b == 0) {
-         return 0L;
-      }
-
-      long z = nextNumber();
-
-      return z >>> (64 - b);
+   public long nextBitsLong(int b) {
+      return nextNumber() >>> (64 - b);
    }
 
    /**

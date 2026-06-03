@@ -280,19 +280,9 @@ public class MWC64k2a2 extends RandomStreamBase {
 	      return i + (res / q);
 	   }
    
-   // return a block of b bits (int): should be added to interface
-   private long nextBitsLong(int b) {
-	    if (b < 0 || b > 63) {
-	        throw new IllegalArgumentException("b must be between 0 and 63");
-	    }
-
-	    if (b == 0) {
-	        return 0L;
-	    }
-
-	    long z = nextNumber();
-
-	    return z >>> (64 - b);
+   // return a block of b bits (int)
+   public long nextBitsLong(int b) {
+	    return nextNumber() >>> (64 - b);
 	}
 
    /**
@@ -303,7 +293,7 @@ public class MWC64k2a2 extends RandomStreamBase {
     * @return random int in [i, j]
     */
    public int nextInt(int i, int j) {
-      return (int) nextLong(i, j);         // Reuse unbiased long method.
+      return (int) nextLong(i, j);
    }
 
    /**
