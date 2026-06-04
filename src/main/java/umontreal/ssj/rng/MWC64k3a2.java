@@ -41,29 +41,29 @@ public class MWC64k3a2 extends RandomStreamBase {
 	
    private static final long serialVersionUID = 20260518L;
    
-   /** State components x_{n-1}, x_{n-2}, x_{n-3} and c_{n-1} interpreted as unsigned 64-bit. */
+   // State components x_{n-1}, x_{n-2}, x_{n-3} and c_{n-1} interpreted as unsigned 64-bit. 
    private long x1, x2, x3, carry;
-   /** Second coefficient a2. */
+   //Second coefficient a2. 
    private static final long A2 = 184698970548483715L;
-   /** Third coefficient a3. */
+   //Third coefficient a3. 
    private static final long A3 = 6028691832887L;   
 //   private static final long A2 = 0x320fbe97bef0f95L, A3 = 0x4a1849ec18bfa6L; // for jumps comparaison with cpp
 
-   /** 2^(-53), used to convert 53 random bits to a double. */
+   //2^(-53), used to convert 53 random bits to a double. 
    private static final double NORM53 = 0x1.0p-53;
    private static final int STREAM_ADVANCE_EXPONENT = 169;
    private static final int SUBSTREAM_ADVANCE_EXPONENT = 118;
 
-   /** Seed used for the next created stream: {x_{n-3}, x_{n-2}, x_{n-1}, carry}. */
+   //Seed used for the next created stream: {x_{n-3}, x_{n-2}, x_{n-1}, carry}. 
    private static long[] nextSeed = {1L, 3L, 4L, 5L};
-   /** Initial state of this stream. */
+   // Initial state of this stream. 
    private long[] Ig;
-   /** Beginning state of the current substream of stream. */
+   //Beginning state of the current substream of stream. 
    private long[] Bg;
   
-   /**
-    * Precomputed BigInteger constants for the MWC-to-LCG jump transformation.
-    */
+   
+   // Precomputed BigInteger constants for the MWC-to-LCG jump transformation.
+    
    private static final BigInteger BI_B = BigInteger.ONE.shiftLeft(64); // b = 2^64
    private static final BigInteger BI_B2 = BigInteger.ONE.shiftLeft(128); // b^2
    private static final BigInteger BI_B3 = BigInteger.ONE.shiftLeft(192); // b^3
@@ -83,12 +83,12 @@ public class MWC64k3a2 extends RandomStreamBase {
    private static final BigInteger SUBSTREAM_K_X2 = SUBSTREAM_JUMP_MULTIPLIER.multiply(BI_B).mod(BI_M); // K_x2 = J*b mod m
    private static final BigInteger SUBSTREAM_K_X1 = SUBSTREAM_JUMP_MULTIPLIER.multiply(BI_B2).mod(BI_M); // K_x1 = J*b^2 mod m
    private static final BigInteger SUBSTREAM_K_C = SUBSTREAM_JUMP_MULTIPLIER.multiply(BI_B3).mod(BI_M); // K_c = J*b^3 mod m
-   
-//   /*For 	A2 = 184698970548483715L;
+    
+//  /*For 	A2 = 184698970548483715L;
 //		     A3 = 6028691832887L;
 //		     STREAM_ADVANCE_EXPONENT = 169;
 //		     SUBSTREAM_ADVANCE_EXPONENT= 118; The values are : 
-//    * */
+//   * */
 //   private static final BigInteger STREAM_K_X3 = new BigInteger("30761207224142103968985508472479115773948763076232986832853996703743926");// Only for the given Ai, and jump sizes
 //   private static final BigInteger STREAM_K_X2 = new BigInteger("2872972596550318317758382057880878886623467367682449388684617761028650");
 //   private static final BigInteger STREAM_K_X1 = new BigInteger("4069686296670218292987053305317065107287547089332977129336044355568643");
@@ -376,6 +376,7 @@ public class MWC64k3a2 extends RandomStreamBase {
     */
    public MWC64k3a2 clone() {
       MWC64k3a2 copy = (MWC64k3a2) super.clone();
+
       copy.Ig = Ig.clone();               // Copy stream-start state.
       copy.Bg = Bg.clone();               // Copy substream-start state.
 
@@ -453,40 +454,63 @@ public class MWC64k3a2 extends RandomStreamBase {
    /**
     * Advances the current stream state by n steps.
     *
-    * @param n number of steps
+    * This method is used for a general jump size n. It does not use the
+    * precomputed fixed-jump constants, because those constants are useful only
+    * for fixed stream/substream jumps.
+    *
+    * The method first maps the current MWC state to the equivalent LCG state,
+    * applies the LCG jump, then converts the result back to the MWC state.
+    *
+    * @param n number of steps to jump
     */
-   void advanceStateByJump(long n) {
-	   if (n < 0) {
-	      throw new IllegalArgumentException("Jump step n cannot be negative.");
-	   }
-	   if (n == 0) {
-	      return;
-	   }
+   public void advanceStateByJump(long n) {
+      if (n < 0L)
+         throw new IllegalArgumentException("Jump step n cannot be negative.");
 
-	   long[] state = getState();
+      if (n == 0)
+         return;
 
-	   BigInteger jumpMultiplier =
-	         BI_B_INV.modPow(BigInteger.valueOf(n), BI_M);
+      BigInteger stateX3 = toUnsignedBigInt(x3);
+      BigInteger stateX2 = toUnsignedBigInt(x2);
+      BigInteger stateX1 = toUnsignedBigInt(x1);
+      BigInteger stateCarry = BigInteger.valueOf(carry);
 
-	   BigInteger kX3 =
-	         jumpMultiplier.multiply(BI_MAP_X3).mod(BI_M);
+//       Map the current MWC state to the equivalent LCG state:
+//        y =  (1 - A2*b^2)*x3 + b*x2 + b^2*x1 + b^3*carry mod m
+      BigInteger y =
+            BI_MAP_X3.multiply(stateX3)
+          .add(BI_B.multiply(stateX2))
+          .add(BI_B2.multiply(stateX1))
+          .add(BI_B3.multiply(stateCarry))
+          .mod(BI_M);
 
-	   BigInteger kX2 =
-	         jumpMultiplier.multiply(BI_B).mod(BI_M);
+      // Apply the LCG jump: y_new = (b^(-1))^n * y mod m.
+      BigInteger sigma =
+            BI_B_INV.modPow(BigInteger.valueOf(n), BI_M)
+          .multiply(y)
+          .mod(BI_M);
 
-	   BigInteger kX1 =
-	         jumpMultiplier.multiply(BI_B2).mod(BI_M);
+//      Convert the jumped LCG state back to the MWC state. For MWC64k3a2, A1 = 0, so the inverse reconstruction is:
+//        newX3 = low 64 bits of sigma
+//        newX2 = next 64 bits
+//        then correct the remaining part with A2*newX3.
 
-	   BigInteger kCarry =
-	         jumpMultiplier.multiply(BI_B3).mod(BI_M);
+      long newX3 = sigma.longValue();
+      sigma = sigma.shiftRight(64);
 
-	   advanceStateFixedJump(state, kX3, kX2, kX1, kCarry);
+      long newX2 = sigma.longValue();
+      sigma = sigma.shiftRight(64);
 
-	   x3 = state[0];
-	   x2 = state[1];
-	   x1 = state[2];
-	   carry = state[3];
-	}
+      sigma = sigma.add(BI_A2.multiply(toUnsignedBigInt(newX3)));
+
+      long newX1 = sigma.longValue();
+      long newCarry = sigma.shiftRight(64).longValue();
+
+      x3 = newX3;
+      x2 = newX2;
+      x1 = newX1;
+      carry = newCarry;
+   }
    
    //public method for nextnumber test
    public long nextRaw()

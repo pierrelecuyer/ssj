@@ -32,31 +32,31 @@ public class MWC64k2a2 extends RandomStreamBase {
 	
    private static final long serialVersionUID = 20260518L;
    
-   /** State components x_{n-1}, x_{n-2} and c_{n-1} interpreted as unsigned 64-bit. */
+   // State components x_{n-1}, x_{n-2} and c_{n-1} interpreted as unsigned 64-bit. 
    private long x1, x2, carry;
-   /** First coefficient a1. */
+   // First coefficient a1. 
    private static final long A1 = 193154555888013165L;
-   /** Second coefficient a2. */
-   private static final long A2 = 1966812196490295L;   
-//   private static final long  A1 = 556348944096481337L, A2 = 8250136865355103L; // Used in cpp code for jumps
-
-   /** 2^(-53), used to convert 53 random bits to a double. */
+   // Second coefficient a2. 
+   private static final long A2 = 1966812196490295L;
+// private static final long  A1 = 556348944096481337L, A2 = 8250136865355103L; // Used in cpp code for jumps
+   
+   // 2^(-53), used to convert 53 random bits to a double. 
    private static final double NORM53 = 0x1.0p-53;
-   /** Stream spacing: 2^113 generated values. */
+   // Stream spacing: 2^113 generated values. 
    private static final int STREAM_ADVANCE_EXPONENT =  113;
-   /** Substream spacing: 2^62	 generated values. */
+   // Substream spacing: 2^62	 generated values. 
    private static final int SUBSTREAM_ADVANCE_EXPONENT = 62;
 
-   /** Seed used for the next created stream: {x_{n-2}, x_{n-1}, carry}. */
+   // Seed used for the next created stream: {x_{n-2}, x_{n-1}, carry}. 
    private static long[] nextSeed = {12345L, 12345L, 12345L}; 
-   /** Initial state of this stream. */
+   //Initial state of this stream. 
    private long[] Ig;
-   /** Beginning state of the current substream of stream. */
+   // Beginning state of the current substream of stream. 
    private long[] Bg;
   
-   /**
-    * Precomputed BigInteger constants for the MWC-to-LCG jump transformation.
-    */
+   
+    // Precomputed BigInteger constants for the MWC-to-LCG jump transformation.
+    
    private static final BigInteger BI_B = BigInteger.ONE.shiftLeft(64); // b = 2^64
    private static final BigInteger BI_A1 = BigInteger.valueOf(A1);
    private static final BigInteger BI_A2 = BigInteger.valueOf(A2); 
@@ -78,13 +78,13 @@ public class MWC64k2a2 extends RandomStreamBase {
 //   /*For A1 = 193154555888013165L; A2 = 1966812196490295L; STREAM_ADVANCE_EXPONENT = 113; SUBSTREAM_ADVANCE_EXPONENT = 62
 //    * These values are precalculated and hardcoded here 
 //    * */
-//   private static final BigInteger STREAM_K_X2 = new BigInteger("550287765979488443922754971547870548747622917622202515");// Ony for the given A1, A2 and the given jumpsizes
-//   private static final BigInteger STREAM_K_X1 = new BigInteger("590664228179752031471436901652469203082748750179775222");// Ony for the given A1, A2 and the given jumpsizes
-//   private static final BigInteger STREAM_K_C  = new BigInteger("521510005202858839425516464682983339842500770120428048");// Ony for the given A1, A2 and the given jumpsizes
-//   private static final BigInteger  SUBSTREAM_K_X2 = new BigInteger("253956167587244238733053471042992883266608765200613794");// Ony for the given A1, A2 and the given jumpsizes
-//   private static final BigInteger SUBSTREAM_K_X1 = new BigInteger("334142836076716064087784195971406862825997835485950288");
-//   private static final BigInteger SUBSTREAM_K_C  = new BigInteger("475660625350411904999072789094749200216738394742542956");// Ony for the given A1, A2 and the given jumpsizes
-  
+//   private static final BigInteger STREAM_K_X2 = new BigInteger("550287765979488443922754971547870548747622917622202515");//Only for the given A1, A2 and the given jumpsizes
+//   private static final BigInteger STREAM_K_X1 = new BigInteger("590664228179752031471436901652469203082748750179775222");//Only for the given A1, A2 and the given jumpsizes
+//   private static final BigInteger STREAM_K_C  = new BigInteger("521510005202858839425516464682983339842500770120428048");//Only for the given A1, A2 and the given jumpsizes
+//   private static final BigInteger  SUBSTREAM_K_X2 = new BigInteger("253956167587244238733053471042992883266608765200613794");// Only for the given A1, A2 and the given jumpsizes
+//   private static final BigInteger SUBSTREAM_K_X1 = new BigInteger("334142836076716064087784195971406862825997835485950288");//Only for the given A1, A2 and the given jumpsizes
+//   private static final BigInteger SUBSTREAM_K_C  = new BigInteger("475660625350411904999072789094749200216738394742542956");//Only for the given A1, A2 and the given jumpsizes
+ 
    /**
     * Constructs a new stream.
     */
@@ -218,13 +218,6 @@ public class MWC64k2a2 extends RandomStreamBase {
    }
    
    /**
-    * Another possibility to avoid returning 0 ?
-    */
-//   protected double nextValue2() {
-//      return ((nextNumber() >>> 11) + 0.5) * NORM53;
-//   }
-   
-   /**
     * Returns a random long in [i, j].
     *
     * @param i lower bound
@@ -280,7 +273,7 @@ public class MWC64k2a2 extends RandomStreamBase {
 	      return i + (res / q);
 	   }
    
-   // return a block of b bits (int)
+   // return a block of b bits (int):
    public long nextBitsLong(int b) {
 	    return nextNumber() >>> (64 - b);
 	}
@@ -358,6 +351,7 @@ public class MWC64k2a2 extends RandomStreamBase {
     */
    public MWC64k2a2 clone() {
       MWC64k2a2 copy = (MWC64k2a2) super.clone();
+
       copy.Ig = Ig.clone();               // Copy stream-start state.
       copy.Bg = Bg.clone();               // Copy substream-start state.
 
@@ -428,36 +422,53 @@ public class MWC64k2a2 extends RandomStreamBase {
    /**
     * Advances the current stream state by n steps.
     *
-    * @param n number of steps
+    * This method is for a general jump size n. It does not use
+    * advanceStateFixedJump and does not compute fixed-jump coefficients.
+    *
+    * It maps the current MWC state to the equivalent LCG state, applies
+    * the LCG jump, then converts the result back to the MWC state.
+    *
+    * @param n number of steps to jump
     */
-   void advanceStateByJump(long n) { // use same code as for fixedsize jumps to test them, but normally for varying size this is slower, normal computing is faster.
-	   if (n < 0) {
-	      throw new IllegalArgumentException("Jump step n cannot be negative.");
-	   }
-	   if (n == 0) {
-	      return;
-	   }
+   public void advanceStateByJump(long n) {
+      if (n < 0)
+         throw new IllegalArgumentException("Jump step n cannot be negative.");
 
-	   long[] state = getState();
+      if (n == 0)
+         return;
 
-	   BigInteger jumpMultiplier =
-	         BI_B_INV.modPow(BigInteger.valueOf(n), BI_M);
-	   
-	   BigInteger kX2 =
-			   jumpMultiplier.multiply( BigInteger.ONE.subtract(BI_A1.multiply(BI_B))).mod(BI_M);
+      BigInteger stateX2 = toUnsignedBigInt(x2);
+      BigInteger stateX1 = toUnsignedBigInt(x1);
+      BigInteger stateCarry = BigInteger.valueOf(carry);
 
-	   BigInteger kX1 =
-			   jumpMultiplier.multiply(BI_B).mod(BI_M);
+//       Map the current MWC state to the equivalent LCG state:
+//        y =   (1 - A1*b)*x2 + b*x1 + b^2*carry mod m
 
-	   BigInteger kC =
-			   jumpMultiplier.multiply(BI_B2).mod(BI_M);
+      BigInteger y =
+            BI_MAP_X2.multiply(stateX2)
+          .add(BI_B.multiply(stateX1))
+          .add(BI_B2.multiply(stateCarry))
+          .mod(BI_M);
 
-	   advanceStateFixedJump(state, kX2, kX1, kC);
+      // Apply the LCG jump: y_new = (b^(-1))^n * y mod m.
+      BigInteger sigma =
+            BI_B_INV.modPow(BigInteger.valueOf(n), BI_M)
+          .multiply(y)
+          .mod(BI_M);
 
-	   x2 = state[0];
-	   x1 = state[1];
-	   carry = state[2];
-	}
+       // Convert the jumped LCG state back to the MWC state.
+      long newX2 = sigma.longValue();
+      sigma = sigma.shiftRight(64);
+
+      sigma = sigma.add(BI_A1.multiply(toUnsignedBigInt(newX2)));
+
+      long newX1 = sigma.longValue();
+      long newCarry = sigma.shiftRight(64).longValue();
+
+      x2 = newX2;
+      x1 = newX1;
+      carry = newCarry;
+   }
    
    //for test
    public long nextRaw()
