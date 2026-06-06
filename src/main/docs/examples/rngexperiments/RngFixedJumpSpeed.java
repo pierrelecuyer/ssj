@@ -6,6 +6,7 @@ import java.io.IOException;
 import umontreal.ssj.rng.MRG32k3a;
 import umontreal.ssj.rng.MWC64k2a2;
 import umontreal.ssj.rng.MWC64k3a2;
+import umontreal.ssj.rng.MWC64k3a2;
 import umontreal.ssj.rng.LFSR258;
 import umontreal.ssj.rng.RandomStream;
 
@@ -32,7 +33,7 @@ public class RngFixedJumpSpeed {
     static final int M = 1_000_000;
 
     /** Number of runs. Run 1 is warm-up and is not included in the average. */
-    static final int N = 5;
+    static final int N = 6;
 
     /**
      * Sink variable used to prevent the JVM from removing object creation

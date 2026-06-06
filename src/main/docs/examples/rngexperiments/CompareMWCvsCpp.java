@@ -1,7 +1,9 @@
 package rngexperiments;
 
 import java.io.FileWriter;
+import java.math.BigInteger;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.io.IOException;
 import umontreal.ssj.rng.MWC64k2a2;
 import umontreal.ssj.rng.MWC64k3a2;
@@ -24,7 +26,7 @@ public class CompareMWCvsCpp {
     *   n = 1,000,000 jumps for timing
     *   
     */
-   private static final long N_SPEED = 10_000_000_000L;
+   private static final long N_SPEED = 10_000__000L;
    private static final long JUMP_SIZE = 5000L;
    private static final long N_JUMPS = 1000_000L;
 
@@ -171,7 +173,7 @@ public class CompareMWCvsCpp {
       long start = System.nanoTime();
 
       for (int i = 1; i <= 4; i++) {
-         rng.advanceStateByJump(JUMP_SIZE);
+         rng.advanceStateByJump(BigInteger.valueOf(JUMP_SIZE));
          out.append("after jump " + i + " = " + state(rng.getState()) + "\n");
       }
 
@@ -189,7 +191,7 @@ public class CompareMWCvsCpp {
 
       start = System.nanoTime();
 
-      rng.advanceStateByJump(4L * JUMP_SIZE);
+      rng.advanceStateByJump(BigInteger.valueOf(JUMP_SIZE).multiply(BigInteger.valueOf(4L)));
 
       end = System.nanoTime();
 
@@ -210,7 +212,7 @@ public class CompareMWCvsCpp {
       start = System.nanoTime();
 
       for (long i = 0; i < N_JUMPS; i++) {
-    	  rng.advanceStateByJump(JUMP_SIZE);
+    	  rng.advanceStateByJump(BigInteger.valueOf(JUMP_SIZE));
       }
 
       end = System.nanoTime();
