@@ -2,7 +2,6 @@ package rngexperiments;
 
 import java.math.BigInteger;
 import java.util.Arrays;
-
 import umontreal.ssj.rng.MWC64k3a2;
 
 /**
