@@ -18,8 +18,8 @@ import umontreal.ssj.rng.RandomStreamFactory;
  * rejection, boundary jump sizes, negative jump rejection, output sequence
  * consistency, and clone independence.
  *
- * This class stays quiet unless an assertion fails, then prints a compact
- * summary of the number of successful assertion checks.
+ * If no assertion fails, this class prints a compact summary of the successful
+ * assertion checks followed by a final pass message.
  */
 public class TestJumpsAssert {
 
@@ -52,7 +52,8 @@ public class TestJumpsAssert {
    };
 
    private static final Variant[] VARIANTS = {
-         new Variant<MWC64k2a2>("MWC64k2a2", MWC64k2a2.class, 113, 62, SEEDS_K2) {
+         new Variant<MWC64k2a2>("MWC64k2a2", MWC64k2a2.class, 113, 62,
+                                 195121368084503459L, SEEDS_K2) {
             void setPackageSeed(long[] seed) { MWC64k2a2.setPackageSeed(seed); }
             void setSeed(MWC64k2a2 stream, long[] seed) { stream.setSeed(seed); }
             long[] getState(MWC64k2a2 stream) { return stream.getState(); }
@@ -61,7 +62,8 @@ public class TestJumpsAssert {
             MWC64k2a2 copy(MWC64k2a2 stream) { return stream.clone(); }
          },
 
-         new Variant<MWC64k3a2>("MWC64k3a2", MWC64k3a2.class, 169, 118, SEEDS_K3) {
+         new Variant<MWC64k3a2>("MWC64k3a2", MWC64k3a2.class, 169, 118,
+                                 184704999240316601L, SEEDS_K3) {
             void setPackageSeed(long[] seed) { MWC64k3a2.setPackageSeed(seed); }
             void setSeed(MWC64k3a2 stream, long[] seed) { stream.setSeed(seed); }
             long[] getState(MWC64k3a2 stream) { return stream.getState(); }
@@ -473,6 +475,15 @@ public class TestJumpsAssert {
                   variant.setSeedFromRandomStream(variant.newInstance(), new long[variant.seedLength()]);
                }
             });
+
+      assertException(
+            variant,
+            variant.name + ": all-ones/max-carry state is rejected",
+            new ThrowingRunnable() {
+               public void run() {
+                  variant.setSeedFromRandomStream(variant.newInstance(), variant.allOnesMaxCarrySeed());
+               }
+            });
    }
 
    /**
@@ -747,6 +758,7 @@ public class TestJumpsAssert {
       final String name;
       final int streamAdvanceExponent;
       final int substreamAdvanceExponent;
+      final long maxCarry;
       final long[][] seeds;
       int good = 0;
 
@@ -754,11 +766,12 @@ public class TestJumpsAssert {
       private final RandomStreamFactory factory;
 
       Variant(String name, Class<T> streamClass, int streamAdvanceExponent,
-              int substreamAdvanceExponent, long[][] seeds) {
+              int substreamAdvanceExponent, long maxCarry, long[][] seeds) {
          this.name = name;
          this.streamClass = streamClass;
          this.streamAdvanceExponent = streamAdvanceExponent;
          this.substreamAdvanceExponent = substreamAdvanceExponent;
+         this.maxCarry = maxCarry;
          this.seeds = seeds;
          this.factory = new BasicRandomStreamFactory(streamClass);
       }
@@ -786,6 +799,13 @@ public class TestJumpsAssert {
 
       long[] validSeed() {
          return seeds[0].clone();
+      }
+
+      long[] allOnesMaxCarrySeed() {
+         long[] seed = new long[seedLength()];
+         Arrays.fill(seed, -1L);
+         seed[seed.length - 1] = maxCarry;
+         return seed;
       }
 
       void setSeedFromRandomStream(RandomStream stream, long[] seed) {

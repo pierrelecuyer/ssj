@@ -9,7 +9,7 @@ import umontreal.ssj.rng.MWC64k3a2;
 import umontreal.ssj.rng.RandomStream;
 import umontreal.ssj.rng.RandomStreamFactory;
 
-   /**
+/**
  * Tests the jump implementations of MWC64k2a2 and MWC64k3a2.
  *
  * The tests compare generic BigInteger jumps with repeated generation,
@@ -38,7 +38,7 @@ public class TestMWC64Jumps {
          {12345L, 67890L, 13579L},
          {-1L, 1L, 2L},
          {Long.MIN_VALUE, Long.MAX_VALUE, 999999999999L},
-         {-1L, -1L, 6459908096439L}
+         {-1L, -1L, 184000000000000000L}
    };
 
    /**
@@ -57,7 +57,8 @@ public class TestMWC64Jumps {
    };
 
    private static final Variant[] VARIANTS = {
-         new Variant<MWC64k2a2>("MWC64k2a2", MWC64k2a2.class, 113, 62, SEEDS_K2) {
+         new Variant<MWC64k2a2>("MWC64k2a2", MWC64k2a2.class, 113, 62,
+                                 195121368084503459L, SEEDS_K2) {
             void setPackageSeed(long[] seed) { MWC64k2a2.setPackageSeed(seed); }
             void setSeed(MWC64k2a2 stream, long[] seed) { stream.setSeed(seed); }
             long[] getState(MWC64k2a2 stream) { return stream.getState(); }
@@ -66,7 +67,8 @@ public class TestMWC64Jumps {
             MWC64k2a2 copy(MWC64k2a2 stream) { return stream.clone(); }
          },
 
-         new Variant<MWC64k3a2>("MWC64k3a2", MWC64k3a2.class, 169, 118, SEEDS_K3) {
+         new Variant<MWC64k3a2>("MWC64k3a2", MWC64k3a2.class, 169, 118,
+                                 184704999240316601L, SEEDS_K3) {
             void setPackageSeed(long[] seed) { MWC64k3a2.setPackageSeed(seed); }
             void setSeed(MWC64k3a2 stream, long[] seed) { stream.setSeed(seed); }
             long[] getState(MWC64k3a2 stream) { return stream.getState(); }
@@ -584,6 +586,16 @@ public class TestMWC64Jumps {
                   variant.setSeedFromRandomStream(stream, new long[variant.seedLength()]);
                }
             }));
+
+      printBooleanResult(
+            variant,
+            variant.name + ": all-ones/max-carry state is rejected",
+            expectException(new ThrowingRunnable() {
+               public void run() {
+                  RandomStream stream = variant.newInstance();
+                  variant.setSeedFromRandomStream(stream, variant.allOnesMaxCarrySeed());
+               }
+            }));
    }
 
    /**
@@ -889,6 +901,7 @@ public class TestMWC64Jumps {
       final String name;
       final int streamAdvanceExponent;
       final int substreamAdvanceExponent;
+      final long maxCarry;
       final long[][] seeds;
       int good = 0;
       int bad = 0;
@@ -897,11 +910,12 @@ public class TestMWC64Jumps {
       private final RandomStreamFactory factory;
 
       Variant(String name, Class<T> streamClass, int streamAdvanceExponent,
-              int substreamAdvanceExponent, long[][] seeds) {
+              int substreamAdvanceExponent, long maxCarry, long[][] seeds) {
          this.name = name;
          this.streamClass = streamClass;
          this.streamAdvanceExponent = streamAdvanceExponent;
          this.substreamAdvanceExponent = substreamAdvanceExponent;
+         this.maxCarry = maxCarry;
          this.seeds = seeds;
          this.factory = new BasicRandomStreamFactory(streamClass);
       }
@@ -929,6 +943,13 @@ public class TestMWC64Jumps {
 
       long[] validSeed() {
          return seeds[0].clone();
+      }
+
+      long[] allOnesMaxCarrySeed() {
+         long[] seed = new long[seedLength()];
+         Arrays.fill(seed, -1L);
+         seed[seed.length - 1] = maxCarry;
+         return seed;
       }
 
       void setSeedFromRandomStream(RandomStream stream, long[] seed) {
