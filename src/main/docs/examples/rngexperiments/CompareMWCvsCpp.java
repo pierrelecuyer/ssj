@@ -3,14 +3,13 @@ package rngexperiments;
 import java.io.FileWriter;
 import java.math.BigInteger;
 import java.io.IOException;
+
 import umontreal.ssj.rng.MWC64k2a2;
 //import umontreal.ssj.rng.MWC64k3a2;
 
-
-
 public class CompareMWCvsCpp {
 
-   /*This print same values in c++ tests (MWCSpeed10.res and MWCJump.res)
+   /*This print same values as in c++ tests (MWCSpeed10.res and MWCJump.res)
     *  but only for MWC64k2a2: for the jumps the coefficients must be changed in MWC64k2a2
     * Fixed values chosen to match the C++ files:
     *
@@ -22,9 +21,9 @@ public class CompareMWCvsCpp {
     *   jumpSize = 5000
     *   n0 = 4 successive jumps
     *   n = 1,000,000 jumps for timing
-    *   
+    *
     */
-   private static final long N_SPEED = 10_000__000_000L;
+   private static final long N_SPEED = 10_000_000_000L;
    private static final long JUMP_SIZE = 5000L;
    private static final long N_JUMPS = 1000_000L;
 
@@ -37,43 +36,39 @@ public class CompareMWCvsCpp {
     *   x1 = x_{n-1}
     *   carry = c
     */
-   private static final long[] SEED = {12345L, 12345L, 12345L, 12345L};
+   private static final long[] SEED = {12345L, 12345L, 12345L};
 
    public static void main(String[] args) throws IOException {
-	   
-		StringBuilder out = new StringBuilder();
-		   
-		out.append("-----MWC64k2a2Tests------------------\n");
-	   
-	  get_n_frst_values(10);
+      StringBuilder out = new StringBuilder();
+
+      out.append("-----MWC64k2a2Tests------------------\n");
+
+      printFirstRawValues(10);
       runSpeedRawTest();
       runSpeedU01Test();
       runJumpTest(out); // to match c++ jump res coefficients Ai must be changed, coefficient for jumps are commented in the class MWC64k2a2
 
-      
       System.out.println(out);
 
 //      FileWriter writer = new FileWriter("/home/otman/Documents/GitHub/Data/o-MWC-test/Jumps__precomputing.res");
 //      writer.write(out.toString());
 //      writer.close();
    }
+
    /*
     * for raw vallues
     * */
-   private static void get_n_frst_values(int n) {
-	      MWC64k2a2 rng = new MWC64k2a2();
-	      rng.setSeed(SEED);
-           
-	      System.out.println("Using the seed xxxxxx, the first " + n + " vlaues are :");
-	      String raw;
-	      for (long i = 0; i < n; i++) {
-	    	  raw = Long.toUnsignedString(rng.nextRaw()) ;
-	         System.out.println(raw+ "     ");
-	      }
-	      
+   private static void printFirstRawValues(int n) {
+      MWC64k2a2 rng = new MWC64k2a2();
+      rng.setSeed(SEED);
+
+      System.out.println("Using the seed xxxxxx, the first " + n + " vlaues are :");
+      String raw;
+      for (long i = 0; i < n; i++) {
+         raw = Long.toUnsignedString(rng.nextRaw());
+         System.out.println(raw + "     ");
+      }
    }
-   
-   
 
    /*
     * Same idea as the MWC64k2a2 raw speed block in TestMWCSpeed.cc:
@@ -88,7 +83,6 @@ public class CompareMWCvsCpp {
    private static void runSpeedRawTest() {
       MWC64k2a2 rng = new MWC64k2a2();
 
-      
       rng.setSeed(SEED);
       long sum = 0L;
       long start = System.nanoTime();
@@ -110,7 +104,7 @@ public class CompareMWCvsCpp {
     * dsum = 0;
     * for i = 0 to n-1:
     *     dsum += MWC64k2a2U01();
-    * Java nextValue() uses the top 53 bits and rejects 0.
+    * Java nextDouble() uses the top 53 bits of the 64-bit output.
     */
    private static void runSpeedU01Test() {
       MWC64k2a2 rng = new MWC64k2a2();
@@ -133,7 +127,6 @@ public class CompareMWCvsCpp {
       System.out.println("average = " + (sum / N_SPEED));
       System.out.println("time = " + seconds(start, end));
    }
-   
 
    /*
     * Same structure as MWCJump.res:
@@ -142,30 +135,27 @@ public class CompareMWCvsCpp {
     * 2. Make 4 successive jumps of size 5000.
     * 3. Make one large jump of size 20000 from the initial state.
     * 4. Make 1,000,000 jumps of size 5000 and print final state + time.
- * IMPORTANT for MWCJump.res comparison:
- *
- * TestMWCJump.cc uses different  constants than TestMWCSpeed.cc.
- *
- * To match the MWCJump.res output, temporarily change the constants
- * in MWC64k2a2.java to:
- *   A1 = 0x07b88c6ac008d039L;  // 556348944096481337
- *   A2 = 0x001d4f74ad35355fL;  // 8250136865355103
- ** in MWC64k3a2.java to:
- *A2 = 0x320fbe97bef0f95L, A3 = 0x4a1849ec18bfa6L; 
- */
-    
+    * IMPORTANT for MWCJump.res comparison:
+    *
+    * TestMWCJump.cc uses different  constants than TestMWCSpeed.cc.
+    *
+    * To match the MWCJump.res output, temporarily change the constants
+    * in MWC64k2a2.java to:
+    *   A1 = 0x07b88c6ac008d039L;  // 556348944096481337
+    *   A2 = 0x001d4f74ad35355fL;  // 8250136865355103
+    * in MWC64k3a2.java to:
+    *   A2 = 0x320fbe97bef0f95L, A3 = 0x4a1849ec18bfa6L;
+   */
    private static void runJumpTest(StringBuilder out) {
-	   out.append("");
-	   out.append("============================================================= \n");
-	   out.append("MWC64k2a2 jump test \\n");
-	   out.append("jumpSize = " + JUMP_SIZE +"\n");
-	   out.append("n jumps for timing = " + N_JUMPS +"\n");
+      out.append("============================================================= \n");
+      out.append("MWC64k2a2 jump test\n");
+      out.append("jumpSize = " + JUMP_SIZE + "\n");
+      out.append("n jumps for timing = " + N_JUMPS + "\n");
 
       MWC64k2a2 rng = new MWC64k2a2();
       rng.setSeed(SEED);
 
-      out.append("");
-      out.append("Successive jumps ahead: \\n");
+      out.append("Successive jumps ahead:\n");
       out.append("initial state = " + state(rng.getState()) + "\n");
 
       long start = System.nanoTime();
@@ -183,8 +173,6 @@ public class CompareMWCvsCpp {
        * One big jump from the original seed.
        * This corresponds to jumpSize2 = n0 * jumpSize = 4 * 5000 = 20000.
        */
-//      MWC64k2a2 bigJump = new MWC64k2a2();
-//      bigJump.setSeed(SEED);
       rng.setSeed(SEED);
 
       start = System.nanoTime();
@@ -196,29 +184,27 @@ public class CompareMWCvsCpp {
       out.append("\n");
       out.append("One large jump: \n");
       out.append("jumpSize2 = " + (4L * JUMP_SIZE) + "\n");
-      out.append("state = " + state(rng.getState())+"\n");
+      out.append("state = " + state(rng.getState()) + "\n");
       out.append("time = " + seconds(start, end) + "\n");
 
       /*
        * Timing test:
        * jump ahead by jumpSize, repeated N_JUMPS times.
        */
-//      MWC64k2a2 manyJumps = new MWC64k2a2();
-//      manyJumps.setSeed(SEED);
       rng.setSeed(SEED);
 
       start = System.nanoTime();
 
       for (long i = 0; i < N_JUMPS; i++) {
-    	  rng.advanceStateByJump(BigInteger.valueOf(JUMP_SIZE));
+         rng.advanceStateByJump(BigInteger.valueOf(JUMP_SIZE));
       }
 
       end = System.nanoTime();
 
       out.append("\n");
       out.append("Repeated jump timing:\n");
-      out.append("number of jumps = " + N_JUMPS +"\n");
-      out.append("jumpSize = " + JUMP_SIZE+"\n");
+      out.append("number of jumps = " + N_JUMPS + "\n");
+      out.append("jumpSize = " + JUMP_SIZE + "\n");
       out.append("final state = " + state(rng.getState()) + "\n");
       out.append("time = " + seconds(start, end) + "\n");
    }
@@ -230,14 +216,11 @@ public class CompareMWCvsCpp {
       return "[" +
          Long.toUnsignedString(s[0]) + " " +
          Long.toUnsignedString(s[1]) + " " +
-         Long.toUnsignedString(s[2]) + " " +
-         Long.toUnsignedString(s[3]) +
+         Long.toUnsignedString(s[2]) +
       "]";
    }
 
    private static double seconds(long start, long end) {
       return (end - start) / 1.0e9;
    }
-   
-
 }

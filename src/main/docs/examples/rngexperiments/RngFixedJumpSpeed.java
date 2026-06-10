@@ -3,11 +3,10 @@ package rngexperiments;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import umontreal.ssj.rng.MRG32k3a;
-import umontreal.ssj.rng.MWC64k3a2;
-import umontreal.ssj.rng.MWC64k2a2;
-
 import umontreal.ssj.rng.LFSR258;
+import umontreal.ssj.rng.MRG32k3a;
+import umontreal.ssj.rng.MWC64k2a2;
+import umontreal.ssj.rng.MWC64k3a2;
 import umontreal.ssj.rng.RandomStream;
 
 /**
@@ -30,16 +29,16 @@ import umontreal.ssj.rng.RandomStream;
 public class RngFixedJumpSpeed {
 
     /** Number of jumps performed in each run. */
-    static final int M = 1_000_000;
+    private static final int M = 1_000_000;
 
     /** Number of runs. Run 1 is warm-up and is not included in the average. */
-    static final int N = 6;
+    private static final int N = 6;
 
     /**
      * Sink variable used to prevent the JVM from removing object creation
      * as dead code in the stream-jump tests.
      */
-    static RandomStream streamSink;
+    private static RandomStream streamSink;
 
     /**
      * Runs the stream-jump and substream-jump speed tests.
@@ -59,7 +58,7 @@ public class RngFixedJumpSpeed {
 
         System.out.println(out);
 
-        FileWriter writer = new FileWriter("/home/otman/Documents/GitHub/Data/o-MWC-test/RngFixedJumpSpeedTest.res");
+        FileWriter writer = new FileWriter("RngFixedJumpSpeedTest.res");
         writer.write(out.toString());
         writer.close();
     }
@@ -67,12 +66,12 @@ public class RngFixedJumpSpeed {
     /**
      * Tests stream jumps by repeatedly creating new stream objects.
      */
-    static void testStreamJump(StringBuilder out) {
+    private static void testStreamJump(StringBuilder out) {
         out.append("===== Stream jump: constructor + stream jump + object allocation =====\n\n");
 
         runStreamJumpMRG32k3a(out);
         runStreamJumpLFSR258(out);
-        
+
         runStreamJumpMWC64k2a2(out);
         runStreamJumpMWC64k3a2(out);
 
@@ -82,7 +81,7 @@ public class RngFixedJumpSpeed {
     /**
      * Tests substream jumps by repeatedly calling resetNextSubstream().
      */
-    static void testSubstreamJump(StringBuilder out) {
+    private static void testSubstreamJump(StringBuilder out) {
         out.append("===== Substream jump: resetNextSubstream() =====\n\n");
 
         runSubstreamJump("MRG32k3a", new MRG32k3a(), out);
@@ -96,7 +95,7 @@ public class RngFixedJumpSpeed {
     /**
      * Measures stream jumps for MRG32k3a by repeatedly creating new objects.
      */
-    static void runStreamJumpMRG32k3a(StringBuilder out) {
+    private static void runStreamJumpMRG32k3a(StringBuilder out) {
         out.append("MRG32k3a\n");
 
         double total = 0.0;
@@ -127,7 +126,7 @@ public class RngFixedJumpSpeed {
     /**
      * Measures stream jumps for MWC64k3a2 by repeatedly creating new objects.
      */
-    static void runStreamJumpMWC64k3a2(StringBuilder out) {
+    private static void runStreamJumpMWC64k3a2(StringBuilder out) {
         out.append("MWC64k3a2\n");
 
         double total = 0.0;
@@ -158,7 +157,7 @@ public class RngFixedJumpSpeed {
     /**
      * Measures stream jumps for MWC64k2a2 by repeatedly creating new objects.
      */
-    static void runStreamJumpMWC64k2a2(StringBuilder out) {
+    private static void runStreamJumpMWC64k2a2(StringBuilder out) {
         out.append("MWC64k2a2\n");
 
         double total = 0.0;
@@ -189,7 +188,7 @@ public class RngFixedJumpSpeed {
     /**
      * Measures stream jumps for LFSR258 by repeatedly creating new objects.
      */
-    static void runStreamJumpLFSR258(StringBuilder out) {
+    private static void runStreamJumpLFSR258(StringBuilder out) {
         out.append("LFSR258\n");
 
         double total = 0.0;
@@ -225,7 +224,7 @@ public class RngFixedJumpSpeed {
      * @param stream stream object used for the test
      * @param out output buffer
      */
-    static void runSubstreamJump(String name, RandomStream stream, StringBuilder out) {
+    private static void runSubstreamJump(String name, RandomStream stream, StringBuilder out) {
         out.append(name).append("\n");
 
         double total = 0.0;
