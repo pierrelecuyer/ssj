@@ -1,6 +1,6 @@
 package umontreal.ssj.rng;
-import java.math.BigInteger;
 
+import java.math.BigInteger;
 
 /**
  * <p>
@@ -38,7 +38,6 @@ public class MWC64k2a2 extends RandomStreamBase {
    private long x1, x2, carry;
    // Coefficients a1 and a2. This class currently works with positive signed Java long constants: A1 and A2.
    private static final long A1 = 193154555888013165L, A2 = 1966812196490295L;
-   // private static final long A1 = 556348944096481337L, A2 = 8250136865355103L; // Used in C++ code for jumps.
 
    // 2^(-53), used to convert 53 random bits to a double.
    private static final double NORM53 = 0x1.0p-53;
@@ -111,15 +110,15 @@ public class MWC64k2a2 extends RandomStreamBase {
     * Constructs a new stream.
     */
    public MWC64k2a2() {
-      Ig = nextSeed.clone();              // Save the start MWC state of this stream.
-      IgYMont = nextSeedYMont.clone();    // Save the matching Montgomery LCG state.
-      Bg = new long[3];                   // Allocate the substream state.
-      BgYMont = new long[3];              // Allocate the Montgomery substream state.
+      Ig = nextSeed.clone();
+      IgYMont = nextSeedYMont.clone();
+      Bg = new long[3];
+      BgYMont = new long[3];
 
-      resetStartStream();                 // Set Bg and current state from Ig.
+      resetStartStream();
 
       advanceLCGStateMont(nextSeedYMont, STREAM_JUMP_MONT_0,
-            STREAM_JUMP_MONT_1, STREAM_JUMP_MONT_2, nextSeed); // Prepare the next stream seed.
+            STREAM_JUMP_MONT_1, STREAM_JUMP_MONT_2, nextSeed);
    }
 
    /**
@@ -138,9 +137,9 @@ public class MWC64k2a2 extends RandomStreamBase {
     * @param seed seed {x_{n-2}, x_{n-1}, carry}
     */
    public static void setPackageSeed(long[] seed) {
-      checkSeed(seed);                    // Validate seed.
-      nextSeed = seed.clone();            // Copy seed to avoid external mutation.
-      nextSeedYMont = new long[3];        // Store a new matching Montgomery LCG state.
+      checkSeed(seed);
+      nextSeed = seed.clone();
+      nextSeedYMont = new long[3];
       stateToMontgomeryLCG(nextSeed, nextSeedYMont);
    }
 
@@ -150,11 +149,11 @@ public class MWC64k2a2 extends RandomStreamBase {
     * @param seed seed {x_{n-2}, x_{n-1}, carry}
     */
    public void setSeed(long[] seed) {
-      checkSeed(seed);                    // Validate seed.
-      Ig = seed.clone();                  // Replace initial stream state.
-      IgYMont = new long[3];              // Store the matching Montgomery LCG state.
+      checkSeed(seed);
+      Ig = seed.clone();
+      IgYMont = new long[3];
       stateToMontgomeryLCG(Ig, IgYMont);
-      resetStartStream();                 // Restart stream from new seed.
+      resetStartStream();
    }
 
    /**
@@ -169,39 +168,42 @@ public class MWC64k2a2 extends RandomStreamBase {
    /**
     * Resets this stream to the beginning of its stream.
     */
+   @Override
    public void resetStartStream() {
-      Bg[0] = Ig[0];                      // Substream start = stream start.
+      Bg[0] = Ig[0];
       Bg[1] = Ig[1];
       Bg[2] = Ig[2];
 
-      BgYMont[0] = IgYMont[0]; // Substream Montgomery LCG state = stream Montgomery LCG state.
+      BgYMont[0] = IgYMont[0];
       BgYMont[1] = IgYMont[1];
       BgYMont[2] = IgYMont[2];
 
-      resetStartSubstream();              // Current state = substream start.
+      resetStartSubstream();
    }
 
    /**
     * Resets this stream to the beginning of its current substream.
     */
+   @Override
    public void resetStartSubstream() {
-      x2 = Bg[0];                         // Restore x_{n-2}.
-      x1 = Bg[1];                         // Restore x_{n-1}.
-      carry = Bg[2];                      // Restore carry.
+      x2 = Bg[0];
+      x1 = Bg[1];
+      carry = Bg[2];
    }
 
    /**
     * Moves this stream to the beginning of the next substream.
     */
+   @Override
    public void resetNextSubstream() {
       advanceLCGStateMont(BgYMont, SUBSTREAM_JUMP_MONT_0,
-            SUBSTREAM_JUMP_MONT_1, SUBSTREAM_JUMP_MONT_2, Bg); // Advance the substream Montgomery LCG state.
+            SUBSTREAM_JUMP_MONT_1, SUBSTREAM_JUMP_MONT_2, Bg);
       resetStartSubstream();
    }
 
    /**
     * Generates one MWC step and returns the old x_{n-1},
-    * Compatibility: JDK18 or later. Math.unsignedMultiplyHigh was introduced since JDK18.
+    * Compatibility: JDK 18 or later. Math.unsignedMultiplyHigh was introduced in JDK 18.
     *
     * @return old x_{n-1}, interpreted as unsigned 64-bit
     */
@@ -220,7 +222,7 @@ public class MWC64k2a2 extends RandomStreamBase {
       long lowWithCarry = low + carry;
       long overflow2 = Long.compareUnsigned(lowWithCarry, low) < 0 ? 1L : 0L;
 
-      long high = high1 + high2 + overflow1 + overflow2; // we can replace high1,2,overflow1,2 directly here, kept for readability
+      long high = high1 + high2 + overflow1 + overflow2;
 
       x2 = x1;
       x1 = lowWithCarry;
@@ -245,6 +247,7 @@ public class MWC64k2a2 extends RandomStreamBase {
     *
     * @return the next uniform in [0, 1)
     */
+   @Override
    protected double nextValue() {
       return (nextNumber() >>> 11) * NORM53;
    }
@@ -260,6 +263,7 @@ public class MWC64k2a2 extends RandomStreamBase {
     * @param j upper bound, inclusive
     * @return a random long in {@code [i, j]}
     */
+   @Override
    public long nextLong(long i, long j) {
       if (i > j)
          throw new IllegalArgumentException(i + " is larger than " + j + ".");
@@ -297,6 +301,7 @@ public class MWC64k2a2 extends RandomStreamBase {
     * @param b number of bits to return, between 1 and 64
     * @return the top b bits of the next 64-bit output
     */
+   @Override
    public long nextBitsLong(int b) {
       return nextNumber() >>> (64 - b);
    }
@@ -308,6 +313,7 @@ public class MWC64k2a2 extends RandomStreamBase {
     * @param j upper bound
     * @return random int in [i, j]
     */
+   @Override
    public int nextInt(int i, int j) {
       return (int) nextLong(i, j);
    }
@@ -317,6 +323,7 @@ public class MWC64k2a2 extends RandomStreamBase {
     *
     * @return current state string
     */
+   @Override
    public String toString() {
       StringBuilder sb = new StringBuilder();
 
@@ -372,24 +379,25 @@ public class MWC64k2a2 extends RandomStreamBase {
     *
     * @return independent copy of this stream
     */
+   @Override
    public MWC64k2a2 clone() {
       MWC64k2a2 copy = (MWC64k2a2) super.clone();
 
-      copy.Ig = Ig.clone();               // Copy stream-start state.
-      copy.Bg = Bg.clone();               // Copy substream-start state.
-      copy.IgYMont = IgYMont.clone();     // Deep-copy the stream-start Montgomery LCG state.
-      copy.BgYMont = BgYMont.clone();     // Deep-copy the substream-start Montgomery LCG state.
+      copy.Ig = Ig.clone();
+      copy.Bg = Bg.clone();
+      copy.IgYMont = IgYMont.clone();
+      copy.BgYMont = BgYMont.clone();
 
       return copy;
    }
+
+   private static final long MAX_CARRY = A1 + A2 - 1L;
 
    /**
     * Checks if a seed is usable.
     *
     * @param seed seed to check
     */
-   private static final long MAX_CARRY = A1 + A2 - 1L;
-
    private static void checkSeed(long[] seed) {
       if (seed == null)
          throw new NullPointerException("Seed must not be null.");
@@ -804,9 +812,7 @@ public class MWC64k2a2 extends RandomStreamBase {
     *
     * @param n number of steps to jump
     */
-   // BigInteger n allows for arbitrary jump sizes, to check against stream and substream fixed 
-   // jump sizes and for testing with small jumps. We can use long n letter.
-   public void advanceStateByJump(BigInteger n) { 
+   public void advanceStateByJump(BigInteger n) {
       if (n.signum() < 0)
          throw new IllegalArgumentException("Jump step n cannot be negative.");
 
@@ -843,7 +849,11 @@ public class MWC64k2a2 extends RandomStreamBase {
       carry = newCarry;
    }
 
-   // Expose the raw 64-bit output for testing purposes.
+   /**
+    * Returns the next raw 64-bit output for testing purposes.
+    *
+    * @return next raw 64-bit output
+    */
    public long nextRaw() {
       return nextNumber();
    }
