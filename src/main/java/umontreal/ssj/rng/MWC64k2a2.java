@@ -202,7 +202,7 @@ public class MWC64k2a2 extends RandomStreamBase {
    }
 
    /**
-    * Generates one MWC step and returns the old x_{n-1},
+    * Generates one MWC step and returns the old x_{n-1}.
     * Compatibility: JDK 18 or later. Math.unsignedMultiplyHigh was introduced in JDK 18.
     *
     * @return old x_{n-1}, interpreted as unsigned 64-bit
