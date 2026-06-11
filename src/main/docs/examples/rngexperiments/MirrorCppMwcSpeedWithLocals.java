@@ -5,52 +5,38 @@ import java.io.PrintStream;
 import java.io.FileNotFoundException;
 
 /**
-* Java mirror of the C++ TestMWCSpeed.cc benchmark using local variables to represent simulated 128-bit intermediates.
-*
-* The goal is to reproduce the same generator recurrences and benchmark
-* structure as the C++ file, while making the Java hot loops closer to the C++
-* implementation. Java does not provide uint64_t or __uint128_t, so unsigned
-* 64-bit values are stored in long variables, and each simulated 128-bit
-* intermediate is represented locally by two 64-bit variables, usually tl/th
-* for tauLow/tauHigh and pl/ph for productLow/productHigh.
-*
-* Unlike TestMWCSpeed_2.java, this version does not use setTau... helper
-* methods in the hot generator methods. Generator state remains static
-* because it represents the actual state of the RNG, but arithmetic temporary
-* values are local variables inside each generator.
-*
-* This matters for speed comparisons. Static fields such as tauLow, tauHigh,
-* pLow, pHigh, oldLow, sum3Low, and sum3High are not part of the RNG state;
-* they are only temporary values. Keeping them local gives the JIT compiler a
-* better chance to keep them in registers and avoids passing intermediate
-* results through class-level fields.
-*
-* Findings from the Java speed tests:
-*
-* 1. For carry propagation, the branchless form     high += condition ? 1L : 0L;  was faster in these tests than  if (condition) high++;
-* 	This is why carry updates use the ternary-add form.
-*
-* 2. Generators that require more calls to Math.unsignedMultiplyHigh are
-* generally slower in Java, because Java must emulate the high 64 bits of
-* an unsigned 128-bit product.
-*
-* 3. Some Vigna coefficients are unsigned 64-bit constants larger than
-* Long.MAX_VALUE, for example constants starting with 0xff.... Java stores
-* these as negative long values. Passing such values directly to
-* Math.unsignedMultiplyHigh is slower, because the method must correct the
-* signed high product to obtain the unsigned high product.
-*
-* For these cases, this version inlines the same identity   a = 2^64 - q  with q = -a in Java. It computes q*x and reconstructs
-* (2^64 - q)*x + carry by subtraction. This keeps the same recurrence while
-* avoiding the slower negative-coefficient path in Math.unsignedMultiplyHigh.
-*
-* This local-variable version is mainly intended for speed comparison with
-* the helper-based Java version. It keeps the RNG state static, but keeps
-* the simulated 128-bit arithmetic intermediates as local high/low pairs
-* inside each generator, instead of storing them in static helper fields.
-*/
+ * Java mirror of the C++ TestMWCSpeed.cc benchmark using local variables for 128-bit products.
+ *
+ * The goal is to reproduce the C++ recurrences and benchmark structure while
+ * keeping the Java generator methods close to the C++ implementation. Java has
+ * no uint64_t or __uint128_t, so unsigned 64-bit values use long variables, and
+ * 128-bit products use local high/low pairs.
+ *
+ * This version avoids setTau... helpers in generator methods. Generator state
+ * remains static, while arithmetic temporary values are local to each generator.
+ *
+ * Findings from these speed tests:
+ *
+ * 1. For carry propagation, the branchless ternary-add form
+ *    high += condition ? 1L : 0L; was faster than if (condition) high++.
+ *
+ * 2. Generators with more Math.unsignedMultiplyHigh calls are generally
+ *    slower.
+ *
+ * 3. Some Vigna coefficients are above Long.MAX_VALUE, so Java stores them as
+ *    negative long values. Passing them to Math.unsignedMultiplyHigh is slower.
+ *
+ * For coefficients larger than Long.MAX_VALUE, this version uses
+ * a = 2^64 - q, with q = -a in Java. It computes q*x and reconstructs
+ * (2^64 - q)*x + carry by subtraction. This keeps the same recurrence while
+ * avoiding the slower direct call to Math.unsignedMultiplyHigh with such
+ * coefficients.
+ *
+ * This local-variable version is intended for speed comparison with the
+ * helper-based Java version.
+ */
 
-public final class TestMWCSpeedLocalsNoHelpers {
+public final class MirrorCppMwcSpeedWithLocals {
     static long x, y, z, c;
     static long x1, x2, x3;
     static long sum;
@@ -66,22 +52,603 @@ public final class TestMWCSpeedLocalsNoHelpers {
     static final long GMWC_A0INV = 0xbbf397e9a69da811L;
     static final long GMWC_A3 = 0xff963a86efd088a2L;
 
-    private TestMWCSpeedLocalsNoHelpers() {}
+    private MirrorCppMwcSpeedWithLocals() {}
 
-    static void printResults(String rngName, long elapsedNanos, long sum) {
-        System.out.printf("%16s%13.6f    %18s%n",
-                rngName, elapsedNanos / 1.0e9, Long.toUnsignedString(sum));
-    }
+    public static void main(String[] args) throws java.io.FileNotFoundException {
 
-    static void printResultsDouble(String rngName, long elapsedNanos, double average) {
-        System.out.printf("%16s%13.8f  %12.8f%n",
-                rngName, elapsedNanos / 1.0e9, average);
-    }
+//        PrintStream out = new PrintStream("MirrorCppMwcSpeedWithLocals.res");
+//        System.setOut(out); // Uncomment both lines to write results to a .res file.
 
-    static double unsignedToDouble(long v) {
-        if (v >= 0L)
-            return (double) v;
-        return (double) (v & Long.MAX_VALUE) + 0x1.0p63;
+        // long n = 4;
+        // long n = 1000L * 1000L; // One million
+        // long n = 1000L * 1000L * 1000L; // One billion
+        long n = 1000L * 1000L * 10000L; // Ten billion
+
+        System.out.println("\n========= JAVA mirror with local variables, without helpers =========");
+        System.out.printf("Time to generate n = %d = %.6e numbers.%n", n, (double) n);
+        System.out.println("    Generator     Time (seconds)      Sum mod 2^{64} ");
+        tottmp = System.nanoTime();
+
+        // *******   k = 1  *********************************************
+        System.out.println("k = 1 ");
+
+        testLoop("MWC128 given as a parameter to testLoop    ", MirrorCppMwcSpeedWithLocals::MWC128, n);
+        testLoop("mwc64k1 given as a parameter to testLoop   ", MirrorCppMwcSpeedWithLocals::mwc64k1, n);
+        testLoop("mwc64k3a2 given as a parameter to testLoop ", MirrorCppMwcSpeedWithLocals::mwc64k3a2, n);
+        System.out.println();
+
+        x = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += MWC128();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("MWC128", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k1();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k1", tmp, sum);
+
+        // *******   k = 2  *********************************************
+        System.out.println("k = 2 ");
+
+        x = y = z = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += MWC192();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("MWC192", tmp, sum);
+
+        x1 = x2 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k2a1();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k2a1", tmp, sum);
+
+        x1 = x2 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k2a2();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k2a2", tmp, sum);
+
+        x1 = x2 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k2a2eq();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k2a2eq", tmp, sum);
+
+        x1 = x2 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k2a2eq2();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k2a2eq2", tmp, sum);
+
+        x1 = x2 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k2a1gk();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k2a1gk", tmp, sum);
+
+        x1 = x2 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k2a2gk();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k2a2gk", tmp, sum);
+
+        // *******   k = 3  *********************************************
+        System.out.println("k = 3 ");
+
+        x = y = z = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += MWC256();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("MWC256", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a1();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a1", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a2();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a2", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a3();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a3", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a2eq();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a2eq", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a3eq();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a3eq", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a1Xor();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a1Xor", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a2Xor();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a2Xor", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a3Xor();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a3Xor", tmp, sum);
+        System.out.println();
+
+        // ************************************************************
+        // a_0 < -1
+
+        x = y = z = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += GMWC256();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("GMWC256", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a1gk();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a1gk", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a2gk();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a2gk", tmp, sum);
+
+        x1 = x2 = x3 = c = 12345L;
+        sum = 0L;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            sum += mwc64k3a3gk();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResults("mwc64k3a3gk", tmp, sum);
+
+        // ******************************************************
+        System.out.println("\nUniform over (0,1) ");
+        System.out.printf("standard dev. for average = (4n)^{-1/2} =    %.8f%n",
+                1.0 / Math.sqrt(2.0 * n));
+        System.out.println("      Generator              Time (seconds)    Average ");
+        double dsum = 0.0;
+
+        // k = 2
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k2a2U01();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k2a2U01    53           ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k2a2() >>> 1) * twom63;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k2a2 U(0,1) 63          ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k2a2() >>> 11) * twom53 + twom55;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k2a2 U(0,1) 53, + twom55", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k2a2U01i();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k2a2U01i U(0,1) 53      ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k2a2XorU01();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k2a2XorU01 U(0,1) 53    ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k2a2XorU01i();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k2a2XorU01i U(0,1) 53   ", tmp, dsum / n);
+
+        System.out.println();
+
+        // k = 3
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a1() >>> 11) * twom53;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1 U(0,1) 53          ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a1U01();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1U01 U(0,1) 53       ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a1U01w();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1U01w U(0,1) 53      ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a1U01i();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1U01i U(0,1) 53      ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a1XorU01();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1XorU01 U(0,1) 53    ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a1XorU01i();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1XorU01i U(0,1) 53   ", tmp, dsum / n);
+
+        System.out.println();
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a2() >>> 11) * twom53;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2 U(0,1) 53          ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a2U01();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2U01 U(0,1) 53       ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a2U01w();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2U01w U(0,1) 53      ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a2U01i();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2U01i U(0,1) 53      ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a2XorU01();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2XorU01 U(0,1) 53    ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a2XorU01i();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2XorU01i U(0,1) 53   ", tmp, dsum / n);
+
+        System.out.println();
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a3() >>> 11) * twom53;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a3 U(0,1) 53          ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a3U01w();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a3U01w U(0,1) 53      ", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += mwc64k3a3U01i();
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a3U01i U(0,1) 53      ", tmp, dsum / n);
+
+        // ******************************************************************
+        // Extra tests that appear after return 0 in the C++ file.
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += unsignedToDouble(mwc64k2a2()) * twom64;
+        }
+        printResultsDouble("mwc64k2a2 U(0,1) 64", System.nanoTime() - tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k2a2Xor() >>> 11) * twom53;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k2a2Xor U(0,1) 53", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k2a2Xor() >>> 1) * twom63;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k2a2Xor U(0,1) 63", tmp, dsum / n);
+
+        x1 = x2 = x3 = c = 12345L;
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += unsignedToDouble(mwc64k2a2Xor()) * twom64;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k2a2Xor U(0,1) 64", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a1() >>> 11) * twom53;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1 U(0,1) 53", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a1() >>> 1) * twom63;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1 U(0,1) 63", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += unsignedToDouble(mwc64k3a1()) * twom64;
+        }
+        printResultsDouble("mwc64k3a1 U(0,1) 64", System.nanoTime() - tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a1Xor() >>> 11) * twom53;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1Xor U(0,1)", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a1Xor() >>> 1) * twom63;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1Xor U(0,1) 63", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += unsignedToDouble(mwc64k3a1Xor()) * twom64;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a1Xor U(0,1) 64", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a2() >>> 11) * twom53;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2 U(0,1)   ", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a2() >>> 1) * twom63;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2 U(0,1) 63", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += unsignedToDouble(mwc64k3a2()) * twom64;
+        }
+        printResultsDouble("mwc64k3a2 U(0,1) 64", System.nanoTime() - tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a2Xor() >>> 11) * twom53;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2Xor U(0,1) 53", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a2Xor() >>> 1) * twom63;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2Xor U(0,1) 63", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += unsignedToDouble(mwc64k3a2Xor()) * twom64;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a2Xor U(0,1) 64", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a3() >>> 11) * twom53;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a3 U(0,1) 53 ", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += (mwc64k3a3() >>> 1) * twom63;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a3 U(0,1) 63 ", tmp, dsum / n);
+
+        dsum = 0.0;
+        tmp = System.nanoTime();
+        for (long i = 0; i < n; i++) {
+            dsum += unsignedToDouble(mwc64k3a3()) * twom64;
+        }
+        tmp = System.nanoTime() - tmp;
+        printResultsDouble("mwc64k3a3 U(0,1) 64 ", tmp, dsum / n);
+
+        System.out.println();
+        printResultsDouble("Total computing time: ", System.nanoTime() - tottmp, 0);
     }
 
     // *******   k = 1  **********************************************
@@ -772,603 +1339,20 @@ public final class TestMWCSpeedLocalsNoHelpers {
 
     // *************************************************************************
 
-    public static void main (String[] args) throws java.io.FileNotFoundException {
-    	
-    	//PrintStream out = new PrintStream("C:/Users/cherrato/Documents/GitHub/Data/o-MWC-test/MWCSpeed10JavaLoc.res");// Uncomment to write restults
-    	
-    	//System.setOut(out);
-        // long n = 4;
-        // long n = 1000L * 1000L; // One million
-        // long n = 1000L * 1000L * 1000L; // One billion
-        long n = 1000L * 1000L * 10000L; // Ten billions
-
-        System.out.println("\n=========JAVA WITH LOCAL FIELDS NO HELPERS========");
-        System.out.printf("Time to generate n = %d = %.6e numbers.%n", n, (double) n);
-        System.out.println("    Generator     Time (seconds)      Sum mod 2^{64} ");
-        tottmp = System.nanoTime();
-
-        // *******   k = 1  *********************************************
-        System.out.println("k = 1 ");
-
-        testLoop("MWC128 given as a parameter to testLoop    ", TestMWCSpeedLocalsNoHelpers::MWC128, n);
-        testLoop("mwc64k1 given as a parameter to testLoop   ", TestMWCSpeedLocalsNoHelpers::mwc64k1, n);
-        testLoop("mwc64k3a2 given as a parameter to testLoop ", TestMWCSpeedLocalsNoHelpers::mwc64k3a2, n);
-        System.out.println();
-
-        
-        x = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += MWC128();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("MWC128", tmp, sum);
-        
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k1();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k1", tmp, sum);
-
-
-        // *******   k = 2  *********************************************
-        System.out.println("k = 2 ");
-
-        x = y = z = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += MWC192();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("MWC192", tmp, sum);
-
-        x1 = x2 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k2a1();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k2a1", tmp, sum);
-
-        x1 = x2 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k2a2();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k2a2", tmp, sum);
-
-        x1 = x2 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k2a2eq();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k2a2eq", tmp, sum);
-
-        x1 = x2 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k2a2eq2();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k2a2eq2", tmp, sum);
-
-        x1 = x2 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k2a1gk();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k2a1gk", tmp, sum);
-
-        x1 = x2 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k2a2gk();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k2a2gk", tmp, sum);
-
-        // *******   k = 3  *********************************************
-        System.out.println("k = 3 ");
-
-        x = y = z = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += MWC256();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("MWC256", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a1();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a1", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a2();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a2", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a3();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a3", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a2eq();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a2eq", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a3eq();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a3eq", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a1Xor();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a1Xor", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a2Xor();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a2Xor", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a3Xor();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a3Xor", tmp, sum);
-        System.out.println();
-
-        // ************************************************************
-        // a_0 < -1
-
-        x = y = z = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += GMWC256();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("GMWC256", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a1gk();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a1gk", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a2gk();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a2gk", tmp, sum);
-
-        x1 = x2 = x3 = c = 12345L;
-        sum = 0L;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            sum += mwc64k3a3gk();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResults("mwc64k3a3gk", tmp, sum);
-
-        // ******************************************************
-        System.out.println("\nUniform over (0,1) ");
-        System.out.printf("standard dev. for average = (4n)^{-1/2} =    %.8f%n",
-                1.0 / Math.sqrt(2.0 * n));
-        System.out.println("      Generator              Time (seconds)    Average ");
-        double dsum = 0.0;
-
-        // k = 2
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k2a2U01();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k2a2U01    53           ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k2a2() >>> 1) * twom63;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k2a2 U(0,1) 63          ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k2a2() >>> 11) * twom53 + twom55;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k2a2 U(0,1) 53, + twom55", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k2a2U01i();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k2a2U01i U(0,1) 53      ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k2a2XorU01();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k2a2XorU01 U(0,1) 53    ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k2a2XorU01i();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k2a2XorU01i U(0,1) 53   ", tmp, dsum / n);
-
-        System.out.println();
-
-        // k = 3
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a1() >>> 11) * twom53;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1 U(0,1) 53          ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a1U01();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1U01 U(0,1) 53       ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a1U01w();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1U01w U(0,1) 53      ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a1U01i();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1U01i U(0,1) 53      ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a1XorU01();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1XorU01 U(0,1) 53    ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a1XorU01i();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1XorU01i U(0,1) 53   ", tmp, dsum / n);
-
-        System.out.println();
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a2() >>> 11) * twom53;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2 U(0,1) 53          ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a2U01();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2U01 U(0,1) 53       ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a2U01w();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2U01w U(0,1) 53      ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a2U01i();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2U01i U(0,1) 53      ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a2XorU01();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2XorU01 U(0,1) 53    ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a2XorU01i();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2XorU01i U(0,1) 53   ", tmp, dsum / n);
-
-        System.out.println();
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a3() >>> 11) * twom53;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a3 U(0,1) 53          ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a3U01w();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a3U01w U(0,1) 53      ", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += mwc64k3a3U01i();
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a3U01i U(0,1) 53      ", tmp, dsum / n);
-
-        // ******************************************************************
-        // Extra tests that appear after return 0 in the C++ file.
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += unsignedToDouble(mwc64k2a2()) * twom64;
-        }
-        printResultsDouble("mwc64k2a2 U(0,1) 64", System.nanoTime() - tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k2a2Xor() >>> 11) * twom53;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k2a2Xor U(0,1) 53", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k2a2Xor() >>> 1) * twom63;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k2a2Xor U(0,1) 63", tmp, dsum / n);
-
-        x1 = x2 = x3 = c = 12345L;
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += unsignedToDouble(mwc64k2a2Xor()) * twom64;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k2a2Xor U(0,1) 64", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a1() >>> 11) * twom53;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1 U(0,1) 53", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a1() >>> 1) * twom63;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1 U(0,1) 63", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += unsignedToDouble(mwc64k3a1()) * twom64;
-        }
-        printResultsDouble("mwc64k3a1 U(0,1) 64", System.nanoTime() - tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a1Xor() >>> 11) * twom53;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1Xor U(0,1)", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a1Xor() >>> 1) * twom63;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1Xor U(0,1) 63", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += unsignedToDouble(mwc64k3a1Xor()) * twom64;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a1Xor U(0,1) 64", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a2() >>> 11) * twom53;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2 U(0,1)   ", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a2() >>> 1) * twom63;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2 U(0,1) 63", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += unsignedToDouble(mwc64k3a2()) * twom64;
-        }
-        printResultsDouble("mwc64k3a2 U(0,1) 64", System.nanoTime() - tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a2Xor() >>> 11) * twom53;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2Xor U(0,1) 53", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a2Xor() >>> 1) * twom63;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2Xor U(0,1) 63", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += unsignedToDouble(mwc64k3a2Xor()) * twom64;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a2Xor U(0,1) 64", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a3() >>> 11) * twom53;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a3 U(0,1) 53 ", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += (mwc64k3a3() >>> 1) * twom63;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a3 U(0,1) 63 ", tmp, dsum / n);
-
-        dsum = 0.0;
-        tmp = System.nanoTime();
-        for (long i = 0; i < n; i++) {
-            dsum += unsignedToDouble(mwc64k3a3()) * twom64;
-        }
-        tmp = System.nanoTime() - tmp;
-        printResultsDouble("mwc64k3a3 U(0,1) 64 ", tmp, dsum / n);
-
-        System.out.println();
-        printResultsDouble("Total computing time: ", System.nanoTime() - tottmp, 0);
+    static void printResults(String rngName, long elapsedNanos, long sum) {
+        System.out.printf("%16s%13.6f    %18s%n",
+                rngName, elapsedNanos / 1.0e9, Long.toUnsignedString(sum));
     }
+
+    static void printResultsDouble(String rngName, long elapsedNanos, double average) {
+        System.out.printf("%16s%13.8f  %12.8f%n",
+                rngName, elapsedNanos / 1.0e9, average);
+    }
+
+    static double unsignedToDouble(long v) {
+        if (v >= 0L)
+            return (double) v;
+        return (double) (v & Long.MAX_VALUE) + 0x1.0p63;
+    }
+
 }

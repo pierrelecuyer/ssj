@@ -10,7 +10,7 @@ import umontreal.ssj.rng.RandomStream;
 import umontreal.ssj.rng.RandomStreamFactory;
 
 /**
- * Assertion-based version of TestMWC64Jumps.
+ * Assertion-based version of TestMwc64JumpBehavior.
  *
  * The tests compare generic BigInteger jumps with repeated generation,
  * fixed substream jumps, and stream construction. They also check jump
@@ -21,7 +21,7 @@ import umontreal.ssj.rng.RandomStreamFactory;
  * If no assertion fails, this class prints a compact summary of the successful
  * assertion checks followed by a final pass message.
  */
-public class TestJumpsAssert {
+public class TestMwc64JumpBehaviorAssert {
 
    private static final int[] SMALL_JUMPS = {
          0, 1, 2, 3, 4, 5, 10, 63, 64, 65, 100, 1000, 10000

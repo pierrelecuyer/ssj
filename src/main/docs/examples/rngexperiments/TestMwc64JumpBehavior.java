@@ -18,7 +18,7 @@ import umontreal.ssj.rng.RandomStreamFactory;
  * rejection, boundary jump sizes, negative jump rejection, output sequence
  * consistency, and clone independence.
  */
-public class TestMWC64Jumps {
+public class TestMwc64JumpBehavior {
 
    private static final int[] SMALL_JUMPS = {
          0, 1, 2, 3, 4, 5, 10, 63, 64, 65, 100, 1000, 10000
