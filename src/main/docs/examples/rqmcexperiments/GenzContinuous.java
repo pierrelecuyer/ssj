@@ -27,7 +27,7 @@ public class GenzContinuous implements MonteCarloModelDouble {
     *
     * @param s dimension of the function
     * @param c scale parameters, all strictly positive
-    * @param w location parameters, all in the open interval @f$(0,1)@f$
+    * @param w location parameters, all in the half-open interval @f$[0,1)@f$
     */
    public GenzContinuous(int s, double[] c, double[] w) {
       if (s <= 0)
@@ -109,8 +109,8 @@ public class GenzContinuous implements MonteCarloModelDouble {
       return "GenzContinuous";
    }
    
-   /////////for test
+   // for testing
    public double getExactMean() {
-	   return exactMean;
-	}
+      return exactMean;
+   }
 }
