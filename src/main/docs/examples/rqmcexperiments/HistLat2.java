@@ -25,6 +25,7 @@ import umontreal.ssj.stat.*;
 	
 public class HistLat2 {
 
+   // Very long main function.
    public static void main(String[] args) throws IOException {
 
       String dataDir = "/home/otman/Documents/GitHub/Data/wsc23-test/";// .dat files should be here

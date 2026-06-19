@@ -51,8 +51,7 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
    static TallyStore statReps = new TallyStore(); // Collects stats on RQMC replicates.
 
    /**
-    * Formats the table as a `String`, one row per value of k, one column with a
-    * line feed after each observation.
+    * Formats the table as a `String`, one row per value of k, one column for each type of point set.
     */
    public static String tableToString(int mink, int maxk, double[][] table) throws IOException {
       StringBuilder sb = new StringBuilder();
@@ -68,8 +67,8 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
    }
 
    /**
-    * Perform m independent RQMC replications and save the average and variance
-    * for that particular k and point set type in the appropriate tables.
+    * Perform m independent RQMC replications and save the average, variance, log variance,
+    * and kurtosis for this particular k and point set type in the appropriate tables.
     */
    public static void simulRepsRQMC(MonteCarloModelDouble model, PointSet p, PointSetIterator iter, 
          PointSetRandomization rand, int m, int k, int typePts) {

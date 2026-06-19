@@ -17,17 +17,41 @@ import umontreal.ssj.stat.ScaledHistogram;
 
 
 /**
- * Generates compact LaTeX/PGFPlots histogram pages for SAMO25 RQMC experiments.
+ * Produces a LaTeX/PGFPlots document that contains a collection of histograms 
+ * for the distribution of QMC or RQMC estimators for one or more functions,
+ * various dimensions `s` and number of points \(n=2^k\). 
+ * 
+ * NOTES and QUESTIONS:
+ * 
+ * -- I think this program should be made general and more flexible, not only for the samo25 files.
+ * Should the main function that is specific to samo25 be in a separate file?  
+ * If we do that, the global variables in the class would have to be passed as parameters to the functions instead.
+ * But then these functions would be more general.
+ * -- It is not a good idea to scan all the .dat files in the directory, because we 
+ * may want to do only one or a few functions, there may be other .dat files there that are
+ * irrelevant, we may want to name the files in a different way, etc.  
+ * I think all the file names that we want should be constructed in the program,
+ * which should then check the directory to find them.
+ * Currently there is a file hash map, but no explanation of what it does.
+ * -- Currently, the main loops over a list of models. What is does for each model should perhaps
+ * be put in a method, to simplify the main function ?
+ * -- The directory names should be set by the user...
+ * -- The option of shifting the data should probably be removed? 
+ * They should already be shifted properly in the .dat files.  We can do that. 
+ * -- Should the functions to make the header and footer of the file be defined elsewhere, 
+ * e.g., in the stat package?
+ * -- Does one `comparison page` means one value of s for one function?
+ * 
  *
  * The class scans a directory of `.dat` files, groups them by model, dimension,
- * method, and sample size, then writes one standalone LaTeX file per model.
+ * method, and sample size, then writes one stand-alone LaTeX file per model.
  * Each page compares several RQMC methods over several values of \(n=2^k\).
  *
  * The histograms are built from SSJ `TallyStore` and `TallyHistogram` objects,
  * with optional centering for models whose exact integral is known.
  */
 
-public class HistLatexSamo25 {
+public class HistCollectionLatex {
 
 	private static final int NUM_BINS = 100; //Number of bins used for every histogram.
 	private static final int RIGHT_EXT_MARK = 2; //Number of largest observations marked on the right side of each histogram.
@@ -36,8 +60,10 @@ public class HistLatexSamo25 {
 	private static final String AXIS_WIDTH = "6.5cm";  // latex plot option
 	private static final String AXIS_HEIGHT = "5.5cm"; // latex plot option
 
-   public static void main(String[] args) throws IOException {
-
+   // Very long main function.  Say what it does.
+	public static void main(String[] args) throws IOException {
+	   
+      // These directory names must be changed to the desired ones. 
       String dataDir = "/home/otman/Dropbox/samo25/datapl/"; // dat files source directory 
       String latexDir = "/home/otman/Documents/GitHub/Data/samo25-test/latex-files/"; // latex output dir
 
@@ -58,6 +84,7 @@ public class HistLatexSamo25 {
       File outputFolder = new File(latexDir);
       outputFolder.mkdirs();
 
+      //  Are we sure we always want to treat all the .dat files that are there?   ******
       File[] files = inputFolder.listFiles((dir, name) -> name.endsWith(".dat"));
 
       if (files == null || files.length == 0) {

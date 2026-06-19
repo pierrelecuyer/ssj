@@ -647,8 +647,8 @@ public class DigitalNetBase2 extends DigitalNet {
 
 
    /** 
-    * Same as @link nestedUniformScramble(RandomStream,double[][],int)@endlink, but
-    * it returns the points as integers from 0 to 2^outDigits - 1, instead of doubles.
+    * Same as @link nestedUniformScramble(RandomStream,double[][],int)@endlink, except 
+    * that `outDigits` can be larger.
     */
    public void nestedUniformScramble64(RandomStream stream, double[][] output, int numBits) {
       assert output.length == numPoints;

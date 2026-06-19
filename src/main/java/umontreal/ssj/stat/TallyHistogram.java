@@ -119,47 +119,6 @@ public class TallyHistogram extends Tally {
    }
 
    /**
-    * Fills this object from the first numObs observations in array obs.
-    */
-   public void fillFromArray(double[] obs, int numObs) {
-      init();
-      for (int i = 0; i < numObs; i++)
-         add(obs[i]);
-   }
-
-   /**
-    * Fills this object from the entire array obs.
-    */
-   public void fillFromArray(double[] obs) {
-      fillFromArray(obs, obs.length);
-   }
-
-   /**
-    * Fills this object from the observations in a TallyStore object.
-    */
-   public void fillFromTallyStore(TallyStore ts) {
-      fillFromArray(ts.getArray(), ts.numberObs());
-   }
-
-   /**
-    * Fills this object by reading the observations from the file `filename`.
-    * This file should contain only a set of real numbers separated by a white space
-    * or a new line. Each one will be one observation.
-    */
-   public void fillFromFile(String filename) {
-      init();
-      try {
-         File file = new File(filename);
-         Scanner scanner = new Scanner(file);
-         while (scanner.hasNextDouble())
-             add(scanner.nextDouble());
-         scanner.close();
-      } catch (FileNotFoundException e) {
-         System.out.println("fillFromFile: File not found");
-      }
-   } 
-
-   /**
     * Gives a new observation @f$x@f$ to the statistical probe. Updates are made as
     * for the parent `Tally` object. Also increases by 1 the bin counter in which
     * value @f$x@f$ falls. Values that fall outside the interval @f$[a,b]@f$ are
