@@ -212,9 +212,21 @@ public class Tally extends StatProbe implements Cloneable {
       return numObs;
    }
 
+   /**
+    * @return the sum of collected observations
+    */
    @Override
    public double sum() {
       return numObs * curAverage;
+   }
+   
+   /**
+    * Returns the sum of squares of collected observations.
+    * 
+    * @return the sum of squares of collected observations
+    */
+   public double sumSquares() {
+      return curSum2;
    }
 
    /**
