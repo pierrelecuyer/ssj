@@ -14,6 +14,7 @@ public class Gaussian implements MonteCarloModelDouble {
 
    int s;
    double sum;
+   double mean;
 
    // Constructor.
    public Gaussian(int s) {
@@ -28,11 +29,12 @@ public class Gaussian implements MonteCarloModelDouble {
          u = stream.nextDouble();
          sum += u * u;
       }
+      mean = Math.pow(1.462651745907181, s);
    }
 
    // Generates and returns X, without IS.
    public double getPerformance() {
-      return Math.exp(sum);
+      return Math.exp(sum) - mean;
    }
 
    // Descriptor of this model.

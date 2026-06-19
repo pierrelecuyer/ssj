@@ -16,13 +16,17 @@ public class Oscillatory implements MonteCarloModelDouble {
    int s;
    double sum;
    double[] a;
+   double mean = 1.0;
 
    // Constructor.
    public Oscillatory(int s) {
       this.s = s;
       a = new double[s];
-      for (int j = 0; j < s; j++)
+      for (int j = 0; j < s; j++) {
          a[j] = (double) (j + 1) / (double) s;
+         mean *= 2.0 * Math.sin(a[j] / 2.0) / a[j];
+      } 
+      mean *= Math.cos((s + 1.0) / 4.0);
    }
 
    // Generates the values and compute the sum.   
@@ -35,7 +39,7 @@ public class Oscillatory implements MonteCarloModelDouble {
 
    // Return the value X of the function. Here, E[X] is not zero. 
    public double getPerformance() {
-      return Math.cos(sum);
+      return Math.cos(sum) - mean;
    }
 
    // Descriptor.

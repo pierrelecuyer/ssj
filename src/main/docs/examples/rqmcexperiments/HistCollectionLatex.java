@@ -212,7 +212,7 @@ public class HistCollectionLatex {
 
       for (String method : methods) {
 
-    	  out.print("\\raisebox{0.7cm}{\\rotatebox{90}{\\scriptsize "
+    	   out.print("\\raisebox{0.7cm}{\\rotatebox{90}{\\scriptsize "
     		      + escapeLatex(method) + "}}");
          for (int k : ks) {
             File file = findFile(fileMap, baseTag, method, k, m);
@@ -563,7 +563,7 @@ public class HistCollectionLatex {
 	   double prod = 1.0;
 
 	   for (int j = 1; j <= s; j++) {
-	      double a = (double) j / s;
+	      double a = (double) j / s;     
 	      prod *= 2.0 * Math.sin(a / 2.0) / a;
 	   } 
 
