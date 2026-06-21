@@ -159,8 +159,16 @@ public class Tally extends StatProbe implements Cloneable {
       try {
          File file = new File(filename);
          Scanner scanner = new Scanner(file);
-         
-         // TODO  ......
+         while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if (line.startsWith(skip))
+               continue;
+
+            Scanner lineScanner = new Scanner(line);
+            while (lineScanner.hasNextDouble())
+               add(lineScanner.nextDouble());
+            lineScanner.close();
+         }
          scanner.close();
       } catch (FileNotFoundException e) {
          System.out.println("fillFromFile: File not found");
