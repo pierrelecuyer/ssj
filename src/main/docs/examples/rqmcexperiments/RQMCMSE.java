@@ -27,10 +27,9 @@ public class RQMCMSE {
     *
     * @param tally tally containing the estimator values
     * @return estimated MSE relative to {@link #TARGET}
-    */
+   */
    private static double mse(Tally tally) {
       double bias = tally.average() - TARGET;
-   //   return tally.sumSquares() / tally.numberObs() + bias * bias;
       return tally.variance() + bias * bias;
    }
 
@@ -40,7 +39,8 @@ public class RQMCMSE {
     * @param filename input data file
     * @param m number of bootstrap samples
     * @param r size of each bootstrap sample
-    * @param stream random stream; its current substream is restarted before sampling
+    * @param stream random stream; its current substream is restarted before
+    *               sampling
     * @return array containing the MSE of @f$A_r@f$ and @f$M_r@f$
     * @throws IllegalArgumentException if the file contains no observations
     */
@@ -48,7 +48,8 @@ public class RQMCMSE {
       // Restart the current substream before generating the bootstrap samples.
       stream.resetStartSubstream();
       TallyStore simulations = new TallyStore();
-      simulations.fillFromFile(filename); //use fillFromFile(filename, skip) if file contains comments
+      // Use fillFromFile(filename, skip) if the file contains comments.
+      simulations.fillFromFile(filename);
       int numSim = simulations.numberObs();
       if (numSim == 0)
          throw new IllegalArgumentException("No simulation values found in " + filename);
@@ -67,8 +68,8 @@ public class RQMCMSE {
          }
 
          statAver.add(sum / r);
-         Arrays.sort(sample); 
-         if ((r & 1) == 0) 
+         Arrays.sort(sample);
+         if ((r & 1) == 0)
             statMed.add((sample[r / 2 - 1] + sample[r / 2]) / 2.0);
          else
             statMed.add(sample[r / 2]);
@@ -108,6 +109,7 @@ public class RQMCMSE {
     * @param m number of bootstrap samples
     * @param r size of each bootstrap sample
     * @param stream random stream used for sampling
+    * @throws IllegalArgumentException if the result directory cannot be created
     */
    private static void computeFolderMse(String dataDir, String resultDir,
          String functionName, int s,
@@ -117,7 +119,7 @@ public class RQMCMSE {
       File resultFolder = new File(resultDir);
       if (!resultFolder.exists() && !resultFolder.mkdirs())
          throw new IllegalArgumentException(
-               "Could not create result folder " + resultFolder.getAbsolutePath()); 
+               "Could not create result folder " + resultFolder.getAbsolutePath());
 
       StringBuilder header = new StringBuilder(" k ");
       for (String method : methods)
@@ -129,7 +131,7 @@ public class RQMCMSE {
       for (int i = 0; i < ks.length; i++) {
          int k = ks[i];
 
-         // New bootstrap sequence for this k. Each method will restart this substream.
+         // New bootstrap sequence for this k. Each method restarts this substream.
          stream.resetNextSubstream();
 
          arRows.append(k).append("  ");
@@ -175,9 +177,11 @@ public class RQMCMSE {
     * Configures and runs the MSE experiments.
     */
    public static void main(String[] args) {
-      String dataDir = "/home/otman/Documents/dropbox_copy/samo25_copy/datapl/";
-      String resultDir = "/home/otman/Documents/GitHub/Data/o-test/testNewC/";
-      
+
+      // Adapt these paths if the input and output directories are elsewhere.
+      String dataDir = "datapl/";
+      String resultDir = "results/";
+
       int m = 100000;
       int r = 11;
       int numObs = 10000;
@@ -185,11 +189,11 @@ public class RQMCMSE {
       String[] functionNames = {"MC2"};
       int[] dimensions = {4};
       int[] ks = {8, 10, 12, 14, 16};
-      String[] methods = { "Lat-RS", "Lat-RSB",  "Lat-Rv",  "Lat-Rpv",  
-                           "Lat-RvRS",  "Lat-RvRSB",  "Lat-RpvRS",  "Lat-RpvRSB",     
-                           "Sob-RDS",  "Sob-RDSB",  "Sob-LMS",  "Sob-LMS-RDS", "Sob-NUS"
+      String[] methods = {
+            "Lat-RS", "Lat-RSB", "Lat-Rv", "Lat-Rpv",
+            "Lat-RvRS", "Lat-RvRSB", "Lat-RpvRS", "Lat-RpvRSB",
+            "Sob-RDS", "Sob-RDSB", "Sob-LMS", "Sob-LMS-RDS", "Sob-NUS"
       };
-      
 
       RandomStream stream = new LFSR258();
       for (String functionName : functionNames)
