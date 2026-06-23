@@ -115,7 +115,7 @@ public class GenzContinuous implements MonteCarloModelDouble {
    public String getTag() {
       return "GenzContinuous";
    }
-   
+
    // for testing
    public double getExactMean() {
       return exactMean;

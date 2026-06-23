@@ -115,6 +115,7 @@ public class GenzProductPeak implements MonteCarloModelDouble {
    public String getTag() {
       return "GenzProductPeak";
    }
+
    // for testing
    public double getExactMean() {
       return exactMean;

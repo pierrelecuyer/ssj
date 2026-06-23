@@ -29,7 +29,8 @@ import umontreal.ssj.util.Num;
 public class GenzGaussian implements MonteCarloModelDouble {
 
    private final int s;
-   private final double[] cSquared; // Precomputed (C_j)^2 for simulate. C_j are needed only for exact value
+   // Precomputed (C_j)^2 for simulate. C_j are needed only for the exact value.
+   private final double[] cSquared;
    private final double[] w;
    private final double exactMean;
 
@@ -120,9 +121,9 @@ public class GenzGaussian implements MonteCarloModelDouble {
    public String getTag() {
       return "GenzGaussian";
    }
+
    // for testing
    public double getExactMean() {
       return exactMean;
    }
-
 }

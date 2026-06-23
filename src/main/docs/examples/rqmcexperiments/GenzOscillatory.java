@@ -109,7 +109,7 @@ public class GenzOscillatory implements MonteCarloModelDouble {
    public String getTag() {
       return "GenzOscillatory";
    }
-   
+
    // for testing
    public double getExactMean() {
       return exactMean;
