@@ -5,19 +5,32 @@ import umontreal.ssj.rng.RandomStream;
 import umontreal.ssj.util.Num;
 
 /**
- * Implements the general Genz Gaussian peak function taken from @cite IGEN87a.
+ * Implements the general Genz Gaussian peak function taken from @cite iGEN87a.
  *
  * The function is defined by
  * @f[
  *   f(u_1,\dots,u_s) =
  *   \exp\left(-\sum_{j=1}^s c_j^2 (u_j - w_j)^2\right),
  * @f]
- * for @f$\bm u = (u_1,\dots,u_s) \in [0,1]^s@f$.
+ * for @f$\boldsymbol{u} = (u_1,\dots,u_s) \in [0,1]^s@f$.
+ *
+ * The exact solution is taken from @cite iKAA25a and is given by
+ * @f[
+ *   \int_{[0,1]^s} f(\boldsymbol{u})\,\mathrm{d}\boldsymbol{u}
+ *   = \frac{\pi^{s/2}}{2^s}
+ *     \prod_{j=1}^s
+ *     \frac{\operatorname{erf}(c_j w_j)
+ *       + \operatorname{erf}(c_j(1-w_j))}{c_j}.
+ * @f]
+ * @cite iKAA25a assumes @f$0 < w_j < 1@f$, whereas this implementation also
+ * permits @f$w_j = 0@f$. The exact formula remains valid at this boundary
+ * value.
  */
 public class GenzGaussian implements MonteCarloModelDouble {
 
    private final int s;
-   private final double[] cSquared; // Precomputed (C_j)^2 for simulate. C_j are needed only for exact value
+   // Precomputed (C_j)^2 for simulate. C_j are needed only for the exact value.
+   private final double[] cSquared;
    private final double[] w;
    private final double exactMean;
 
@@ -79,6 +92,11 @@ public class GenzGaussian implements MonteCarloModelDouble {
    /**
     * Computes the exact mean of the Genz Gaussian peak function.
     *
+    * The computation multiplies the one-dimensional integral factors for the
+    * supplied scale and location parameters.
+    *
+    * @param c scale parameters
+    * @param w location parameters
     * @return exact integral over @f$[0,1]^s@f$
     */
    private static double computeExactMean(double[] c, double[] w) {
@@ -103,9 +121,9 @@ public class GenzGaussian implements MonteCarloModelDouble {
    public String getTag() {
       return "GenzGaussian";
    }
+
    // for testing
    public double getExactMean() {
       return exactMean;
    }
-
 }
