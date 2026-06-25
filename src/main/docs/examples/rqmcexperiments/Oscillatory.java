@@ -10,6 +10,12 @@ import umontreal.ssj.rng.RandomStream;
  * @f]
  * for @f$\bm u = (u_1,\dots,u_s) \in [0,1]^s@f$, with @f$a_j = j/s@f$.
  * This function is smooth, but not one-periodic.
+ * The exact value of the integral is
+ * @f[
+ *   \int_{[0,1]^s} f(\boldsymbol{u})\,\mathrm{d}\boldsymbol{u}
+ *   = \cos\left(\frac{1}{2}\sum_{j=1}^s a_j\right)
+ *     \prod_{j=1}^s \frac{2\sin(a_j/2)}{a_j}.
+ * @f]
  */
 public class Oscillatory implements MonteCarloModelDouble {
 

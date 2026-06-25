@@ -3,14 +3,13 @@ package rqmcexperiments;
 import java.io.*;
 import umontreal.ssj.hups64.*;
 import umontreal.ssj.mcqmctools.*;
-import umontreal.ssj.rng.MRG32k3a;
 import umontreal.ssj.rng.LFSR258;
 import umontreal.ssj.rng.RandomStream;
 import umontreal.ssj.stat.*;
 import umontreal.ssj.util.Chrono;
 import umontreal.ssj.util.Num;
 
-// Tools to generate and store RQMC replicates for WSC 2026 paper
+// Tools to generate and store the RQMC replicates for WSC 2026 paper
 
 public class WSC26RQMCSamples64 extends RQMCExperiment64 {
 
@@ -19,11 +18,12 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
    // Lattice generating vector for n=2^{14} found with gamma_j = 2/(2+j), used for the WSC23 paper.
    static int a14[] = { 1, 6229, 2691, 3349, 5893, 7643, 7921, 7055, 4829, 5177, 5459, 4863, 4901, 2833, 2385, 3729,
          981, 957, 4047, 1013, 1635, 2327, 7879, 2805, 2353, 1081, 3999, 879, 5337, 7725, 4889, 5103 };
-   // This one is for n=2^{18}, found by CBC with same gamma_j.
+   // This one is for n=2^{18}, found by CBC with the same gamma_j.
    static int a18[] = { 1, 103259, 73357, 46713, 58781, 112041, 32459, 50551, 40125, 128245, 
          18285, 124265, 98539, 130087, 113373, 22191, 120679, 98411, 94845, 33103, 47891, 15941, 
          30147, 43921, 81129, 3289, 50935, 63965, 55749, 38101, 70631, 116243 };
    
+   // Select the types of point sets you want to try.
    static final String strPointSets = " k "
 //         + " Strat "        // Stratification
          + " Lat-RS "       // Lattice + RS
@@ -51,7 +51,9 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
    static TallyStore statReps = new TallyStore(); // Collects stats on RQMC replicates.
 
    /**
-    * Formats the table as a `String`, one row per value of k, one column for each type of point set.
+    * Formats a table as a `String`, one row per value of k, one column for each type of point set.
+    * The entries are taken directly from `table`.  This method is used to construct each file 
+    * produced by this program.  These files are used to make plots as functions of k.
     */
    public static String tableToString(int mink, int maxk, double[][] table) throws IOException {
       StringBuilder sb = new StringBuilder();
@@ -72,7 +74,7 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
     */
    public static void simulRepsRQMC(MonteCarloModelDouble model, PointSet p, PointSetIterator iter, 
          PointSetRandomization rand, int m, int k, int typePts) {
-      System.out.println("typePts = " + typePts);
+      // System.out.println("typePts = " + typePts);
       // System.out.println("\n***  SimulRepsRQMC: The point set p before simulReplicates:");
       // System.out.println(p.formatPoints());
       RQMCExperiment64.simulReplicatesRQMC(model, p, iter, rand, m, statReps);
@@ -93,7 +95,7 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
 
    /**
     * For the given model and given `k`, perform m RQMC replications with n=2^k points,
-    * for different types of RQMC points, with and without the tent transformation.
+    * for each selected type of RQMC points, with and without the tent transformation.
     */
    public static void simulRepsAllTypes(MonteCarloModelDouble model, int s, int k, int m) throws IOException {
       int n = (int) Num.TWOEXP[k]; // Number of points.
@@ -108,12 +110,12 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
       // simulRepsRQMC(model, str, new RandomShift(stream), m, k, met++);
       
       // Lattice points  
-      Rank1Lattice pLat = new Rank1Lattice(n, a14, s);
+      Rank1Lattice pLat = new Rank1Lattice(n, a18, s);
       RandomShift randShift = new RandomShift(stream);
       BakerTransformedPointSet pLatBaker = new BakerTransformedPointSet(pLat);
 
       // Lat-RS
-      System.out.println("*****  Lat-RS");
+      //System.out.println("*****  Lat-RS");
       simulRepsRQMC(model, pLat, randShift, m, k, met++);
 
       // Lat-RSB
@@ -134,7 +136,7 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
       // System.out.println("after Sobol + baker");
 
       // Sob-RDS
-      System.out.println("***** DigitalNet with RDS alone");
+      //System.out.println("***** DigitalNet with RDS alone");
       p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
       simulRepsRQMC(model, p, rands, m, k, met++);
       // if (p instanceof DigitalNet) System.out.println("p is a DigitalNet, Sobol, after rands");
@@ -144,7 +146,7 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
       simulRepsRQMC(model, pBaker, rands, m, k, met++);
       
       // Sob-LMS
-      System.out.println("*****  DigitalNet with LMS alone");
+      //System.out.println("*****  DigitalNet with LMS alone");
       p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
       PointSetRandomization lms = new LMScramble(stream);
       simulRepsRQMC(model, p, lms, m, k, met++);
@@ -152,14 +154,14 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
       // System.out.println(p.formatPoints());
       
       // Sob-LMS-RDS
-      System.out.println("*****  DigitalNet with LMS + RDS");
+      //System.out.println("*****  DigitalNet with LMS + RDS");
       p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
       PointSetRandomization randlms = new LMScrambleShift(stream);
       simulRepsRQMC(model, p, randlms, m, k, met++);
       // if (p instanceof DigitalNet) System.out.println("p is a DigitalNet after LMS");
 
       // Sob-LMS-RDS + independent random bits after k
-      System.out.println("*****  DigitalNet with LMS+RDS + indep random bits after k");
+      //System.out.println("*****  DigitalNet with LMS+RDS + indep random bits after k");
       p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
       p.addIndepRandomBits(new LFSR258());
       randlms = new LMScrambleShift(stream);
@@ -171,7 +173,7 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
       simulRepsRQMC(model, pBaker, randlms, m, k, met++);
 
       // Sob-NUS
-      System.out.println("*****  DigitalNet with NUS");
+      //System.out.println("*****  DigitalNet with NUS");
       // RandomStream streamNUS = new LFSR113();
       RandomStream streamNUS = new LFSR258();
       p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.     
@@ -185,7 +187,6 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
       // System.out.println("*****  Doing DigitalNet with NUS + baker");
       BakerTransformedPointSet cpBaker = new BakerTransformedPointSet(cp);
       simulRepsRQMC(model, cpBaker, randNUS, m, k, met++);
-      // if (cpBaker instanceof BakerTransformedPointSet) System.out.println("cpBaker is a BakerTransformedPointSet after NUSB");
       
       // Sob-Int2    Sob-interlaced-order2
       //System.out.println("*****  Doing DigitalNet with interlacing");
@@ -194,7 +195,6 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
       p = p2.matrixInterlace(2, s);
       pBaker = new BakerTransformedPointSet(p);
       // System.out.println(p.formatPoints());
-
       // simulRepsRQMC(model, p, rands, m, k, met++);
       // simulRepsRQMC(model, pBaker, rands, m, k, met++);    
 
@@ -202,7 +202,8 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
    }
 
    /**
-    * For given model and given k, perform m RQMC runs for given model with n=2^k points,
+    * LMS only.
+    * For given model and given k, perform m RQMC runs with n=2^k points,
     * for different types of RQMC points, with and without random bits after k.
     */
    public static void simulRepsLMS(MonteCarloModelDouble model, int s, int k, int m) throws IOException {
@@ -249,7 +250,8 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
    }
    
    /**
-    * For given model and given k, perform m RQMC runs for given model with n=2^k points,
+    * NUS only.
+    * For given model and given k, perform m RQMC runs with n=2^k points,
     * for different types of RQMC points, with and without tent transform.
     */
    public static void simulRepsNUS(MonteCarloModelDouble model, int s, int k, int m) throws IOException {
@@ -317,7 +319,7 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
    
    /**
     * For one model, perform m RQMC runs for all point set sizes k, and puts the
-    * results in arrays.  After that, the arrays are used to output data sets in files. 
+    * results in arrays, which are then used to construct output files. 
     */
    public static void simulAllSizes(MonteCarloModelDouble model, int s, int mink, int maxk, int m)
          throws IOException {
@@ -333,9 +335,6 @@ public class WSC26RQMCSamples64 extends RQMCExperiment64 {
       file.close();
       file = new FileWriter(directory + modelTag + "-" + s + "-variance.res");
       file.write(tableToString(mink, maxk, statLogVariance));
-      file.close();
-      file = new FileWriter(directory + modelTag + "-" + s + "-variance2.res");
-      file.write(tableToString(mink, maxk, statLogVariance2));
       file.close();
       file = new FileWriter(directory + modelTag + "-" + s + "-kurtosis.res");
       file.write(tableToString(mink, maxk, statKurtosis));

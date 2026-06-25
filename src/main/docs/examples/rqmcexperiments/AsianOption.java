@@ -79,10 +79,12 @@ public class AsianOption implements MonteCarloModelDouble {
       this.d = d;
       obsTimes = new double[d + 1];
       obsTimes[0] = 0.0;
-      for (int j = 1; j <= d; j++)
+      obsTimes[1] = T1;
+      for (int j = 2; j <= d; j++)
          obsTimes[j] = T1 + (j - 1) * (T - T1) / (d - 1);
       this.strike = strike;
       discount = Math.exp(-r * obsTimes[d]);
+      // System.out.println(" obsTimes[d] = " + obsTimes[d] + ", discount = " + discount);
    }
 
    /**

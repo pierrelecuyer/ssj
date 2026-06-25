@@ -48,20 +48,16 @@ public class GenzGaussian implements MonteCarloModelDouble {
          throw new IllegalArgumentException("s must be positive");
       if (c == null || w == null || c.length != s || w.length != s)
          throw new IllegalArgumentException("c and w must have length s");
-
       this.s = s;
       this.cSquared = new double[s];
       this.w = w.clone();
-
       for (int j = 0; j < s; j++) {
          if (c[j] <= 0.0)
             throw new IllegalArgumentException("c[" + j + "] must be positive");
          if (w[j] < 0.0 || w[j] >= 1.0)
             throw new IllegalArgumentException("w[" + j + "] must be in [0, 1)");
-
          cSquared[j] = c[j] * c[j];
       }
-
       this.exactMean = computeExactMean(c, w);
    }
 
@@ -102,13 +98,10 @@ public class GenzGaussian implements MonteCarloModelDouble {
    private static double computeExactMean(double[] c, double[] w) {
       double integral = 1.0;
       double sqrtPiOver2 = Math.sqrt(Math.PI) / 2.0;
-
       for (int j = 0; j < c.length; j++) {
          integral *= sqrtPiOver2
-               * (Num.erf(c[j] * w[j]) + Num.erf(c[j] * (1.0 - w[j])))
-               / c[j];
+               * (Num.erf(c[j] * w[j]) + Num.erf(c[j] * (1.0 - w[j]))) / c[j];
       }
-
       return integral;
    }
 
