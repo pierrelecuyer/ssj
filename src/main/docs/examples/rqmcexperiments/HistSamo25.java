@@ -14,8 +14,8 @@ public class HistSamo25 {
     * Sets the SAMO 2025 parameters and writes the histogram LaTeX files.
     */
    public static void main(String[] args) throws IOException {
-      String inputFolder = "/home/otman/Documents/dropbox_copy/samo25_copy/datapl/";
-      String outputFolder = "/home/otman/Documents/GitHub/Data/samo25-test/latexNewConfig/";
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histograms/";
 
       int m = 10000;
       int[] sDims = new int[] {2, 4, 8, 16, 32};
