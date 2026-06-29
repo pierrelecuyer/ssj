@@ -24,9 +24,10 @@ public class WSC26RepsRQMC64 extends RQMCExperiment64 {
 
    public static void main(String[] args) throws IOException {
 
+      // Change this to the desired output directory.
       // WSC26RQMCSamples64.directory = "C:/Users/Lecuyer/Dropbox/wsc26/data/";   // Retained for 32 bits
       WSC26RQMCSamples64.directory = "C:/Users/Lecuyer/Dropbox/wsc26/results64-june/"; // Retained for 64 bits
-      // WSC26RQMCSamples64.directory = "C:/Users/Lecuyer/Dropbox/wsc26/test/";  // For testing
+      //WSC26RQMCSamples64.directory = "C:/Users/Lecuyer/Dropbox/wsc26/test/";  // For testing
 
       MonteCarloModelDouble model;
       Chrono timerTotal = new Chrono();
@@ -38,7 +39,7 @@ public class WSC26RepsRQMC64 extends RQMCExperiment64 {
       double r = 0.05;
       double sigma = 0.5;
       NormalGen gen = new NormalGen(new LFSR258());  // For Asian only
-  
+
       for (int s =  1; s <= 16; s *= 2) {
       // for (int s = 4; s <= 32; s *= 2) {
          int m = 1000; // Number of RQMC randomizations.
@@ -47,16 +48,16 @@ public class WSC26RepsRQMC64 extends RQMCExperiment64 {
          System.out.println("WSC26RepsRQMC64, hups64, run with s = " + s);
 
          // Uncomment the models you want below to select them.
-         //WSC26RQMCSamples64.simulAllSizes(new SmoothPerB4(s, 1.0), s, mink, maxk, m);
-         //WSC26RQMCSamples64.simulAllSizes(new SumUeU(s), s, mink, maxk, m);
-         //WSC26RQMCSamples64.simulAllSizes(new MC2(s), s, mink, maxk, m);
-         //WSC26RQMCSamples64.simulAllSizes(new Polynomial(s), s, mink, maxk, m);
-         //WSC26RQMCSamples64.simulAllSizes(new Oscillatory(s), s, mink, maxk, m);
-         //WSC26RQMCSamples64.simulAllSizes(new Gaussian(s), s, mink, maxk, m);
-         //WSC26RQMCSamples64.simulAllSizes(new SmoothGauss(s), s, mink, maxk, m);
-         //WSC26RQMCSamples64.simulAllSizes(new PieceLinGauss(s), s, mink, maxk, m);
-         //WSC26RQMCSamples64.simulAllSizes(new IndSumNormal(s), s, mink, maxk, m);
-         //WSC26RQMCSamples64.simulAllSizes(new XY(), 2, mink, maxk, m);
+         WSC26RQMCSamples64.simulAllSizes(new SmoothPerB4(s, 1.0), s, mink, maxk, m);
+         WSC26RQMCSamples64.simulAllSizes(new SumUeU(s), s, mink, maxk, m);
+         WSC26RQMCSamples64.simulAllSizes(new MC2(s), s, mink, maxk, m);
+         WSC26RQMCSamples64.simulAllSizes(new Polynomial(s), s, mink, maxk, m);
+         WSC26RQMCSamples64.simulAllSizes(new Oscillatory(s), s, mink, maxk, m);
+         WSC26RQMCSamples64.simulAllSizes(new Gaussian(s), s, mink, maxk, m);
+         WSC26RQMCSamples64.simulAllSizes(new SmoothGauss(s), s, mink, maxk, m);
+         WSC26RQMCSamples64.simulAllSizes(new PieceLinGauss(s), s, mink, maxk, m);
+         WSC26RQMCSamples64.simulAllSizes(new IndSumNormal(s), s, mink, maxk, m);
+         WSC26RQMCSamples64.simulAllSizes(new XY(), 2, mink, maxk, m);
          
          // The following is for the Asian option model only; uncomment what is used.
          //
