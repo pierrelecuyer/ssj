@@ -3,11 +3,11 @@ package rqmcexperiments;
 import java.io.IOException;
 
 /**
- * Example that uses {@link HistCollectionLatex} to generate histograms in LaTeX files. 
+ * Example that uses {@link HistCollectionLatex} to generate histograms in LaTeX files.
  * The local variables in the `main` set the directories, list of models, list of methods,
  * dimensions, values of `k = log_2 n`, and number of observations.
  * All of these are passed as parameters to `HistCollectionLatex.writeCollection`,
- * which constructs one LaTeX file for for each model in the list.
+ * which constructs one LaTeX file for each model in the list.
  */
 public class HistSamo25 {
 
