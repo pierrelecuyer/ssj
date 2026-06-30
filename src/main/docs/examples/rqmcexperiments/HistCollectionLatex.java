@@ -18,8 +18,8 @@ import umontreal.ssj.stat.ScaledHistogram;
  * class contains tools to do that. It assumes that the data files are
  * classified with multiple parameters, and organize the histograms with a
  * multidimensional ordering based on these parameters.
- * 
- * This class Is actually more specific. It assumes that each data file contains
+ *
+ * This class is actually more specific. It assumes that each data file contains
  * $m$ observations of a QMC or RQMC estimator for a given integrand (model), a
  * given number @f$s@f$ of dimensions, a given RQMC method, and a given number
  * of points @f$n = 2^k@f$. These four parameters classify the data sets and the
@@ -32,12 +32,12 @@ import umontreal.ssj.stat.ScaledHistogram;
  * of @f$s@f$ are put together in a large table, usually with one row for all
  * values of @f$k@f$ for each method. The rows of that table can cover several
  * letter-sized pages if many RQMC methods are considered.
- * 
+ *
  * The data files in the input directory are assumed to be named as follows.
  * Each model is identified by a short string called the model tag. Each file
  * name starts with its model tag, then the value of @f$s@f$, then the
  * identifier of the method, then the value of @f$k@f$, then the number @f$m@f$
- * of observations in the file. All the fields are separated bt the character
+ * of observations in the file. All the fields are separated by the character
  * `-`, The file extension is `.dat`. For example,
  * `Gaussian-2-Lat-RS-8-10000.dat` will be an input file that contains 10000
  * observations (real numbers) and nothing else, for the model `Gaussian` in 2
@@ -53,21 +53,22 @@ import umontreal.ssj.stat.ScaledHistogram;
  * (100 by default) can be changed by {@link #setNumBins}, and the number of
  * extreme observations that are marked on each side of the histogram (2 by
  * default) can be set by {@link #setExtremeMarks}.
- * 
- * The program {@link HistSamo25.java} gives an example of how to use this
+ *
+ * The program {@link HistSamo25} gives an example of how to use this
  * class. Before calling any method, one must specify the input and output
- * folders that contain the data files and the histograms, respectively. Then the set
- * of model tags, the set of method names, the set of dimensions @f$s@f$, the
- * set of values of @f$k@f$, and the number of observations per histogram, must
- * also be defined, to be passed as parameters. The method `fileNameMaker` in
- * the program will construct a file name as described above for each
- * combination of model, dimension, method, and value of @f$k@f$, and search for
- * that data file in the input folder. Output file names and page titles are
- * defined by {@code outputFileName} and {@code makePageTitle}. Those helper
- * methods can be adjusted in the source code if a different naming or title
- * convention is desired.
- * 
- * This class has no constructor; all the methods are static.
+ * folders that contain the data files and the generated histograms latex files, 
+ * respectively. Then the set of model tags, the set of method names, the set of
+ * dimensions @f$s@f$, the set of values of @f$k@f$, and the number of observations
+ * per histogram, must also be defined, to be passed as parameters. The method
+ * {@code fileNameMaker} in the program will construct a file name as described
+ * above for each combination of model, dimension, method, and value of @f$k@f$,
+ * and search for that data file in the input folder. Output file names and page
+ * titles are defined by {@code outputFileName} and {@code makePageTitle}.
+ * Those helper methods can be adjusted in the source code if a different naming
+ * or title convention is desired.
+ *
+ * This class has no public constructor; it is a static utility class, and
+ * all the methods are static.
  */
 
 public class HistCollectionLatex {
