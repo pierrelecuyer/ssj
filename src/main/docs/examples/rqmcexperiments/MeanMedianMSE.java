@@ -15,37 +15,56 @@ import umontreal.ssj.util.Misc;
  * distribution and we want to estimate the true mean of the distribution by
  * picking a small number @f$r@f$ of observations at random from the large set,
  * with replacement, and taking either their average @f$A_r@f$ or their median
- * @f$M_r@f$ as an estimator of the mean.
- * We want to estimate the MSE of @f$A_r@f$ and @f$M_r@f$ and
- * the ratio @f$\mathrm{MSE}[A_r] / \mathrm{MSE}[M_r]@f$ to compare them.
- * The true mean is assumed to be known and given by the variable {@code exactMean}.
- * It is zero by default, but can be changed via {@link #setExactMean(double)}.
- * To estimate the MSEs, @f$\mathrm{MSE}[A_r]@f$ is computed by
- * {@link #mseAr(Tally, int)} directly from the empirical variance of the
- * stored observations, using
- * @f$\mathrm{Var}_{\mathrm{emp}}(X)/r + \mathrm{bias}^2@f$.
- * For @f$M_r@f$, we pick @f$r@f$ observations at random from the set,
- * compute @f$M_r@f$, repeat that @f$m@f$ times, and estimate the MSE from
- * these values. The method
- * {@link #bootstrapMrValues(TallyStore, int, int, RandomStream, TallyStore)}
- * generates the @f$M_r@f$ values, and {@link #mse(Tally)} computes their
- * MSE.
+ * 
+ * @f$M_r@f$ as an estimator of the mean. We want to estimate the MSE
+ *           of @f$A_r@f$ and @f$M_r@f$ and the ratio @f$\mathrm{MSE}[A_r] /
+ *           \mathrm{MSE}[M_r]@f$ to compare them. The true mean is assumed to
+ *           be known and given by the variable {@code exactMean}. It is zero by
+ *           default, but can be changed via {@link #setExactMean(double)}. To
+ *           estimate the MSEs, @f$\mathrm{MSE}[A_r]@f$ is computed by
+ *           {@link #mseAr(Tally, int)} directly from the empirical variance of
+ *           the stored observations, using
+ * @f$\mathrm{Var}_{\mathrm{emp}}(X)/r + \mathrm{bias}^2@f$. For @f$M_r@f$, we
+ *                                     pick @f$r@f$ observations at random from
+ *                                     the set, compute @f$M_r@f$, repeat
+ *                                     that @f$m@f$ times, and estimate the MSE
+ *                                     from these values. The method
+ *                                     {@link #bootstrapMrValues(TallyStore, int, int, RandomStream, TallyStore)}
+ *                                     generates the @f$M_r@f$ values, and
+ *                                     {@link #mse(Tally)} computes their MSE.
  *
- * This class is organized to do this not only for a single distribution (data
- * set), but for a large collection of data sets that are stored in data files
- * in exactly the same way and with the same naming convention as for the class
- * {@link HistCollectionLatex}. The top-level entry method is
- * {@link #computeFolderMSE}. It takes the input and output directories, a
- * model tag (name), the number @f$s@f$ of dimensions, a set of RQMC method
- * names, a set of values of @f$k@f$, the number of observations per input
- * file, the number @f$m@f$ of replications to estimate the @f$\mathrm{MSE}[M_r]@f$, the value of
- * @f$r@f$, and a random stream.
- * The input file names to search will be constructed based on this information.
- * After estimating the two MSEs for each method and each @f$k@f$, three
- * {@code .res} files will be created for this model and value of @f$s@f$,
- * each one containing a table whose columns correspond to RQMC methods, the
- * rows are for the values of @f$k@f$, and the entries are the MSE or ratio
- * values.
+ *                                     This class is organized to do this not
+ *                                     only for a single distribution (data
+ *                                     set), but for a large collection of data
+ *                                     sets that are stored in data files in
+ *                                     exactly the same way and with the same
+ *                                     naming convention as for the class
+ *                                     {@link HistCollectionLatex} and also for
+ *                                     several values of @f$r@f$ if desired.
+ * 
+ *                                     The top-level entry method is
+ *                                     {@link #estimateMSEOneModel}. It takes
+ *                                     the input and output directories, a model
+ *                                     tag (name), the number @f$s@f$ of
+ *                                     dimensions, a set of RQMC method names, a
+ *                                     set of values of @f$k@f$, the number of
+ *                                     observations per input file, the
+ *                                     number @f$m@f$ of replications to
+ *                                     estimate the @f$\mathrm{MSE}[M_r]@f$, the
+ *                                     value of @f$r@f$, and a random stream.
+ *                                     The input file names to search will be
+ *                                     constructed based on this information.
+ *                                     After estimating the two MSEs for each
+ *                                     method and each @f$k@f$, three
+ *                                     {@code .res} files will be created for
+ *                                     this model and value of @f$s@f$, each one
+ *                                     containing a table whose columns
+ *                                     correspond to RQMC methods, the rows are
+ *                                     for the values of @f$k@f$, and the
+ *                                     entries are the MSE or ratio values. The
+ *                                     method also produces a .cvs file that
+ *                                     gives the moments and MSE estimates for
+ *                                     each input file, one case per row.
  */
 public class MeanMedianMSE {
    /**
@@ -71,6 +90,7 @@ public class MeanMedianMSE {
 
    /**
     * Returns the current value of {@code exactMean}.
+    * 
     * @return current value of {@code exactMean}
     */
    public static double getExactMean() {
@@ -85,25 +105,23 @@ public class MeanMedianMSE {
     */
    public static double mse(Tally tally) {
       double bias = tally.average() - exactMean;
-      return tally.variance() * (tally.numberObs() - 1.0)
-         / tally.numberObs() + bias * bias;
+      return tally.variance() * (tally.numberObs() - 1.0) / tally.numberObs() + bias * bias;
    }
 
    /**
     * Computes the MSE of the average of @f$r@f$ observations sampled with
     * replacement from the empirical distribution defined by the values in the
-    * tally using @f$\mathrm{Var}_{\mathrm{emp}}(X)/r + \mathrm{bias}^2@f$.
-    * This avoids using bootstrap for the average and computes the MSE directly
-    * from the stored observations.
+    * tally using @f$\mathrm{Var}_{\mathrm{emp}}(X)/r + \mathrm{bias}^2@f$. This
+    * avoids using bootstrap for the average and computes the MSE directly from the
+    * stored observations.
     *
     * @param tally tally containing the observations
-    * @param r number of observations sampled and averaged
+    * @param r     number of observations sampled and averaged
     * @return estimated MSE relative to {@code exactMean}
     */
    public static double mseAr(Tally tally, int r) {
       double bias = tally.average() - exactMean;
-      return tally.variance() * (tally.numberObs() - 1.0)
-         / tally.numberObs() / r + bias * bias;
+      return tally.variance() * (tally.numberObs() - 1.0) / tally.numberObs() / r + bias * bias;
    }
 
    /**
@@ -123,21 +141,16 @@ public class MeanMedianMSE {
    }
 
    /**
-    * Performs bootstrap simulations to obtain realizations of @f$M_r@f$,
-    * and store them in {@code statMed}.
+    * Performs bootstrap simulations to obtain realizations of @f$M_r@f$, and store
+    * them in {@code statMed}.
     *
-    * **********  Better to re-use the same collector and return it, so we can also
-    *             look at the average, kurtosis, etc. if desired.***********************
-    *      
-    *
-    * @param tally input data observations
-    * @param m number of bootstrap samples
-    * @param r size of each bootstrap sample
-    * @param stream random stream used for sampling
+    * @param tally   input data observations
+    * @param m       number of bootstrap samples
+    * @param r       size of each bootstrap sample
+    * @param stream  random stream used for sampling
     * @param statMed TallyStore in which the @f$M_r@f$ values are stored
-   */
-   public static void bootstrapMrValues(TallyStore tally, int m, int r,
-         RandomStream stream, TallyStore statMed) {
+    */
+   public static void bootstrapMrValues(TallyStore tally, int m, int r, RandomStream stream, TallyStore statMed) {
       int numSim = tally.numberObs();
       double[] values = tally.getArray();
       double[] sample = new double[r];
@@ -154,7 +167,7 @@ public class MeanMedianMSE {
    /**
     * Writes a formatted result table to a file.
     *
-    * @param file output file
+    * @param file  output file
     * @param table formatted table
     * @throws RuntimeException if the file cannot be written
     */
@@ -171,17 +184,15 @@ public class MeanMedianMSE {
     * value of @f$k@f$.
     *
     * @param inputFolder directory containing the input data files
-    * @param model model name used in the filename
-    * @param s model dimension
-    * @param method RQMC method name
-    * @param k value of @f$k@f$
-    * @param numObs number of observations contained in the filename
+    * @param model       model name used in the filename
+    * @param s           model dimension
+    * @param method      RQMC method name
+    * @param k           value of @f$k@f$
+    * @param numObs      number of observations contained in the filename
     * @return the data file, or {@code null} if it is missing
     */
-   private static File getDataFile(String inputFolder, String model,
-         int s, String method, int k, int numObs) {
-      String fileName = model + "-" + s + "-" + method
-            + "-" + k + "-" + numObs + ".dat";
+   private static File getDataFile(String inputFolder, String model, int s, String method, int k, int numObs) {
+      String fileName = model + "-" + s + "-" + method + "-" + k + "-" + numObs + ".dat";
       File file = new File(inputFolder, fileName);
       if (!file.isFile()) {
          System.out.println("Missing file: " + file.getAbsolutePath());
@@ -191,88 +202,103 @@ public class MeanMedianMSE {
    }
 
    /**
-    * Computes and writes the three MSE tables for one model and dimension.
-    * Missing input files are reported and skipped.
+    * Computes and writes the three MSE tables for one model, for all values
+    * of @f$s@f$ and @f$r@f$. Missing input files are reported and skipped.
     *
-    * @param inputFolder directory containing the input data files
+    * @param inputFolder  directory containing the input data files
     * @param outputFolder directory in which result tables are written
-    * @param model model name used in input filenames
-    * @param s model dimension
-    * @param methods RQMC method names
-    * @param ks values of @f$k@f$
-    * @param numObs number of observations identified in each filename
-    * @param m number of bootstrap samples
-    * @param r size of each bootstrap sample
-    * @param stream random stream used for sampling
+    * @param model        model name used in input filenames
+    * @param dims         set of model dimensions
+    * @param methods      RQMC method names
+    * @param ks           values of @f$k@f$
+    * @param numObs       number of observations identified in each filename
+    * @param m            number of bootstrap samples
+    * @param r            the size of each bootstrap sample
+    * @param stream       random stream used for sampling
     * @throws IllegalArgumentException if the result directory cannot be created
     */
-   public static void computeFolderMSE(String inputFolder, String outputFolder,
-         String model, int s,
-         String[] methods, int[] ks, int numObs,
-         int m, int r, RandomStream stream) {
+   public static void estimateMSEOneModel(String inputFolder, String outputFolder, String model, int[] dims,
+         String[] methods, int[] ks, int numObs, int m, int r, RandomStream stream) {
 
       File resultFolder = new File(outputFolder);
       if (!resultFolder.exists() && !resultFolder.mkdirs())
-         throw new IllegalArgumentException(
-               "Could not create result folder " + resultFolder.getAbsolutePath());
-      StringBuilder header = new StringBuilder(" k ");
-      for (String method : methods)
-         header.append(" ").append(method).append(" ");
-      header.append("\n");
+         throw new IllegalArgumentException("Could not create result folder " + resultFolder.getAbsolutePath());
 
+      // Builds the first row of the .cvs file and of the .res files.
+      StringBuilder cvshead = new StringBuilder(" model, s, method, k, mean, variance, skewness, ekurtosis ");
+      cvshead.append(",  MSEAr,   MSEMr,   MSEratio \n");
+      StringBuilder resheader = new StringBuilder(" k ");
+      for (String method : methods)
+         resheader.append(" ").append(method).append(" ");
+      resheader.append("\n");
+
+      StringBuilder cvsRows = new StringBuilder();
       StringBuilder arRows = new StringBuilder();
       StringBuilder mrRows = new StringBuilder();
       StringBuilder ratioRows = new StringBuilder();
-
       TallyStore statMed = new TallyStore("M_r");
-      for (int i = 0; i < ks.length; i++) {
-         int k = ks[i];
-         // Use a new substream for this k.
-         stream.resetNextSubstream();
-         arRows.append(k).append("  ");
-         mrRows.append(k).append("  ");
-         ratioRows.append(k).append("  ");
 
-         for (String method : methods) {
-            File file = getDataFile(
-                  inputFolder, model, s, method, k, numObs);
-            if (file == null) {
-               arRows.append("Missing  ");
-               mrRows.append("Missing  ");
-               ratioRows.append("Missing  ");
-               continue;
+      for (int s : dims) {
+         statMed.init();
+         for (int k : ks) {
+
+            // Use a new substream for this k.
+            stream.resetNextSubstream();
+            arRows.append(k).append("  ");
+            mrRows.append(k).append("  ");
+            ratioRows.append(k).append("  ");
+
+            for (String method : methods) {
+               File file = getDataFile(inputFolder, model, s, method, k, numObs);
+               if (file == null) {
+                  arRows.append("Missing  ");
+                  mrRows.append("Missing  ");
+                  ratioRows.append("Missing  ");
+                  continue;
+               }
+               TallyStore tally = readDataValues(file.getAbsolutePath());
+
+               // We reuse the same substream for every method at this k.
+               // Here we use CRNs across the methods. Not sure if it make sense,
+               // because the input data for different methods are different and independent.
+               // ***********
+
+               stream.resetStartSubstream();
+               bootstrapMrValues(tally, m, r, stream, statMed);
+               double arMse = mseAr(tally, r);
+               double mrMse = mse(statMed);
+               arRows.append(arMse).append("  ");
+               mrRows.append(mrMse).append("  ");
+               ratioRows.append(mrMse == 0.0 ? Double.NaN : arMse / mrMse).append("  ");
             }
-            TallyStore tally = readDataValues(file.getAbsolutePath());
-            // Reuse the same substream for every method at this k.
-            stream.resetStartSubstream();
-            bootstrapMrValues(tally, m, r, stream, statMed);
-            double arMse = mseAr(tally, r);
-            double mrMse = mse(statMed);
-            arRows.append(arMse).append("  ");
-            mrRows.append(mrMse).append("  ");
-            ratioRows.append(mrMse == 0.0 ? Double.NaN : arMse / mrMse).append("  ");
+            arRows.append("\n");
+            mrRows.append("\n");
+            ratioRows.append("\n");
          }
-         arRows.append("\n");
-         mrRows.append("\n");
-         ratioRows.append("\n");
-      }
-      String arTable = header.toString() + arRows.toString();
-      String mrTable = header.toString() + mrRows.toString();
-      String ratioTable = header.toString() + ratioRows.toString();
-      File arFile = new File(resultFolder,
-            model + "-" + s + "-" + r + "-MSE-Ar.res");
-      File mrFile = new File(resultFolder,
-            model + "-" + s + "-" + r + "-MSE-Mr.res");
-      File ratioFile = new File(resultFolder,
-            model + "-" + s + "-" + r + "-MSE-Ratio-ArOverMr.res");
-      writeTable(arFile, arTable);
-      writeTable(mrFile, mrTable);
-      writeTable(ratioFile, ratioTable);
+         String arTable = resheader.toString() + arRows.toString();
+         String mrTable = resheader.toString() + mrRows.toString();
+         String ratioTable = resheader.toString() + ratioRows.toString();
+         File arFile = new File(resultFolder, model + "-" + s + "-" + r + "-MSE-Ar.res");
+         File mrFile = new File(resultFolder, model + "-" + s + "-" + r + "-MSE-Mr.res");
+         File ratioFile = new File(resultFolder, model + "-" + s + "-" + r + "-MSE-Ratio-ArOverMr.res");
+         writeTable(arFile, arTable);
+         writeTable(mrFile, mrTable);
+         writeTable(ratioFile, ratioTable);
 
-      System.out.println("MSE result tables written to:");
-      System.out.println("  " + arFile.getAbsolutePath());
-      System.out.println("  " + mrFile.getAbsolutePath());
-      System.out.println("  " + ratioFile.getAbsolutePath());
+         System.out.println("MSE tables written to:");
+         System.out.println("  " + arFile.getAbsolutePath());
+         System.out.println("  " + mrFile.getAbsolutePath());
+         System.out.println("  " + ratioFile.getAbsolutePath());
+
+         arRows.setLength(0);
+         mrRows.setLength(0);
+         ratioRows.setLength(0);
+      }
+      String cvsTable = cvshead.toString() + cvsRows.toString();
+      File cvsFile = new File(resultFolder, model + "-MSE-" + r + ".cvs");
+      writeTable(cvsFile, cvsTable);
+      System.out.println("cvs file written to:");
+      System.out.println("  " + cvsFile.getAbsolutePath());
    }
 
 }

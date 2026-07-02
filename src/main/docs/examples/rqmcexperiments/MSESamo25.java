@@ -2,6 +2,7 @@ package rqmcexperiments;
 
 import umontreal.ssj.rng.LFSR258;
 import umontreal.ssj.rng.RandomStream;
+import umontreal.ssj.util.Chrono;
 
 /**
  * Example that uses {@link MeanMedianMSE} to generate tables for the MSEs of
@@ -20,24 +21,30 @@ public class MSESamo25 {
    
       String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
       String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/mse/";
-      String[] modelTags = {"MC2"};
+      // String[] modelTags = {"MC2"};
+      String[] modelTags = new String[] {
+            "SmoothPerB4", "SumUeU", "MC2", "Polynomial", "Oscillatory",
+            "Gaussian", "SmoothGauss", "PieceLinGauss", "IndSumNormal"
+      };
+      int[] dims = {2, 4, 8, 16, 32};
       String[] methods = {
             "Lat-RS", "Lat-RSB", "Lat-Rv", "Lat-Rpv",
             "Lat-RvRS", "Lat-RvRSB", "Lat-RpvRS", "Lat-RpvRSB",
             "Sob-RDS", "Sob-RDSB", "Sob-LMS", "Sob-LMS-RDS",
             "Sob-LMS-RDS-IRB", "Sob-NUS"
       };
-      int[] dimensions = {4};
       int[] ks = {8, 10, 12, 14, 16};
+      int r = 11;           // Sample size for the median estimator.
 
       int numObs = 10000;   // Number of observations in the input data files.
-      int numReps = 100000; // Number of replications to estimate the MSE_Mr.
-      int r = 11;           // Sample size for the mean or median estimator.
+      int numReps = 10000;  // Number of bootstrap subsamples to estimate the MSE_Mr.
 
       RandomStream stream = new LFSR258();
+      Chrono timerTotal = new Chrono();
       for (String model : modelTags)
-         for (int s : dimensions)
-            MeanMedianMSE.computeFolderMSE(inputFolder, outputFolder, model, s,
-                  methods, ks, numObs, numReps, r, stream);
-   }
+         MeanMedianMSE.estimateMSEOneModel(inputFolder, outputFolder, model, dims,
+               methods, ks, numObs, numReps, r, stream);
+      System.out.println("\nTotal time for everything: " + timerTotal.format() +
+            "\n=========================================== \n");
+      }
 }

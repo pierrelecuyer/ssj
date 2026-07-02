@@ -290,8 +290,8 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       System.out.println("RQMC replicates with model: " + model.toString() + ", s = " + s + "\n");
       Chrono timer = new Chrono();
       for (int k = mink; k <= maxk; k += 2) { // For each point set size
-         // simulRepsAllTypes(model, s, k, m);
-         simulRepsSelectedTypes(model, s, k, m);
+         simulRepsAllTypes(model, s, k, m);
+         //  simulRepsSelectedTypes(model, s, k, m);
       }
       System.out.println(
             "\nTotal time for simulAllSizes: " + timer.format() + "\n=========================================== \n");

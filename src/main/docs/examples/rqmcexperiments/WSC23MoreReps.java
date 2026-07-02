@@ -24,8 +24,8 @@ public class WSC23MoreReps extends RQMCExperiment64 {
       Chrono timerTotal = new Chrono();
       RandomStream noise = new LFSR258();
 
-      for (int s = 2; s <= 2; s *= 2) {
-      // for (int s = 4; s <= 32; s *= 2) {
+      //for (int s = 2; s <= 2; s *= 2) {
+      for (int s = 2; s <= 32; s *= 2) {
          System.out.println("WSC23MoreReps, run with s = " + s);
          // Uncomment the model you want below. ***
          // model = new SmoothPerBeta52(s, 1.0);
@@ -49,15 +49,18 @@ public class WSC23MoreReps extends RQMCExperiment64 {
          // int m = 10; // Number of RQMC randomizations.
          int mink = 8;
          int maxk = 16;
-         WSC23MoreSamples.simulRepsAllSizes(new SmoothPerB4(s, 1.0), s, mink, maxk, m);
-         WSC23MoreSamples.simulRepsAllSizes(new SumUeU(s), s, mink, maxk, m);
-         WSC23MoreSamples.simulRepsAllSizes(new MC2(s), s, mink, maxk, m);
-         WSC23MoreSamples.simulRepsAllSizes(new Polynomial(s), s, mink, maxk, m);
+         //WSC23MoreSamples.simulRepsAllSizes(new SmoothPerBeta52(s, 1.0), s, mink, maxk, m);
+         //WSC23MoreSamples.simulRepsAllSizes(new SmoothPerB4(s, 1.0), s, mink, maxk, m);
+         //WSC23MoreSamples.simulRepsAllSizes(new SumUeU(s), s, mink, maxk, m);
+         //WSC23MoreSamples.simulRepsAllSizes(new MC2(s), s, mink, maxk, m);
+         //WSC23MoreSamples.simulRepsAllSizes(new Polynomial(s), s, mink, maxk, m);
          WSC23MoreSamples.simulRepsAllSizes(new Oscillatory(s), s, mink, maxk, m);
          WSC23MoreSamples.simulRepsAllSizes(new Gaussian(s), s, mink, maxk, m);
-         WSC23MoreSamples.simulRepsAllSizes(new SmoothGauss(s), s, mink, maxk, m);
-         WSC23MoreSamples.simulRepsAllSizes(new PieceLinGauss(s), s, mink, maxk, m);
-         WSC23MoreSamples.simulRepsAllSizes(new IndSumNormal(s), s, mink, maxk, m);
+         //WSC23MoreSamples.simulRepsAllSizes(new SmoothGauss(s), s, mink, maxk, m);
+         //WSC23MoreSamples.simulRepsAllSizes(new RidgeJohnsonSU(s), s, mink, maxk, m);
+         //WSC23MoreSamples.simulRepsAllSizes(new PieceLinGauss(s), s, mink, maxk, m);
+         //WSC23MoreSamples.simulRepsAllSizes(new IndSumNormal(s), s, mink, maxk, m);
+         //WSC23MoreSamples.simulRepsAllSizes(new IndBox(s), s, mink, maxk, m);
               
       }
       System.out.println("Total time for everything: " + timerTotal.format() +
