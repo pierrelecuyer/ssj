@@ -7,10 +7,12 @@ import umontreal.ssj.util.Chrono;
 /**
  * Example that uses {@link MeanMedianMSE} to generate tables for the MSEs of
  * @f$A_r@f$, @f$M_r@f$, and their ratio. For each combination of model and
- * dimension @f$s@f$, three .res files are generated. Each file contains a
- * data table whose columns are for the RQMC methods, the rows are for values of
- * @f$k = \log_2 n@f$ where @f$n@f$ is the number of RQMC points,
- * and the entries are MSE or ratio values.
+ * dimension @f$s@f$, three {@code .res} files are generated. These files contain
+ * tables whose columns are the RQMC methods, whose rows are the values of
+ * @f$k = \log_2 n@f$, where @f$n@f$ is the number of RQMC points, and whose
+ * entries are MSE or ratio values. One {@code .csv} file is also generated for
+ * each model and value of @f$r@f$; it contains the moments and MSE estimates,
+ * with one row for each existing input file.
  */
 public class MSESamo25 {
 
@@ -18,7 +20,7 @@ public class MSESamo25 {
     * Configures and runs MSE experiments with the samo25 data.
     */
    public static void main(String[] args) {
-   
+
       String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
       String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/mse/";
       // String[] modelTags = {"MC2"};
@@ -34,10 +36,10 @@ public class MSESamo25 {
             "Sob-LMS-RDS-IRB", "Sob-NUS"
       };
       int[] ks = {8, 10, 12, 14, 16};
-      int r = 11;           // Sample size for the median estimator.
+      int r = 11;           // Number of observations averaged or used in each bootstrap median sample.
 
       int numObs = 10000;   // Number of observations in the input data files.
-      int numReps = 10000;  // Number of bootstrap subsamples to estimate the MSE_Mr.
+      int numReps = 10000;  // Number of bootstrap subsamples to estimate the MSE[M_r].
 
       RandomStream stream = new LFSR258();
       Chrono timerTotal = new Chrono();
@@ -46,5 +48,5 @@ public class MSESamo25 {
                methods, ks, numObs, numReps, r, stream);
       System.out.println("\nTotal time for everything: " + timerTotal.format() +
             "\n=========================================== \n");
-      }
+   }
 }
