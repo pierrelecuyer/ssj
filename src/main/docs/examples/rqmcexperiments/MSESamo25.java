@@ -28,7 +28,7 @@ public class MSESamo25 {
             "SmoothPerB4", "SumUeU", "MC2", "Polynomial", "Oscillatory",
             "Gaussian", "SmoothGauss", "PieceLinGauss", "IndSumNormal"
       };
-      int[] dims = {2, 4, 8, 16, 32};
+      int[] dims = {1, 2, 4, 8, 16, 32};
       String[] methods = {
             "Lat-RS", "Lat-RSB", "Lat-Rv", "Lat-Rpv",
             "Lat-RvRS", "Lat-RvRSB", "Lat-RpvRS", "Lat-RpvRSB",

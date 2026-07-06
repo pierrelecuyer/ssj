@@ -236,7 +236,7 @@ public class HistCollectionLatex {
             + "line width=0.1pt, " + "fill=none, " + "font=\\small, " + "cells={anchor=east}, " + "inner xsep=0pt, "
             + "inner ysep=3pt," + "}, " + "legend pos=" + legendPos);
 
-      scHist.setAddPlotOptions("fill=blue, draw=blue!80!black, line width=0.03pt");
+      scHist.setAddPlotOptions("fill=blue!25, draw=blue!80!black, line width=0.03pt");
       String latex = scHist.toLatex(true, false);
       String extremeMarksLatex = addExtremeMarks(fileStats.getArray(), getExtremeMarks(), fileStats.numberObs());
       if (!extremeMarksLatex.isEmpty()) {
@@ -333,7 +333,7 @@ public class HistCollectionLatex {
          xmin = center - 0.5 * fallbackRange;
          xmax = center + 0.5 * fallbackRange;
       } else {
-         double finalRange = 1.06 * range;
+         double finalRange = 1.00000001 * range;  // Was 1.06, which is too large.
          xmin = center - 0.5 * finalRange;
          xmax = center + 0.5 * finalRange;
       }
