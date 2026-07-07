@@ -134,6 +134,7 @@ public class TallyHistogram extends Tally {
          ++rightCount;
       else {
          int i = (int) ((x - m_a) / m_h);
+         if (i == numBins) i--; 
          ++count[i];
       }
    }
