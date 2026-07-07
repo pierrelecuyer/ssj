@@ -319,8 +319,8 @@ public class TallyHistogram extends Tally {
       sb.append(PrintfFormat.NEWLINE + "Counters = {" + PrintfFormat.NEWLINE);
       sb.append("   (-inf, " + PrintfFormat.f(6, 3, m_a) + ")    " + leftCount + PrintfFormat.NEWLINE);
       for (int i = 0; i < numBins; i++) {
-         double a = m_a + (i - 1) * m_h;
-         double b = m_a + i * m_h;
+         double a = m_a + i * m_h;
+         double b = m_a + (i + 1) * m_h;
          sb.append("   (" + PrintfFormat.f(6, 3, a) + ", " + PrintfFormat.f(6, 3, b) + ")    " + count[i]
                + PrintfFormat.NEWLINE);
       }

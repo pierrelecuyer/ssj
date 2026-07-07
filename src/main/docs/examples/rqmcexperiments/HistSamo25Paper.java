@@ -22,7 +22,7 @@ public class HistSamo25Paper {
    // Fixed parameters for this particular paper.
    static String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
    static String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdat/";
-   static int numBins = 100;
+   static int numBins = 4;
          
    /**
     * Builds the PGFPlots LaTeX code for one histogram.
@@ -46,7 +46,8 @@ public class HistSamo25Paper {
       TallyHistogram hist = new TallyHistogram(xmin, xmax * 1.000000001, numBins);
       hist.fillFromTallyStore(data);     
       ScaledHistogram scHist = new ScaledHistogram(hist);
-      scHist.setAxisOptions("title={" + fileName + "}, width=4.4cm, height=3.0cm, scale only axis, \n" +
+      System.out.println(hist.toString());
+      scHist.setAxisOptions("title={{\\tiny " + fileName + "}}, width=4.4cm, height=3.0cm, scale only axis, \n" +
              "  ymin=0.0, xmin = " + (xmin - 0.01 * range) + ", xmax = " + (xmax + 0.01 * range) + 
              ",\n  ylabel={}, yticklabels={}, \n" +
              "  scaled x ticks=true, minor x tick num=0, scaled y ticks=false, \n" +
@@ -56,7 +57,7 @@ public class HistSamo25Paper {
              "  legend entries={{\\parbox[c][0.1cm][c]{1.2cm}{\\centering\\scalebox{0.6}{\\tt \n" +
              "  \\begin{tabular}{@{}l@{}}\n     $\\sigma^2=$ " + sci(data.variance())
                  + "\\\\[-1pt]\n     $\\gamma=$ " + sci(data.skewness())
-                 + "\\\\[-1pt]\n     $\\kappa'=$ " + sci(data.kurtosis()) + " \\end{tabular}}}}},\n" +
+                 + "\\\\[-1pt]\n     $\\kappa'=$ " + sci(data.kurtosis()) + "\n  \\end{tabular}}}}},\n" +
              "  legend image code/.code={}, \n" +
              "  legend style={draw=none, fill=none, cells={anchor=west}, inner xsep=0pt, inner ysep=5pt}, \n" +
              "  legend pos=north east");
@@ -111,9 +112,13 @@ public class HistSamo25Paper {
             inputFolder, outputFolder, modelTags, methods, sDims, ks, m);
        */      
    
-      System.out.println(makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RS-16-10000", numBins));
-      System.out.println(makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RvRS-16-10000", numBins));
-      System.out.println(makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RpvRS-16-10000", numBins));
+      System.out.println(makeSimpleHistogramLatex("babytest", 4));
+      
+      
+
+      System.out.println(makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RS-16-10000", 100));
+      System.out.println(makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RvRS-16-10000", 100));
+      System.out.println(makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RpvRS-16-10000", 100));
 
    }
    
