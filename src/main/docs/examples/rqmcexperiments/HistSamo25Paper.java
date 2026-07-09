@@ -128,6 +128,23 @@ public class HistSamo25Paper {
       makeSimpleHistogramLatex("MC2-16-Sob-LMS-RDS-14-10000", 100);
       makeSimpleHistogramLatex("MC2-16-Sob-NUS-14-10000", 100);
 
+      // to write histogram with method from HistCollectionLatex uncomment, it will overwrite
+      // the files written by makeSimpleHistogramLatex if it s in the same folder
+      /* 
+      String[] filenames = new String[] {"SmoothPerB4-8-Lat-RvRS-16-10000", "SmoothPerB4-8-Lat-RS-16-10000",
+         "SmoothPerB4-8-Lat-RpvRS-16-10000","SmoothPerB4-8-Sob-RDS-16-10000","SmoothPerB4-8-Sob-LMS-RDS-16-10000",
+         "SmoothPerB4-8-Sob-NUS-16-10000","MC2-8-Sob-LMS-RDS-16-10000","MC2-16-Sob-LMS-RDS-14-10000","SmoothPerB4-8-Sob-NUS-16-10000"
+
+      };
+      int[] ExtremMarks = new int[] {2,3};
+      String path;
+      for(String filename: filenames){
+         path = inputFolder + filename + ".dat";
+         HistCollectionLatex.writeHistogramLatex(path, outputFolder, numBins, filename, 
+            "4.4 cm", "3 cm", "builtin", ExtremMarks);
+      }
+      */
+
 
    }
    
