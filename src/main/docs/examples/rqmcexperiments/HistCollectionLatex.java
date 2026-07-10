@@ -297,7 +297,7 @@ public class HistCollectionLatex {
          xmin -=  0.5 * fallbackRange;
          xmax +=  0.5 * fallbackRange;
          a = xmin;
-         b = xmax; 
+         b = xmax;
       }
   
       TallyHistogram hist = new TallyHistogram(a, b, numBins);
@@ -430,7 +430,7 @@ public class HistCollectionLatex {
     * {@code "builtin"}, the built-in statistical legend containing the variance,
     * skewness, and kurtosis is generated. Any other nonempty string is used as
     * custom PGFPlots legend options. Custom legend options are returned as-is,
-    * except that it's trimmed and a trailing comma is added when missing.
+    * except that they are trimmed and a trailing comma is added when missing.
     *
     * The position of the built-in legend is selected from the configured
     * {@code legendPos}. If the position is {@code "auto"}, it is selected from the
