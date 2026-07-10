@@ -113,21 +113,50 @@ public class HistSamo25Paper {
       HistCollectionLatex.writeCollection(
             inputFolder, outputFolder, modelTags, methods, sDims, ks, m);
        */      
-   
+
       // This one is just for testing.
-      System.out.println(makeSimpleHistogramLatex("babytest", 4));
+      // System.out.println(makeSimpleHistogramLatex("babytest", 4));
 
-      makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RS-16-10000", 100);
-      makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RvRS-16-10000", 100);
-      makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RpvRS-16-10000", 100);
-      makeSimpleHistogramLatex("SmoothPerB4-8-Sob-RDS-16-10000", 100);
-      makeSimpleHistogramLatex("SmoothPerB4-8-Sob-LMS-RDS-16-10000", 100);
-      makeSimpleHistogramLatex("SmoothPerB4-8-Sob-NUS-16-10000", 100);
+      // makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RS-16-10000", 100);
+      // makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RvRS-16-10000", 100);
+      // makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RpvRS-16-10000", 100);
+      // makeSimpleHistogramLatex("SmoothPerB4-8-Sob-RDS-16-10000", 100);
+      // makeSimpleHistogramLatex("SmoothPerB4-8-Sob-LMS-RDS-16-10000", 100);
+      // makeSimpleHistogramLatex("SmoothPerB4-8-Sob-NUS-16-10000", 100);
       
-      makeSimpleHistogramLatex("MC2-8-Sob-LMS-RDS-16-10000", 100);
-      makeSimpleHistogramLatex("MC2-16-Sob-LMS-RDS-14-10000", 100);
-      makeSimpleHistogramLatex("MC2-16-Sob-NUS-14-10000", 100);
+      // makeSimpleHistogramLatex("MC2-8-Sob-LMS-RDS-16-10000", 100);
+      // makeSimpleHistogramLatex("MC2-16-Sob-LMS-RDS-14-10000", 100);
+      // makeSimpleHistogramLatex("MC2-16-Sob-NUS-14-10000", 100);
 
+      String[] fileNames = new String[] {
+         "SmoothPerB4-8-Lat-RvRS-16-10000", "SmoothPerB4-8-Lat-RS-16-10000",
+         "SmoothPerB4-8-Lat-RpvRS-16-10000","SmoothPerB4-8-Sob-RDS-16-10000",
+         "SmoothPerB4-8-Sob-LMS-RDS-16-10000", "SmoothPerB4-8-Sob-NUS-16-10000",
+         "MC2-8-Sob-LMS-RDS-16-10000","MC2-16-Sob-LMS-RDS-14-10000",
+         "SmoothPerB4-8-Sob-NUS-16-10000"
+      };
+
+      for(String fileName: fileNames){
+         makeSimpleHistogramLatex(fileName, 100);
+      }
+
+      //Same output using 'HistCollectionLatex.makeHistogramLatex'
+
+      int[] ExtremMarks = new int[] {2,2};
+      String path;
+      String latexHist;
+      for(String fileName: fileNames){
+         path = inputFolder + fileName + ".dat";
+         latexHist = HistCollectionLatex.makeHistogramLatex(path, numBins, fileName,
+            "4.4 cm", "3 cm", "builtin", ExtremMarks);
+
+         File outFile = new File(outputFolder, fileName + "-hist25.tex");// hist25 is used to nor overwrite makeSimpleHistogramLatex files
+         try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
+            out.print(latexHist);
+         } catch (IOException e) {
+            throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
+         }
+      }
 
    }
    
