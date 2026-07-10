@@ -98,6 +98,8 @@ public class TallyHistogram extends Tally {
        */
       if (b <= a)
          throw new IllegalArgumentException("   b <= a");
+      if (numBins <= 0)
+         throw new IllegalArgumentException("Number of bins must be positive.");
       count = new int[numBins];
       this.numBins = numBins;
       m_h = (b - a) / (double) numBins;
@@ -149,11 +151,15 @@ public class TallyHistogram extends Tally {
       int j = numBins - 1; // last bin in the initial histogram
       int cpL = 0; // number of empty bins from left initialized to zero
       int cpR = 0; // number of empty bins from right initialized to zero
-      while (count[i] == 0) {
+      while (i < numBins && count[i] == 0) {
          i++;
          cpL++;
-      }
-      while (count[j] == 0) {
+      }     
+
+      if (i == numBins)
+         return image;
+
+      while (j >= 0 && count[j] == 0) {
          j--;
          cpR++;
       }
@@ -170,12 +176,14 @@ public class TallyHistogram extends Tally {
    }
 
    /**
-    * Merges this histogram with the other histogram, by adding the bin counts of
-    * the two histograms.
-    * 
+    * Merges this histogram with the other histogram by adding their bin counts and
+    * out-of-range counters. The statistics inherited from @ref Tally are not
+    * merged and remain those of this histogram.
+    *
+    * The two histograms must have the same number of bins.
+    *
     * @param other the histogram to add
-    * 
-    *              Returns the merged histogram.
+    * @return the merged histogram
     */
    public TallyHistogram addHistograms(TallyHistogram other) {
       if (this.numBins != other.numBins)
@@ -213,14 +221,14 @@ public class TallyHistogram extends Tally {
             countNew[j] += count[i];
          b = b + g;
       }
-      while (b < numBins - 1) {
+      while (b < numBins) {
          countNew[numBinsNew - 1] += count[b];
          b++;
       }
       image.count = countNew;
       image.m_h = m_h * g;
       image.m_a = m_a;
-      image.m_b = m_h * numBinsNew;
+      image.m_b = m_a + m_h * numBinsNew;
       image.numBins = numBinsNew;
       image.leftCount = leftCount;
       image.rightCount = rightCount;
