@@ -150,7 +150,7 @@ public class HistSamo25Paper {
          latexHist = HistCollectionLatex.makeHistogramLatex(path, numBins, fileName,
             "4.4 cm", "3 cm", "builtin", ExtremMarks);
 
-         File outFile = new File(outputFolder, fileName + "-hist25.tex");// hist25 is used to nor overwrite makeSimpleHistogramLatex files
+         File outFile = new File(outputFolder, fileName + "-hist25.tex");// hist25 is used to not overwrite makeSimpleHistogramLatex files
          try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
             out.print(latexHist);
          } catch (IOException e) {
