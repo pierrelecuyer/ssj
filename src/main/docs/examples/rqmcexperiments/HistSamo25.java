@@ -23,6 +23,7 @@ public class HistSamo25 {
          "SmoothPerB4", "SumUeU", "MC2", "Polynomial", "Oscillatory",
          "Gaussian", "SmoothGauss", "PieceLinGauss", "IndSumNormal"
       };
+      
       String[] methods = new String[] {
          "Lat-RS", "Lat-RSB", "Lat-Rv", "Lat-Rpv", "Lat-RvRS",
          "Lat-RvRSB", "Lat-RpvRS", "Lat-RpvRSB",
@@ -33,6 +34,10 @@ public class HistSamo25 {
       int[] ks = new int[] {10, 12, 14, 16};      // Values of k = log_2 n.
       int m = 10000;                    // Number of observations per file.
 
+      // modelTags = new String[] {"SmoothPerB4"};
+      // int[] sDims = new int[] {2};  // Dimensions s.
+      // int[] ks = new int[] {10};      // Values of k = log_2 n.
+         
       HistCollectionLatex.writeCollection(
          inputFolder, outputFolder, modelTags, methods, sDims, ks, m);
    }

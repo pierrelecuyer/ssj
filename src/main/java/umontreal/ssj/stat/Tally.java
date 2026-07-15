@@ -51,8 +51,8 @@ import java.util.logging.Logger;
 public class Tally extends StatProbe implements Cloneable {
    protected int numObs;
    // private double sumSquares;
-   private double curAverage; // The current average of the first numObs observations
-   private double curSum2;    // The current sum of the (xi - curAverage)^2.
+   protected double curAverage; // The current average of the first numObs observations
+   protected double curSum2;    // The current sum of the (xi - curAverage)^2.
    private Logger log = Logger.getLogger("umontreal.ssj.stat");
 
    protected static enum CIType {

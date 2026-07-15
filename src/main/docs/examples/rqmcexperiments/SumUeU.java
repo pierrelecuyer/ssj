@@ -32,7 +32,7 @@ public class SumUeU implements MonteCarloModelDouble {
    }
 
    public double getPerformance() {
-      return sum - s;
+      return sum - (double)s;
    }
 
    // Descriptor.

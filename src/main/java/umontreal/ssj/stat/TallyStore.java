@@ -159,6 +159,23 @@ public class TallyStore extends Tally {
    }
 
    /**
+    * Subtract the average to all observations, so the new average becomes zero.
+    */
+   public void centerData() {
+      double aver = average();
+      minValue -= aver;
+      maxValue -= aver;
+      sumValue = 0.0;
+      curAverage = 0.0;
+      curSum2 = 0.0;
+      double[] obs = this.getArray();
+      for (int i = 0; i < numberObs(); i++) {
+         obs[i] -= aver;
+         curSum2 += obs[i] * obs[i];
+      }
+   }
+
+   /**
     * Recomputes and returns the variance from the observations contained in this tally.
     * This uses the function @ref cern.jet.stat.Descriptive.sampleVariance.
     */

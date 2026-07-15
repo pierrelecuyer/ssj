@@ -56,8 +56,10 @@ public class Rank1Lattice extends PointSet {
 
    private void initA() {
       for (int j = 0; j < dim; j++) {
+         // assert(genAs[j] >= 0);
+         // We reduce a_j mod n. If a_j is negative, we also add n.
          int amod = (genAs[j] % numPoints) + (genAs[j] < 0 ? numPoints : 0);
-         v[j] = normFactor * amod;
+         v[j] = normFactor * (double) amod;
       }
    }
 

@@ -53,7 +53,7 @@ import umontreal.ssj.util.*;
  */
 public class DigitalNetBase2 extends DigitalNet {
    private transient long[] originalMat; // Original matrices, without randomization.
-   protected long[] genMat; // The current generator matrix.
+   protected long[] genMat; // The current generator matrices.
    protected transient long[] digitalShift; // Stores the digital shift vector.
 
    

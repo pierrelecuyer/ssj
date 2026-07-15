@@ -14,10 +14,11 @@ public class WSC23MoreReps extends RQMCExperiment64 {
    public static void main(String[] args) throws IOException {
       // WSC26RQMCSamples64.directory = "C:/Users/Lecuyer/Dropbox/wsc26/data64/"; // Retained for 64 bits
       // WSC23MoreSamples.directory = "C:/Users/Lecuyer/Dropbox/wsc23/test/";        // For testing
-      WSC23MoreSamples.directory = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";        // For Samo paper
+      //WSC23MoreSamples.directory = "C:/Users/Lecuyer/Dropbox/samo25/test/";        // For Samo paper
+       WSC23MoreSamples.directory = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";        // For Samo paper
 
       Chrono timerTotal = new Chrono();
-      for (int s = 1; s <= 1; s *= 2) {
+      for (int s = 1; s <= 32; s *= 2) {
       // for (int s = 2; s <= 32; s *= 2) {
          System.out.println("WSC23MoreReps, run with s = " + s);
 
@@ -29,10 +30,10 @@ public class WSC23MoreReps extends RQMCExperiment64 {
          
          // Uncomment the models you want to run. ***
          //WSC23MoreSamples.simulRepsAllSizes(new SmoothPerBeta52(s, 1.0), s, mink, maxk, m);
-         WSC23MoreSamples.simulRepsAllSizes(new SmoothPerB4(s, 1.0), s, mink, maxk, m);
-         WSC23MoreSamples.simulRepsAllSizes(new SumUeU(s), s, mink, maxk, m);
-         WSC23MoreSamples.simulRepsAllSizes(new MC2(s), s, mink, maxk, m);
-         WSC23MoreSamples.simulRepsAllSizes(new Polynomial(s), s, mink, maxk, m);
+         // WSC23MoreSamples.simulRepsAllSizes(new SmoothPerB4(s, 1.0), s, mink, maxk, m);
+         // WSC23MoreSamples.simulRepsAllSizes(new SumUeU(s), s, mink, maxk, m);
+         // WSC23MoreSamples.simulRepsAllSizes(new MC2(s), s, mink, maxk, m);
+         // WSC23MoreSamples.simulRepsAllSizes(new Polynomial(s), s, mink, maxk, m);
          WSC23MoreSamples.simulRepsAllSizes(new Oscillatory(s), s, mink, maxk, m);
          WSC23MoreSamples.simulRepsAllSizes(new Gaussian(s), s, mink, maxk, m);
          WSC23MoreSamples.simulRepsAllSizes(new SmoothGauss(s), s, mink, maxk, m);
@@ -40,7 +41,10 @@ public class WSC23MoreReps extends RQMCExperiment64 {
          WSC23MoreSamples.simulRepsAllSizes(new PieceLinGauss(s), s, mink, maxk, m);
          WSC23MoreSamples.simulRepsAllSizes(new IndSumNormal(s), s, mink, maxk, m);
          //WSC23MoreSamples.simulRepsAllSizes(new IndBox(s), s, mink, maxk, m);
-              
+
+         // WSC23MoreSamples.simulRepsLatRv(new SumUeU(s), s, mink, m);
+         // WSC23MoreSamples.simulRepsSelectedTypes(new SumUeU(s), s, 10, m);
+
       }
       System.out.println("Total time for everything: " + timerTotal.format() +
             "\n=========================================== \n");
