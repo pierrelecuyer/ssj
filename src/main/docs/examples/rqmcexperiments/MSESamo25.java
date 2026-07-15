@@ -1,5 +1,7 @@
 package rqmcexperiments;
 
+import java.io.IOException;
+
 import umontreal.ssj.rng.LFSR258;
 import umontreal.ssj.rng.RandomStream;
 import umontreal.ssj.util.Chrono;
@@ -19,7 +21,7 @@ public class MSESamo25 {
    /**
     * Configures and runs MSE experiments with the samo25 data.
     */
-   public static void main(String[] args) {
+   public static void main(String[] args) throws IOException {
 
       String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
       String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/mse/";
