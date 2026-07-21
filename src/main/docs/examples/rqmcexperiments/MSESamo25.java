@@ -60,7 +60,7 @@ public class MSESamo25 {
       for (String model : modelTags)
          MeanMedianMSE.estimateMSEManyr(inputFolder, outputFolder, model, dims2,
                methods, ks2, numObs, numReps, rs2, stream);
-/*
+              
       // Grouping by category to make scatter plots.
       String[] modelTags3 = new String[] {
             "SmoothPerB4", "SumUeU", "MC2", "SmoothGauss", "PieceLinGauss", "IndSumNormal"
@@ -83,7 +83,6 @@ public class MSESamo25 {
             modelTags3, dims3, ks3, numObs, numReps, r3, stream);
       MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "c", methodsc,
             modelTags3, dims3, ks3, numObs, numReps, r3, stream);
-*/
       
       System.out.println("\nTotal time for everything: " + timerTotal.format() +
             "\n=========================================== \n");

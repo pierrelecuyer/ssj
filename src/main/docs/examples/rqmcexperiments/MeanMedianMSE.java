@@ -410,7 +410,7 @@ public class MeanMedianMSE {
 
       // Builds the first row of the .csv file.
       StringBuilder csvHead = new StringBuilder("model,s,method,k,mean,variance,abs-skewness,kurtosis");
-      csvHead.append(",MSEAr,MSEMr,MSEratio\n");
+      csvHead.append(",MSEAr,MSEMr,MSEratio,log-ratio\n");
       StringBuilder csvRows = new StringBuilder();
       TallyStore statMed = new TallyStore("M_r");
 
@@ -430,7 +430,8 @@ public class MeanMedianMSE {
                   csvRows.append(model).append(",").append(s).append(",").append(method).append(",").append(k)
                         .append(",").append(tally.average()).append(",").append(tally.variance()).append(",")
                         .append(Math.abs(tally.skewness())).append(",").append(tally.kurtosis(false, false)).append(",")
-                        .append(arMse).append(",").append(mrMse).append(",").append(ratio).append("\n");
+                        .append(arMse).append(",").append(mrMse).append(",").append(ratio).append(",")
+                        .append(Math.log10(ratio)).append("\n");
                }
             }
          }

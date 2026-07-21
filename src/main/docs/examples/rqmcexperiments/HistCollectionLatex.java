@@ -319,7 +319,7 @@ public class HistCollectionLatex {
             + "  anchor=north east, xshift=2pt, yshift=-9.2pt, inner sep=0pt},\n"
             + getLegendOptions(hist, fileStats, legendOptions));
 
-      scHist.setAddPlotOptions("fill=blue!25, draw=blue!80!black, line width=0.03pt");
+      scHist.setAddPlotOptions("fill=blue!25, draw=blue!80!black, very thin");
       String latex = scHist.toLatex(true, false);
 
       String extremeMarksLatex = addExtremeMarks(fileStats.getArray(), extremeMarks, fileStats.numberObs());
@@ -461,7 +461,7 @@ public class HistCollectionLatex {
       String pos = legendPos.equals("auto") ? getLegendPos(hist.getCounters()) : legendPos;
 
       String legend = "  \\parbox[c][0.35cm][c]{1.2cm}{\\centering\n"
-            + "  \\scalebox{0.6}{\\bfseries\\boldmath\n"
+            + "  \\scalebox{0.6}{\\tt\n"  // \\bfseries\\boldmath\n"
             + "  \\begin{tabular}{@{}l@{}}\n"
             + "   $\\sigma^2$=" + sci(hist.variance()) + "\\\\[-1pt]\n"
             + "   $\\gamma$=" + sci(fileStats.skewness()) + "\\\\[-1pt]\n"

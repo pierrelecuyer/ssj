@@ -26,7 +26,7 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
    // 981, 957, 4047, 1013, 1635, 2327, 7879, 2805, 2353, 1081, 3999, 879, 5337,
    // 7725, 4889, 5103 };
    // The following one is for n=2^{18}, found by CBC with same gamma_j.
-   static int a18[] = { 1555, 103259, 73357, 46713, 58781, 112041, 32459, 50551, 40125, 128245, 18285, 124265, 98539,
+   static int a18[] = { 1, 103259, 73357, 46713, 58781, 112041, 32459, 50551, 40125, 128245, 18285, 124265, 98539,
          130087, 113373, 22191, 120679, 98411, 94845, 33103, 47891, 15941, 30147, 43921, 81129, 3289, 50935, 63965,
          55749, 38101, 70631, 116243 };
    // The trivial vector.
@@ -94,7 +94,6 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
          simulateRuns(model, p.getNumPoints(), stream, statValue);
          statReps.add(statValue.average()); // For the estimator of the mean.
          // System.out.println("average = " + statReps.average());
-
       }
       System.out.println("Output file: " + statReps.getName());
       System.out.println("Number obs:  " + statReps.numberObs());
@@ -257,66 +256,132 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       Rank1Lattice pLat = new Rank1Lattice(n, a18, s);
       RandomShift randShift = new RandomShift(stream);
       BakerTransformedPointSet ptent = new BakerTransformedPointSet(pLat);
-      RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for fixed n = power of 2,
-      RandomLatticeParams randLatPar2 = new RandomLatticeParams(n / 2, n, stream); // This one also randomizes n.
+      //RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
+      //RandomLatticeParams randLatPar2 = new RandomLatticeParams(n / 2, n, stream); // This one also randomizes n.
 
-      // Lat-Rv, random a
-      System.out.println("*   Lattice with random gen vector a, no shift");
-      pLat.clearRandomShift();   // This is essential.
-      randLatPar.setRandShift(false);
-      statReps.setName(modelTag + "-" + s + "-Lat-Rv-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
-
-      // Lat-Rpv, random n and a, no shift
-      System.out.println("*   Lattice with random n and random gen vector a, no shift");
-      pLat.clearRandomShift();
-      randLatPar2.setRandShift(false);
-      statReps.setName(modelTag + "-" + s + "-Lat-Rpv-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
-
-      // -------------------------
-      // Objects for Sobol' points
-      // System.out.println("*** Sobol points ");
-      DigitalNetBase2 p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
-      ptent = new BakerTransformedPointSet(p);
-      // PointSetRandomization norand = new EmptyRandomization(); // No randomization
-      PointSetRandomization rds = new RandomShift(stream); // Digital shift
-      PointSetRandomization lms = new LMScramble(stream);
-      PointSetRandomization lmsrds = new LMScrambleShift(stream);
-
-      // Sob-LMS System.out.println("* Sobol with LMS alone, no shift");
-      p.clearRandomShift();     // This is essential to remove the digital shift.
-      statReps.setName(modelTag + "-" + s + "-Sob-LMS-" + k + "-" + m);
-      simulRepsRQMCSort(model, p, lms, m, statReps);
+      // Lat-RS
+      System.out.println("*   Lattice with RS");
+      statReps.setName(modelTag + "-" + s + "-Lat-RS-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randShift, m, statReps);
+      
+      // Lat-RSB
+      System.out.println("*   Lattice with RS + tent transform");
+      statReps.setName(modelTag + "-" + s + "-Lat-RSB-" + k + "-" + m);
+      simulRepsRQMCSort(model, ptent, randShift, m, statReps);
 
       System.out.println(
             "Total time for simulRepsSelectedTypes: " + timer.format() + "\n=========================================== \n");
    }
 
    /**
-    * Same thing, but for Lat-Rv with a fixed a.
+    * Specific models, s, k, method, usually for very large m.
     */
-   public static void simulRepsLatRv (MonteCarloModelDouble model, int s, int k, int m) throws IOException {
-      String modelTag = model.getTag();
-      // String ident; // Identifies the case, used in file names.
-      int n = (int) Num.TWOEXP[k];
+   public static void simulRepsSpecificCases (int m) throws IOException {
       RandomStream stream = new LFSR258();
       Chrono timer = new Chrono();
-      System.out.println("WSC23MoreSamples program, RQMC replicates with model: " + model.toString() + "\n");
+      System.out.println("WSC23MoreSamples program, Specific cases\n");
       TallyStore statReps = new TallyStore(m);
-
-      // --------------------------
-      // Objects for lattice points
-      System.out.println("***  Lattice points, Lat-Rv ");
+      MonteCarloModelDouble model;
+      int s = 8;
+      int k = 16;
+      int n = (int) Num.TWOEXP[k];
+      
+      model = new SmoothPerB4(s, 1.0);
+      System.out.println("SmoothPerB4, Lat-RvRS, s=8, k=16 ");
       Rank1Lattice pLat = new Rank1Lattice(n, a18, s);
-      EmptyRandomization randEmpty = new EmptyRandomization();
+      pLat.clearRandomShift();
+      RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
+      randLatPar.setRandShift(true);
+      statReps.setName(model.getTag() + "-" + s + "-Lat-RvRS-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+ 
+      System.out.println("SmoothPerB4, Sob-LMS-RDS, s=8, k=16 ");
+      DigitalNetBase2 p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
+      PointSetRandomization lms = new LMScramble(stream);
+      PointSetRandomization lmsrds = new LMScrambleShift(stream);
+      p.clearRandomShift(); 
+      statReps.setName(model.getTag() + "-" + s + "-Sob-LMS-RDS-" + k + "-" + m);
+      simulRepsRQMCSort(model, p, lmsrds, m, statReps);
+      
+      /*
+      model = new MC2(s);
+      System.out.println("MC2, Lat-Rpv, s=8, k=16 ");
+      pLat.clearRandomShift();
+      //RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
+      RandomLatticeParams randLatPar2 = new RandomLatticeParams(n / 2, n, stream); // This one also randomizes n.
+      randLatPar2.setRandShift(false);
+      statReps.setName(model.getTag() + "-" + s + "-Lat-Rpv-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
+  
+      model = new MC2(s);
+      System.out.println("MC2, Sob-LMS, s=8, k=16 ");
+      DigitalNetBase2 p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
+      PointSetRandomization lms = new LMScramble(stream);
+      // PointSetRandomization lmsrds = new LMScrambleShift(stream);
+      p.clearRandomShift(); 
+      statReps.setName(model.getTag() + "-" + s + "-Sob-LMS-" + k + "-" + m);
+      simulRepsRQMCSort(model, p, lms, m, statReps);
 
-      // Lat-Rv, fixed a
-      System.out.println("*   Lattice with trivial a, no shift");
-      statReps.setName(modelTag + "-" + s + "-Lat-Rv-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randEmpty, m, statReps);
-      System.out.println("Average = " + statReps.average());
+      System.out.println("MC2, Sob-RDSB, s=8, k=16 ");
+      PointSetRandomization rds = new RandomShift(stream); // Digital shift
+      BakerTransformedPointSet ptent = new BakerTransformedPointSet(p);
+      statReps.setName(model.getTag() + "-" + s + "-Sob-RDSB-" + k + "-" + m);
+      simulRepsRQMCSort(model, ptent, rds, m, statReps);
+      */
+      System.out.println(
+            "Total time for simulRepsLatRv: " + timer.format() + "\n=========================================== \n");
+   }
 
+
+   /**
+    * Specific models, s, k, method, usually for very large m.
+    */
+   public static void simulRepsSpecificCases2 (int m) throws IOException {
+      RandomStream stream = new LFSR258();
+      Chrono timer = new Chrono();
+      System.out.println("WSC23MoreSamples program, Specific cases\n");
+      TallyStore statReps = new TallyStore(m);
+      MonteCarloModelDouble model;
+      int s = 8;
+      int k = 16;
+      int n = (int) Num.TWOEXP[k];
+      
+      model = new MC2(s);
+      System.out.println("MC2, Lat-Rv, s=8, k=16 ");
+      Rank1Lattice pLat = new Rank1Lattice(n, a18, s);
+      pLat.clearRandomShift();
+      RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
+      randLatPar.setRandShift(false);
+      statReps.setName(model.getTag() + "-" + s + "-Lat-Rv-" + k + "-" + m);
+      // simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+ 
+      System.out.println("MC2, Sob-LMS, s=8, k=16 ");
+      DigitalNetBase2 p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
+      PointSetRandomization lms = new LMScramble(stream);
+      PointSetRandomization lmsrds = new LMScrambleShift(stream);
+      p.clearRandomShift(); 
+      statReps.setName(model.getTag() + "-" + s + "-Sob-LMS-" + k + "-" + m);
+      // simulRepsRQMCSort(model, p, lms, m, statReps);
+
+      System.out.println("MC2, Sob-LMS-RDS, s=8, k=16 ");
+      p.clearRandomShift(); 
+      statReps.setName(model.getTag() + "-" + s + "-Sob-LMS-RDS-" + k + "-" + m);
+      // simulRepsRQMCSort(model, p, lmsrds, m, statReps);
+      
+      System.out.println("MC2, Sob-RDSB, s=8, k=16 ");
+      PointSetRandomization rds = new RandomShift(stream); // Digital shift
+      BakerTransformedPointSet ptent = new BakerTransformedPointSet(p);
+      statReps.setName(model.getTag() + "-" + s + "-Sob-RDSB-" + k + "-" + m);
+      simulRepsRQMCSort(model, ptent, rds, m, statReps);
+      
+      s = 4;  k = 14;  n = (int) Num.TWOEXP[k];
+      model = new MC2(s);
+      System.out.println("MC2, Sob-RDSB, s=4, k=14 ");
+      p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
+      ptent = new BakerTransformedPointSet(p);
+      statReps.setName(model.getTag() + "-" + s + "-Sob-RDSB-" + k + "-" + m);
+      simulRepsRQMCSort(model, ptent, rds, m, statReps);
+      
       System.out.println(
             "Total time for simulRepsLatRv: " + timer.format() + "\n=========================================== \n");
    }
@@ -333,8 +398,8 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
       System.out.println("RQMC replicates with model: " + model.toString() + ", s = " + s + "\n");
       Chrono timer = new Chrono();
       for (int k = mink; k <= maxk; k += 2) { // For each point set size
-         // simulRepsAllTypes(model, s, k, m);
-         simulRepsSelectedTypes(model, s, k, m);
+         simulRepsAllTypes(model, s, k, m);
+         // simulRepsSelectedTypes(model, s, k, m);
       }
       System.out.println(
             "\nTotal time for simulAllSizes: " + timer.format() + "\n=========================================== \n");

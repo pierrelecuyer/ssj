@@ -27,29 +27,34 @@ public class HistSamo25Paper {
    /**
     * Builds the PGFPlots LaTeX code for one histogram.
     *
-    * The plot includes a title derived from the input file name, and summary
-    * statistics in a legend. The range of the histogram goes from the smallest 
-    * observation on the left of the first bin to the largest observation plus a
-    * tiny margin of `1.0e-12` times the range on the right of the last bin.
+    * This function is similar to `HistCollectionLatex.makeHistogramLatex`,
+    * with with a few changes that are specific for the plots in the Samo25 paper.
     * Extra space of one percent of the range is added in the display on each side
-    * of the histogram.
+    * of the histogram.  The parameters `titleName` and `legpos` are for the title
+    * of the histogram and the position of the legend.
     *
     * @param String fileName input file name without folder name and extension.
     *
     * @return LaTeX code for the histogram
     * @throws IOException if the data file cannot be read or has no observations
     */
-   public static String makeSimpleHistogramLatex(String fileName, int numBins) throws IOException {
+   public static String makeSimpleHistogramLatex(String fileName, String titleName, 
+         String legpos, int numBins) throws IOException {
       TallyStore data = new TallyStore();
+      System.out.println("makeSimpleHistogramLatex: " + fileName);
       data.fillFromFile(inputFolder + fileName + ".dat");
+      data.quickSort();
+      int n = data.numberObs();
       double a = data.min();
       double b = data.max();
       double range = b - a;
+      System.out.println("makeSimpleHistogramLatex: a = " + a + ", b = " + b);
+
       TallyHistogram hist = new TallyHistogram(a, b + range * 1.0e-12, numBins);
       hist.fillFromTallyStore(data);     
       ScaledHistogram scHist = new ScaledHistogram(hist);
-      System.out.println(hist.toString());
-      scHist.setAxisOptions("title={{\\footnotesize " + fileName + "}}, width=4.4cm, height=3.0cm, scale only axis, \n" +
+      // System.out.println(hist.toString());
+      scHist.setAxisOptions("title={" + titleName + "}, width=4.4cm, height=3.0cm, scale only axis, \n" +
              "  ymin=0.0, xmin = " + (a - 0.01 * range) + ", xmax = " + (b + 0.01 * range) + 
              ",\n  ylabel={}, yticklabels={}, \n" +
              "  scaled x ticks=true, minor x tick num=0, scaled y ticks=false, \n" +
@@ -61,14 +66,27 @@ public class HistSamo25Paper {
                  + "\\\\[-1pt]\n     $\\gamma=$ " + sci(data.skewness())
                  + "\\\\[-1pt]\n     $\\kappa'=$ " + sci(data.kurtosis()) + "\n  \\end{tabular}}}}},\n" +
              "  legend image code/.code={}, \n" +
-             "  legend style={draw=none, fill=none, cells={anchor=west}, inner xsep=0pt, inner ysep=5pt}, \n" +
-             "  legend pos=north east");
+             "  legend style={draw=none, fill=none, cells={anchor=west}, inner xsep=0pt, inner ysep=5pt},\n" +
+             "  legend " + legpos);
       scHist.setAddPlotOptions("mark=none,very thin,fill=blue!25");
       // Make the latex file.
       String latexCode = scHist.toLatex(true, false);
-      File outFile = new File(outputFolder, fileName + "-hist.tex");
+      // Add red marks.
+      StringBuilder coords = new StringBuilder();
+      // int[] marks = new int[] {0, 1, n-1, n-2};
+      int[] marks = new int[] {0, 10, 100, 1000, n-1, n-10, n-100, n-1000};
+      for(int i : marks)
+         coords.append("(").append(String.format(Locale.US, "%.17g", data.getArray()[i])).append(",0) ");
+      // The following is very specific to this Sob-RDS case; it adds purple markes in the middle.
+      if (fileName == "SmoothPerB4-8-Sob-RDS-16-10000")
+         coords.append(" (-4.760742119957395E-6,0) (4.485223280581408E-6,0)");
+      String adds = "\\addplot+[only marks, mark=|, mark size=2.5pt, "
+            + "mark options={green,thick}, forget plot] coordinates {" + coords + "};";
+      latexCode = latexCode.replace("\\end{axis}", adds + "\n\\end{axis}");
+      File outFile = new File(outputFolder, fileName + "-hist-paper.tex");    // Add "-paper" for final ones.
       try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
          out.print(latexCode);
+         System.out.println("Hist printed to file: " + fileName);
       } catch (IOException e) {
          throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
       }
@@ -88,60 +106,32 @@ public class HistSamo25Paper {
     */
    public static void main(String[] args) throws IOException {
 
-      /*
-      String[] modelTags = new String[] {"SmoothPerB4"};
-      String[] methods = new String[] {
-         "Lat-RS", "Lat-RvRS", "Lat-RpvRS", 
-         "Sob-RDS", "Sob-LMS-RDS", "Sob-NUS"
-      };
-      int[] sDims = new int[] {8};  // Dimensions s.
-      int[] ks = new int[] {16};      // Values of k = log_2 n.
-      int m = 10000;                    // Number of observations per file.
-      HistCollectionLatex.writeCollection(
-         inputFolder, outputFolder, modelTags, methods, sDims, ks, m);
-      
-      modelTags = new String[] {"MC2"};
-      methods = new String[] {"Sob-LMS-RDS"};
-      sDims = new int[] {8}; 
-      ks = new int[] {16}; 
-      HistCollectionLatex.writeCollection(
-            inputFolder, outputFolder, modelTags, methods, sDims, ks, m);
-      
-      methods = new String[] {"Sob-LMS-RDS", "Sob-NUS"};
-      sDims = new int[] {16};
-      ks = new int[] {14};
-      HistCollectionLatex.writeCollection(
-            inputFolder, outputFolder, modelTags, methods, sDims, ks, m);
-       */      
-
-      // This one is just for testing.
-      // System.out.println(makeSimpleHistogramLatex("babytest", 4));
-
-      // makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RS-16-10000", 100);
-      // makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RvRS-16-10000", 100);
-      // makeSimpleHistogramLatex("SmoothPerB4-8-Lat-RpvRS-16-10000", 100);
-      // makeSimpleHistogramLatex("SmoothPerB4-8-Sob-RDS-16-10000", 100);
-      // makeSimpleHistogramLatex("SmoothPerB4-8-Sob-LMS-RDS-16-10000", 100);
-      // makeSimpleHistogramLatex("SmoothPerB4-8-Sob-NUS-16-10000", 100);
-      
-      // makeSimpleHistogramLatex("MC2-8-Sob-LMS-RDS-16-10000", 100);
-      // makeSimpleHistogramLatex("MC2-16-Sob-LMS-RDS-14-10000", 100);
-      // makeSimpleHistogramLatex("MC2-16-Sob-NUS-14-10000", 100);
-
       String[] fileNames = new String[] {
-         "SmoothPerB4-8-Lat-RvRS-16-10000", "SmoothPerB4-8-Lat-RS-16-10000",
-         "SmoothPerB4-8-Lat-RpvRS-16-10000","SmoothPerB4-8-Sob-RDS-16-10000",
+         "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", 
+         "SmoothPerB4-8-Lat-RpvRS-16-10000", "SmoothPerB4-8-Sob-RDS-16-10000",
          "SmoothPerB4-8-Sob-LMS-RDS-16-10000", "SmoothPerB4-8-Sob-NUS-16-10000",
-         "MC2-8-Sob-LMS-RDS-16-10000","MC2-16-Sob-LMS-RDS-14-10000",
-         "SmoothPerB4-8-Sob-NUS-16-10000"
+         "MC2-8-Sob-LMS-RDS-16-10000", "MC2-16-Sob-LMS-RDS-14-10000",
+         "MC2-16-Sob-NUS-14-10000"
       };
+      String[] titleNames = new String[] {
+            "Lat-RS", "Lat-RvRS", "Lat-RpvRS","Sob-RDS", "Sob-LMS-RDS", "Sob-NUS",
+            "Sob-LMS-RDS, $s=8$, $k=16$", "Sob-LMS-RDS, $s=16$, $k=14$",
+            "Sob-NUS, $s=16$, $k=14$"
+         };
+      String[] legendAnchor = new String[] {
+            "style={at={(0.5, 0.97)}, anchor=north}", 
+            "pos=north west", "pos=north west", 
+            "style={at={(0.5, 0.97)}, anchor=north}", 
+            "pos=north east", "pos=north east", 
+            "pos=north east", "pos=north east", "pos=north east",
+         };
 
-      for(String fileName: fileNames){
-         makeSimpleHistogramLatex(fileName, 100);
+      for (int i = 0; i < fileNames.length; i++) {
+         makeSimpleHistogramLatex(fileNames[i], titleNames[i], legendAnchor[i], 100);
       }
 
-      //Same output using 'HistCollectionLatex.makeHistogramLatex'
-
+/*
+      // The following gives the same output using 'HistCollectionLatex.makeHistogramLatex'
       int[] ExtremMarks = new int[] {2,2};
       String path;
       String latexHist;
@@ -149,15 +139,15 @@ public class HistSamo25Paper {
          path = inputFolder + fileName + ".dat";
          latexHist = HistCollectionLatex.makeHistogramLatex(path, numBins, fileName,
             "4.4 cm", "3 cm", "builtin", ExtremMarks);
-
-         File outFile = new File(outputFolder, fileName + "-hist25.tex");// hist25 is used to not overwrite makeSimpleHistogramLatex files
+         // -hist25 is used to not overwrite makeSimpleHistogramLatex files
+         File outFile = new File(outputFolder, fileName + "-hist25.tex");
          try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
             out.print(latexHist);
          } catch (IOException e) {
             throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
          }
       }
-
+*/
    }
    
 }
