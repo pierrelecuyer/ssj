@@ -22,7 +22,6 @@ public class HistSamo25Paper {
    // Fixed parameters for this particular paper.
    static String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
    static String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdat/";
-   static int numBins = 100;
          
    /**
     * Builds the PGFPlots LaTeX code for one histogram.
@@ -39,12 +38,12 @@ public class HistSamo25Paper {
     * @throws IOException if the data file cannot be read or has no observations
     */
    public static String makeSimpleHistogramLatex(String fileName, String titleName, 
-         String legpos, int numBins) throws IOException {
+         String legpos, int numBins, int[] marks) throws IOException {
       TallyStore data = new TallyStore();
       System.out.println("makeSimpleHistogramLatex: " + fileName);
       data.fillFromFile(inputFolder + fileName + ".dat");
       data.quickSort();
-      int n = data.numberObs();
+      // int n = data.numberObs();
       double a = data.min();
       double b = data.max();
       double range = b - a;
@@ -61,7 +60,7 @@ public class HistSamo25Paper {
              "  every x tick label/.append style={scale=0.6, transform shape}, \n" +
              "  every x tick scale label/.style={at={(axis description cs:1, 0)}, \n" +
                 "  anchor=north east, xshift=2pt, yshift=-6.2pt, inner sep=0pt}, \n" +
-             "  legend entries={{\\parbox[c][0.1cm][c]{1.2cm}{\\centering\\scalebox{0.6}{\\tt \n" +
+             "  legend entries={{\\parbox[c][0.13cm][c]{1.5cm}{\\centering\\scalebox{0.6}{\\tt \n" +
              "  \\begin{tabular}{@{}l@{}}\n     $\\sigma^2=$ " + sci(data.variance())
                  + "\\\\[-1pt]\n     $\\gamma=$ " + sci(data.skewness())
                  + "\\\\[-1pt]\n     $\\kappa'=$ " + sci(data.kurtosis()) + "\n  \\end{tabular}}}}},\n" +
@@ -71,10 +70,8 @@ public class HistSamo25Paper {
       scHist.setAddPlotOptions("mark=none,very thin,fill=blue!25");
       // Make the latex file.
       String latexCode = scHist.toLatex(true, false);
-      // Add red marks.
+      // Add marks.
       StringBuilder coords = new StringBuilder();
-      // int[] marks = new int[] {0, 1, n-1, n-2};
-      int[] marks = new int[] {0, 10, 100, 1000, n-1, n-10, n-100, n-1000};
       for(int i : marks)
          coords.append("(").append(String.format(Locale.US, "%.17g", data.getArray()[i])).append(",0) ");
       // The following is very specific to this Sob-RDS case; it adds purple markes in the middle.
@@ -83,16 +80,57 @@ public class HistSamo25Paper {
       String adds = "\\addplot+[only marks, mark=|, mark size=2.5pt, "
             + "mark options={green,thick}, forget plot] coordinates {" + coords + "};";
       latexCode = latexCode.replace("\\end{axis}", adds + "\n\\end{axis}");
-      File outFile = new File(outputFolder, fileName + "-hist-paper.tex");    // Add "-paper" for final ones.
-      try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
-         out.print(latexCode);
-         System.out.println("Hist printed to file: " + fileName);
-      } catch (IOException e) {
-         throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
-      }
       return latexCode;
    }
 
+   public static String makeDoubleHistogramLatex(TallyStore data1, TallyStore data2, String titleName, 
+         String legpos, int numBins, int[] marks) throws IOException {
+      data1.quickSort();
+      data2.quickSort();
+      // int n1 = data1.numberObs();
+      // int n2 = data2.numberObs();
+      double a = Math.min(data1.min(), data2.min());
+      double b = Math.max(data1.max(), data2.max());
+      double range = b - a;
+      System.out.println("makeSimpleHistogramLatex: a = " + a + ", b = " + b);
+
+      TallyHistogram hist1 = new TallyHistogram(a, b + range * 1.0e-12, numBins);
+      hist1.fillFromTallyStore(data1);     
+      ScaledHistogram scHist1 = new ScaledHistogram(hist1);
+      TallyHistogram hist2 = new TallyHistogram(a, b + range * 1.0e-12, numBins);
+      hist2.fillFromTallyStore(data2);     
+      ScaledHistogram scHist2 = new ScaledHistogram(hist2);
+      // ScaledHistogram scHist = new ScaledHistogram();
+      
+      // System.out.println(hist.toString());
+      scHist1.setAxisOptions("title={" + titleName + "}, width=4.4cm, height=3.0cm, scale only axis, \n" +
+             "  ymin=0.0, xmin = " + (a - 0.01 * range) + ", xmax = " + (b + 0.01 * range) + 
+             ",\n  ylabel={}, yticklabels={}, \n" +
+             "  scaled x ticks=true, minor x tick num=0, scaled y ticks=false, \n" +
+             "  every x tick label/.append style={scale=0.6, transform shape}, \n" +
+             "  every x tick scale label/.style={at={(axis description cs:1, 0)}, \n" +
+                "  anchor=north east, xshift=2pt, yshift=-6.2pt, inner sep=0pt}, \n");
+      scHist1.setAddPlotOptions("mark=none,very thin,fill=green!25,opacity=0.6,fill opacity=0.6");
+      scHist2.setAddPlotOptions("mark=none,very thin,fill=red!25,opacity=0.6,fill opacity=0.6");
+      // Make the latex file.
+      String latexCode = scHist1.toLatexTwoHist(scHist2);
+      // Add the marks.
+      StringBuilder coords = new StringBuilder();
+      for(int i : marks)
+         coords.append("(").append(String.format(Locale.US, "%.17g", data1.getArray()[i])).append(",0) ");
+      String adds = "\\addplot+[only marks, mark=|, mark size=2.5pt, "
+            + "mark options={green,thick}, forget plot] coordinates {" + coords + "};";
+      latexCode = latexCode.replace("\\end{axis}", adds + "\n\\end{axis}");
+      coords = new StringBuilder();
+      for(int i : marks)
+         coords.append("(").append(String.format(Locale.US, "%.17g", data2.getArray()[i])).append(",0) ");
+      adds = "\\addplot+[only marks, mark=|, mark size=2.5pt, "
+            + "mark options={red,thick}, forget plot] coordinates {" + coords + "};";
+      latexCode = latexCode.replace("\\end{axis}", adds + "\n\\end{axis}");
+      return latexCode;
+   }
+
+   
    private static String sci(double x) {
       String s = String.format(Locale.US, "%2.2e", x);
       s = s.replace("e-0", "e-");
@@ -125,13 +163,21 @@ public class HistSamo25Paper {
             "pos=north east", "pos=north east", 
             "pos=north east", "pos=north east", "pos=north east",
          };
+      int numBins = 100;
+      int[] marks = new int[] {0, 1, 9999, 9998};
 
       for (int i = 0; i < fileNames.length; i++) {
-         makeSimpleHistogramLatex(fileNames[i], titleNames[i], legendAnchor[i], 100);
+         String latexCode = makeSimpleHistogramLatex(fileNames[i], titleNames[i], legendAnchor[i], numBins, marks);
+         File outFile = new File(outputFolder, fileNames[i] + "-hist-paper.tex");    // Add "-paper" for final ones.
+         try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
+            out.print(latexCode);
+            System.out.println("Hist printed to file: " + fileNames[i] + "-hist-paper.tex");
+         } catch (IOException e) {
+            throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
+         }
       }
-
 /*
-      // The following gives the same output using 'HistCollectionLatex.makeHistogramLatex'
+      // The following gives almost the same output using 'HistCollectionLatex.makeHistogramLatex'
       int[] ExtremMarks = new int[] {2,2};
       String path;
       String latexHist;

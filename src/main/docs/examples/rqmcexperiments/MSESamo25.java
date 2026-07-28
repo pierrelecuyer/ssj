@@ -45,7 +45,7 @@ public class MSESamo25 {
 
       RandomStream stream = new LFSR258();
       Chrono timerTotal = new Chrono();
-
+/*
       // This is to estimate the MSE for each case and put that in `mse` directory.
       for (String model : modelTags)
          for (int r : rs)
@@ -60,7 +60,7 @@ public class MSESamo25 {
       for (String model : modelTags)
          MeanMedianMSE.estimateMSEManyr(inputFolder, outputFolder, model, dims2,
                methods, ks2, numObs, numReps, rs2, stream);
-              
+*/              
       // Grouping by category to make scatter plots.
       String[] modelTags3 = new String[] {
             "SmoothPerB4", "SumUeU", "MC2", "SmoothGauss", "PieceLinGauss", "IndSumNormal"
@@ -76,7 +76,7 @@ public class MSESamo25 {
       };
       int[] dims3 = {2, 4, 8, 16, 32};
       int[] ks3 =  {10, 12, 14, 16};
-      int r3 = 11;
+      int r3 = 5;
       MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "a", methodsa,
             modelTags3, dims3, ks3, numObs, numReps, r3, stream);
       MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "b", methodsb,

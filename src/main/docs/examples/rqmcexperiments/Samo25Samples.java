@@ -15,7 +15,7 @@ import umontreal.ssj.util.Num;
  * used by the main program in `WSC23MoreReps.java`. It uses the 64-bit version
  * of `hups`.
  */
-public class WSC23MoreSamples extends RQMCExperiment64 {
+public class Samo25Samples extends RQMCExperiment64 {
 
    static String directory; // Must be set in main program `WSC23MoreReps`.
 
@@ -37,7 +37,7 @@ public class WSC23MoreSamples extends RQMCExperiment64 {
     * Redirect the output to a .res file with the given name, in `directory`.
     */
    public static void redirectToFile(String modelName) throws IOException {
-      File file = new File(WSC23MoreSamples.directory + modelName + ".res");
+      File file = new File(Samo25Samples.directory + modelName + ".res");
       PrintStream printStreamToFile = new PrintStream(file);
       System.setOut(printStreamToFile);
    }
