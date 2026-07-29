@@ -14,7 +14,7 @@ import umontreal.ssj.stat.TallyStore;
 /**
  * Produces histograms as in `HistSamo25`, but only selected histograms for the distributions
  * of the average  @f$A_r@f$ and the median @f$M_r@f$, both on the same plot.
- */
+ */ 
 public class HistSamo25ArMr {
 
    // Fixed parameters for this particular paper.

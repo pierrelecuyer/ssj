@@ -455,7 +455,8 @@ public class MeanMedianMSE {
                   double arMse = mseAr(tally, r);
                   double mrMse = statMed.mseKnownMean(exactMean);
                   double ratio = mrMse == 0.0 ? Double.NaN : arMse / mrMse;
-                  csvRows.append(model).append(",").append(s).append(",").append(method).append(",").append(k)
+                  if ((model!="SumUeU") | (method!="Lat-Rv")) 
+                      csvRows.append(model).append(",").append(s).append(",").append(method).append(",").append(k)
                         .append(",").append(tally.average()).append(",").append(tally.variance()).append(",")
                         .append(Math.abs(tally.skewness())).append(",").append(tally.kurtosis(false, false)).append(",")
                         .append(arMse).append(",").append(mrMse).append(",").append(ratio).append(",")

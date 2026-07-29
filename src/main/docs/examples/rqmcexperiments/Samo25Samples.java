@@ -256,18 +256,26 @@ public class Samo25Samples extends RQMCExperiment64 {
       Rank1Lattice pLat = new Rank1Lattice(n, a18, s);
       RandomShift randShift = new RandomShift(stream);
       BakerTransformedPointSet ptent = new BakerTransformedPointSet(pLat);
-      //RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
-      //RandomLatticeParams randLatPar2 = new RandomLatticeParams(n / 2, n, stream); // This one also randomizes n.
+      RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
+      RandomLatticeParams randLatPar2 = new RandomLatticeParams(n / 2, n, stream); // This one also randomizes n.
 
-      // Lat-RS
-      System.out.println("*   Lattice with RS");
-      statReps.setName(modelTag + "-" + s + "-Lat-RS-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randShift, m, statReps);
-      
-      // Lat-RSB
-      System.out.println("*   Lattice with RS + tent transform");
-      statReps.setName(modelTag + "-" + s + "-Lat-RSB-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, randShift, m, statReps);
+      // Lat-Rpv, random n and a, no shift
+      System.out.println("*   Lattice with random n and random gen vector a, no shift");
+      pLat.clearRandomShift();
+      randLatPar2.setRandShift(false);
+      statReps.setName(modelTag + "-" + s + "-Lat-Rpv-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
+
+      // Lat-RpvRS, random n and a and RS
+      System.out.println("*   Lattice with random n and random gen vector a, and RS");
+      randLatPar2.setRandShift(true);
+      statReps.setName(modelTag + "-" + s + "-Lat-RpvRS-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
+
+      // Lat-RpvRSB, random n and a and RS + tent
+      System.out.println("*   Lattice with random n, random gen vector a, and RS + tent");
+      statReps.setName(modelTag + "-" + s + "-Lat-RpvRSB-" + k + "-" + m);
+      simulRepsRQMCSort(model, ptent, randLatPar2, m, statReps);
 
       System.out.println(
             "Total time for simulRepsSelectedTypes: " + timer.format() + "\n=========================================== \n");
@@ -286,22 +294,26 @@ public class Samo25Samples extends RQMCExperiment64 {
       int k = 16;
       int n = (int) Num.TWOEXP[k];
       
-      model = new SmoothPerB4(s, 1.0);
-      System.out.println("SmoothPerB4, Lat-RvRS, s=8, k=16 ");
       Rank1Lattice pLat = new Rank1Lattice(n, a18, s);
       pLat.clearRandomShift();
       RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
-      randLatPar.setRandShift(true);
-      statReps.setName(model.getTag() + "-" + s + "-Lat-RvRS-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+      RandomLatticeParams randLatPar2 = new RandomLatticeParams(n / 2, n, stream); // This one also randomizes n.
  
-      System.out.println("SmoothPerB4, Sob-LMS-RDS, s=8, k=16 ");
-      DigitalNetBase2 p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
-      PointSetRandomization lms = new LMScramble(stream);
-      PointSetRandomization lmsrds = new LMScrambleShift(stream);
-      p.clearRandomShift(); 
-      statReps.setName(model.getTag() + "-" + s + "-Sob-LMS-RDS-" + k + "-" + m);
-      simulRepsRQMCSort(model, p, lmsrds, m, statReps);
+      // Lat-Rpv, random n and a, no shift
+      model = new SmoothPerB4(s, 1.0);
+      System.out.println("SmoothPerB4, Lat-Rpv, s=8, k=16 ");
+      System.out.println("*   Lattice with random n and random gen vector a, no shift");
+      pLat.clearRandomShift();
+      randLatPar2.setRandShift(false);
+      statReps.setName(model.getTag() + "-" + s + "-Lat-Rpv-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
+
+      model = new MC2(s);
+      System.out.println("MC2, Lat-Rpv, s=8, k=16 ");
+      pLat.clearRandomShift();
+      randLatPar2.setRandShift(false);
+      statReps.setName(model.getTag() + "-" + s + "-Lat-Rpv-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);  
       
       /*
       model = new MC2(s);
@@ -398,8 +410,8 @@ public class Samo25Samples extends RQMCExperiment64 {
       System.out.println("RQMC replicates with model: " + model.toString() + ", s = " + s + "\n");
       Chrono timer = new Chrono();
       for (int k = mink; k <= maxk; k += 2) { // For each point set size
-         simulRepsAllTypes(model, s, k, m);
-         // simulRepsSelectedTypes(model, s, k, m);
+         // simulRepsAllTypes(model, s, k, m);
+         simulRepsSelectedTypes(model, s, k, m);
       }
       System.out.println(
             "\nTotal time for simulAllSizes: " + timer.format() + "\n=========================================== \n");

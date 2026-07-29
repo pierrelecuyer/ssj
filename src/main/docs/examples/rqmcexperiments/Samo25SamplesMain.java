@@ -26,11 +26,13 @@ public class Samo25SamplesMain extends RQMCExperiment64 {
       
       System.out.println("Generating vector for lattices: " + Arrays.toString(Samo25Samples.a18));
       Chrono timerTotal = new Chrono();
+/*      
       for (int s = 1; s <= 32; s *= 2) {
+
       // for (int s = 2; s <= 32; s *= 2) {
          // System.out.println("WSC23MoreReps, run with s = " + s);      
          // Uncomment the models you want to run. ***
-         //WSC23MoreSamples.simulRepsAllSizes(new SmoothPerBeta52(s, 1.0), s, mink, maxk, m);
+         // Samo25Samples.simulRepsAllSizes(new SmoothPerBeta52(s, 1.0), s, mink, maxk, m);
          Samo25Samples.simulRepsAllSizes(new SmoothPerB4(s, 1.0), s, mink, maxk, m);
          Samo25Samples.simulRepsAllSizes(new SumUeU(s), s, mink, maxk, m);
          Samo25Samples.simulRepsAllSizes(new MC2(s), s, mink, maxk, m);
@@ -38,15 +40,16 @@ public class Samo25SamplesMain extends RQMCExperiment64 {
          Samo25Samples.simulRepsAllSizes(new Oscillatory(s), s, mink, maxk, m);
          Samo25Samples.simulRepsAllSizes(new Gaussian(s), s, mink, maxk, m);
          Samo25Samples.simulRepsAllSizes(new SmoothGauss(s), s, mink, maxk, m);
-         //WSC23MoreSamples.simulRepsAllSizes(new RidgeJohnsonSU(s), s, mink, maxk, m);
+         // Samo25Samples.simulRepsAllSizes(new RidgeJohnsonSU(s), s, mink, maxk, m);
          Samo25Samples.simulRepsAllSizes(new PieceLinGauss(s), s, mink, maxk, m);
          Samo25Samples.simulRepsAllSizes(new IndSumNormal(s), s, mink, maxk, m);
-         //WSC23MoreSamples.simulRepsAllSizes(new IndBox(s), s, mink, maxk, m);
-         // WSC23MoreSamples.simulRepsLatRv(new SumUeU(s), s, mink, m);
-         // WSC23MoreSamples.simulRepsSelectedTypes(new SumUeU(s), s, 10, m);
+         // Samo25Samples.simulRepsAllSizes(new IndBox(s), s, mink, maxk, m);
+         // Samo25Samples.simulRepsLatRv(new SumUeU(s), s, mink, m);
+         // Samo25Samples.simulRepsSelectedTypes(new SumUeU(s), s, 10, m);
          
       }
-      // WSC23MoreSamples.simulRepsSpecificCases (million);
+*/      
+      Samo25Samples.simulRepsSpecificCases (million);
 
       System.out.println("Total time for everything: " + timerTotal.format() +
             "\n=========================================== \n");

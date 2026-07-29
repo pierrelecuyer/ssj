@@ -142,7 +142,7 @@ public class Rank1Lattice extends PointSet {
     * `setRandomAforPrimen`.
     */
    public void setRandomAandn(int nmin, int nmax, RandomStream stream) {
-      numPoints = RandomPrime.randomPrime24 (nmin+1, nmax-1, stream); 
+      initN(RandomPrime.randomPrime24(nmin+1, nmax-1, stream));
       setRandomAforPrimen(stream);
    }
 

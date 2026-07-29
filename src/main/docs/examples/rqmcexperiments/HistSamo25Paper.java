@@ -146,13 +146,15 @@ public class HistSamo25Paper {
 
       String[] fileNames = new String[] {
          "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", 
-         "SmoothPerB4-8-Lat-RpvRS-16-10000", "SmoothPerB4-8-Sob-RDS-16-10000",
+         "SmoothPerB4-8-Lat-RpvRS-16-10000", 
+         "SmoothPerB4-8-Sob-RDS-16-10000",
          "SmoothPerB4-8-Sob-LMS-RDS-16-10000", "SmoothPerB4-8-Sob-NUS-16-10000",
          "MC2-8-Sob-LMS-RDS-16-10000", "MC2-16-Sob-LMS-RDS-14-10000",
          "MC2-16-Sob-NUS-14-10000"
       };
       String[] titleNames = new String[] {
-            "Lat-RS", "Lat-RvRS", "Lat-RpvRS","Sob-RDS", "Sob-LMS-RDS", "Sob-NUS",
+            "Lat-RS", "Lat-RvRS", 
+            "Lat-RpvRS","Sob-RDS", "Sob-LMS-RDS", "Sob-NUS",
             "Sob-LMS-RDS, $s=8$, $k=16$", "Sob-LMS-RDS, $s=16$, $k=14$",
             "Sob-NUS, $s=16$, $k=14$"
          };
