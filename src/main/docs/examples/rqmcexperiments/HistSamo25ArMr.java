@@ -261,79 +261,79 @@ public class HistSamo25ArMr {
     */
    public static void main(String[] args) throws IOException {
 
-      // String[] fileNames = new String[] {
-      //    "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", 
-      //    "SmoothPerB4-8-Lat-RpvRS-16-10000", "SmoothPerB4-8-Sob-RDS-16-10000",
-      //    "SmoothPerB4-8-Sob-LMS-RDS-16-10000", "SmoothPerB4-8-Sob-NUS-16-10000",
-      //    "MC2-8-Sob-LMS-RDS-16-10000", "MC2-16-Sob-LMS-RDS-14-10000",
-      //    "MC2-16-Sob-NUS-14-10000"
-      // };
-      // String[] titleNames = new String[] {
-      //       "Lat-RS", "Lat-RvRS", "Lat-RpvRS","Sob-RDS", "Sob-LMS-RDS", "Sob-NUS",
-      //       "Sob-LMS-RDS, $s=8$, $k=16$", "Sob-LMS-RDS, $s=16$, $k=14$",
-      //       "Sob-NUS, $s=16$, $k=14$"
-      //    };
-      // int r = 11;
-      // int numBins = 100;
-      // int numObs = 10000;   // Number of observations in the input data files.
-      // int[] marks = new int[] {0, 99, 499, numObs-1, numObs-100, numObs-500};   // This is for 10^4 obs.
-      // int numReps = 10000;  // Number of bootstrap subsamples of A_r and M_r.
+      String[] fileNames = new String[] {
+         "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", 
+         "SmoothPerB4-8-Lat-RpvRS-16-10000", "SmoothPerB4-8-Sob-RDS-16-10000",
+         "SmoothPerB4-8-Sob-LMS-RDS-16-10000", "SmoothPerB4-8-Sob-NUS-16-10000",
+         "MC2-8-Sob-LMS-RDS-16-10000", "MC2-16-Sob-LMS-RDS-14-10000",
+         "MC2-16-Sob-NUS-14-10000"
+      };
+      String[] titleNames = new String[] {
+            "Lat-RS", "Lat-RvRS", "Lat-RpvRS","Sob-RDS", "Sob-LMS-RDS", "Sob-NUS",
+            "Sob-LMS-RDS, $s=8$, $k=16$", "Sob-LMS-RDS, $s=16$, $k=14$",
+            "Sob-NUS, $s=16$, $k=14$"
+         };
+      int r = 11;
+      int numBins = 100;
+      int numObs = 10000;   // Number of observations in the input data files.
+      int[] marks = new int[] {0, 99, 499, numObs-1, numObs-100, numObs-500};   // This is for 10^4 obs.
+      int numReps = 10000;  // Number of bootstrap subsamples of A_r and M_r.
       RandomStream stream = new LFSR258();
       // Chrono timerTotal = new Chrono();
       
-      // TallyStore tallyInput = new TallyStore();   // The values of X.
-      // TallyStore statAver = new TallyStore();     // The values of A_r
-      // TallyStore statMed = new TallyStore();      // The values of M_r
-      // for (int i = 0; i < fileNames.length; i++) {  // Draw histograms for each case.
-      //    System.out.println("makeDoublestogramLatex: " + fileNames[i]);  // Optional
-      //    tallyInput.fillFromFile(inputFolder + fileNames[i] + ".dat");
-      //    // TEMPORARY: Reset before each histogram so this loop uses
-      //    // the same initial stream state as the reproducible standalone mode.
-      //    stream.resetStartStream();
-      //    MeanMedianMSE.bootstrapArMrValues(tallyInput, numReps, r, stream, statAver, statMed);       
-      //    String latexCode = HistSamo25Paper.makeDoubleHistogramLatex(statAver, statMed, 
-      //          titleNames[i], "pos=north east", numBins, marks);
-      //    File outFile = new File(outputFolder, fileNames[i] + "-ArMr-hist.tex");  
-      //    try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
-      //       out.print(latexCode);
-      //       System.out.println("Hist printed to file: " + fileNames[i]);
-      //    } catch (IOException e) {
-      //       throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
-      //    }
+      TallyStore tallyInput = new TallyStore();   // The values of X.
+      TallyStore statAver = new TallyStore();     // The values of A_r
+      TallyStore statMed = new TallyStore();      // The values of M_r
+      for (int i = 0; i < fileNames.length; i++) {  // Draw histograms for each case.
+         System.out.println("makeDoublestogramLatex: " + fileNames[i]);  // Optional
+         tallyInput.fillFromFile(inputFolder + fileNames[i] + ".dat");
+         // Uncomment to use the same initial stream state as the
+         // reproducible standalone mode.
+         // stream.resetStartStream();
+         MeanMedianMSE.bootstrapArMrValues(tallyInput, numReps, r, stream, statAver, statMed);       
+         String latexCode = HistSamo25Paper.makeDoubleHistogramLatex(statAver, statMed, 
+               titleNames[i], "pos=north east", numBins, marks);
+         File outFile = new File(outputFolder, fileNames[i] + "-ArMr-hist.tex");  
+         try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
+            out.print(latexCode);
+            System.out.println("Hist printed to file: " + fileNames[i]);
+         } catch (IOException e) {
+            throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
+         }
          
-      // }
-      // System.out.println("ALL DONE ");
+      }
+      System.out.println("ALL DONE ");
 
    ///////////////Generates one LaTeX histogram document for each model listed below./////////////
-      String[] modelTags = {
-         "SmoothPerB4", "SumUeU", "MC2", "Polynomial", "Oscillatory",
-         "Gaussian", "SmoothGauss", "PieceLinGauss", "IndSumNormal"
-      };
+      // String[] modelTags = {
+      //    "SmoothPerB4", "SumUeU", "MC2", "Polynomial", "Oscillatory",
+      //    "Gaussian", "SmoothGauss", "PieceLinGauss", "IndSumNormal"
+      // };
 
-      String[] methods = {
-         "Lat-RS", "Lat-RSB", "Lat-Rv", "Lat-Rpv", "Lat-RvRS", "Lat-RvRSB",
-         "Lat-RpvRS", "Lat-RpvRSB", "Sob-RDS", "Sob-RDSB", "Sob-LMS", "Sob-LMS-RDS",
-         "Sob-LMS-RDS-IRB", "Sob-NUS"
-      };
+      // String[] methods = {
+      //    "Lat-RS", "Lat-RSB", "Lat-Rv", "Lat-Rpv", "Lat-RvRS", "Lat-RvRSB",
+      //    "Lat-RpvRS", "Lat-RpvRSB", "Sob-RDS", "Sob-RDSB", "Sob-LMS", "Sob-LMS-RDS",
+      //    "Sob-LMS-RDS-IRB", "Sob-NUS"
+      // };
 
-      int[] sDims = {2, 4, 8, 16, 32};
-      int[] ks = {10, 12, 14, 16};
-      int m = 10000;
+      // int[] sDims = {2, 4, 8, 16, 32};
+      // int[] ks = {10, 12, 14, 16};
+      // int m = 10000;
 
-      // Choose and initialize the random stream here. Reproducing a run
-      // requires the same generator and initial seed.
-      // RandomStream stream = new LFSR258();
-      boolean resetBeforeEachHistogram = true;
+      // // Choose and initialize the random stream here. Reproducing a run
+      // // requires the same generator and initial seed.
+      // // RandomStream stream = new LFSR258();
+      // boolean resetBeforeEachHistogram = true;
 
-      for (String modelTag : modelTags) {
-         writeModelFile(
-               inputFolder, outputFolder,
-               modelTag, methods,
-               sDims, ks, m,
-               stream,
-               resetBeforeEachHistogram);
-      }
+      // for (String modelTag : modelTags) {
+      //    writeModelFile(
+      //          inputFolder, outputFolder,
+      //          modelTag, methods,
+      //          sDims, ks, m,
+      //          stream,
+      //          resetBeforeEachHistogram);
+      // }
 
-      System.out.println("ALL DONE");
+      // System.out.println("ALL DONE");
    }
 }
