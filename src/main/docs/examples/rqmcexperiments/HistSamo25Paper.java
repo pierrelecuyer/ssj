@@ -78,7 +78,7 @@ public class HistSamo25Paper {
       if (fileName == "SmoothPerB4-8-Sob-RDS-16-10000")
          coords.append(" (-4.760742119957395E-6,0) (4.485223280581408E-6,0)");
       String adds = "\\addplot+[only marks, mark=|, mark size=2.5pt, "
-            + "mark options={green,thick}, forget plot] coordinates {" + coords + "};";
+            + "mark options={purple,thick}, forget plot] coordinates {" + coords + "};";
       latexCode = latexCode.replace("\\end{axis}", adds + "\n\\end{axis}");
       return latexCode;
    }

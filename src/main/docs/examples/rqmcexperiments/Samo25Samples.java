@@ -5,6 +5,7 @@ import umontreal.ssj.hups64.*;
 import umontreal.ssj.mcqmctools.MonteCarloModelDouble;
 import umontreal.ssj.mcqmctools.RQMCExperiment64;
 import umontreal.ssj.rng.LFSR258;
+import umontreal.ssj.rng.LFSR113;
 import umontreal.ssj.rng.RandomStream;
 import umontreal.ssj.stat.*;
 import umontreal.ssj.util.Chrono;
@@ -12,12 +13,12 @@ import umontreal.ssj.util.Num;
 
 /**
  * Tools to generate and store RQMC replicates for WSC 2023 paper. This class is
- * used by the main program in `WSC23MoreReps.java`. It uses the 64-bit version
+ * used by the main program in `Samo25SamplesMain.java`. It uses the 64-bit version
  * of `hups`.
  */
 public class Samo25Samples extends RQMCExperiment64 {
 
-   static String directory; // Must be set in main program `WSC23MoreReps`.
+   static String directory; // Must be set in main program `Samo25SamplesMain`.
 
    // Lattice generating vector for n=2^{14} found with gamma_j = 2/(2+j), used for
    // the WSC23 paper.
@@ -123,7 +124,7 @@ public class Samo25Samples extends RQMCExperiment64 {
       int n = (int) Num.TWOEXP[k];
       RandomStream stream = new LFSR258();
       Chrono timer = new Chrono();
-      System.out.println("WSC23MoreSamples program, RQMC replicates with model: " + model.toString() + "\n");
+      System.out.println("Samo25Samples program, RQMC replicates with model: " + model.toString() + "\n");
       TallyStore statReps = new TallyStore(m);
 
       // --------------------------
@@ -153,13 +154,6 @@ public class Samo25Samples extends RQMCExperiment64 {
       statReps.setName(modelTag + "-" + s + "-Lat-Rv-" + k + "-" + m);
       simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
 
-      // Lat-Rpv, random n and a, no shift
-      System.out.println("*   Lattice with random n and random gen vector a, no shift");
-      pLat.clearRandomShift();
-      randLatPar2.setRandShift(false);
-      statReps.setName(modelTag + "-" + s + "-Lat-Rpv-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
-
       // Lat-RvRS, random a and RS
       System.out.println("*   Lattice with random gen vector a and RS");
       randLatPar.setRandShift(true);
@@ -170,6 +164,13 @@ public class Samo25Samples extends RQMCExperiment64 {
       System.out.println("*   Lattice with random gen vector a and RS + tent");
       statReps.setName(modelTag + "-" + s + "-Lat-RvRSB-" + k + "-" + m);
       simulRepsRQMCSort(model, ptent, randLatPar, m, statReps);
+
+      // Lat-Rpv, random n and a, no shift
+      System.out.println("*   Lattice with random n and random gen vector a, no shift");
+      pLat.clearRandomShift();
+      randLatPar2.setRandShift(false);
+      statReps.setName(modelTag + "-" + s + "-Lat-Rpv-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
 
       // Lat-RpvRS, random n and a and RS
       System.out.println("*   Lattice with random n and random gen vector a, and RS");
@@ -247,7 +248,7 @@ public class Samo25Samples extends RQMCExperiment64 {
       int n = (int) Num.TWOEXP[k];
       RandomStream stream = new LFSR258();
       Chrono timer = new Chrono();
-      System.out.println("WSC23MoreSamples program, RQMC replicates with model: " + model.toString() + "\n");
+      System.out.println("Samo25Samples program, RQMC replicates with model: " + model.toString() + "\n");
       TallyStore statReps = new TallyStore(m);
 
       // --------------------------
@@ -259,23 +260,16 @@ public class Samo25Samples extends RQMCExperiment64 {
       RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
       RandomLatticeParams randLatPar2 = new RandomLatticeParams(n / 2, n, stream); // This one also randomizes n.
 
-      // Lat-Rpv, random n and a, no shift
-      System.out.println("*   Lattice with random n and random gen vector a, no shift");
-      pLat.clearRandomShift();
-      randLatPar2.setRandShift(false);
-      statReps.setName(modelTag + "-" + s + "-Lat-Rpv-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
+      // Lat-RvRS, random a and RS
+      System.out.println("*   Lattice with random gen vector a and RS");
+      randLatPar.setRandShift(true);
+      statReps.setName(modelTag + "-" + s + "-Lat-RvRS-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
 
-      // Lat-RpvRS, random n and a and RS
-      System.out.println("*   Lattice with random n and random gen vector a, and RS");
-      randLatPar2.setRandShift(true);
-      statReps.setName(modelTag + "-" + s + "-Lat-RpvRS-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
-
-      // Lat-RpvRSB, random n and a and RS + tent
-      System.out.println("*   Lattice with random n, random gen vector a, and RS + tent");
-      statReps.setName(modelTag + "-" + s + "-Lat-RpvRSB-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, randLatPar2, m, statReps);
+      // Lat-RvRSB, random a and RS + tent
+      System.out.println("*   Lattice with random gen vector a and RS + tent");
+      statReps.setName(modelTag + "-" + s + "-Lat-RvRSB-" + k + "-" + m);
+      simulRepsRQMCSort(model, ptent, randLatPar, m, statReps);
 
       System.out.println(
             "Total time for simulRepsSelectedTypes: " + timer.format() + "\n=========================================== \n");
@@ -287,18 +281,29 @@ public class Samo25Samples extends RQMCExperiment64 {
    public static void simulRepsSpecificCases (int m) throws IOException {
       RandomStream stream = new LFSR258();
       Chrono timer = new Chrono();
-      System.out.println("WSC23MoreSamples program, Specific cases\n");
+      System.out.println("Samo25Samples program, Specific cases\n");
       TallyStore statReps = new TallyStore(m);
       MonteCarloModelDouble model;
-      int s = 8;
-      int k = 16;
+      int s = 4;
+      int k = 10;
       int n = (int) Num.TWOEXP[k];
       
       Rank1Lattice pLat = new Rank1Lattice(n, a18, s);
       pLat.clearRandomShift();
       RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
       RandomLatticeParams randLatPar2 = new RandomLatticeParams(n / 2, n, stream); // This one also randomizes n.
- 
+      
+      // Lat-Rv, random a, random shift
+      model = new MC2(s);
+      System.out.println("SmoothPerB4, Lat-RvRS, s=4, k=10 ");
+      System.out.println("*   Lattice with random gen vector a, random shift");
+      // pLat.clearRandomShift();
+      randLatPar.setRandShift(true);
+      statReps.setName(model.getTag() + "-" + s + "-Lat-RvRS-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+
+      /*
+      
       // Lat-Rpv, random n and a, no shift
       model = new SmoothPerB4(s, 1.0);
       System.out.println("SmoothPerB4, Lat-Rpv, s=8, k=16 ");
@@ -315,7 +320,6 @@ public class Samo25Samples extends RQMCExperiment64 {
       statReps.setName(model.getTag() + "-" + s + "-Lat-Rpv-" + k + "-" + m);
       simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);  
       
-      /*
       model = new MC2(s);
       System.out.println("MC2, Lat-Rpv, s=8, k=16 ");
       pLat.clearRandomShift();
@@ -351,7 +355,7 @@ public class Samo25Samples extends RQMCExperiment64 {
    public static void simulRepsSpecificCases2 (int m) throws IOException {
       RandomStream stream = new LFSR258();
       Chrono timer = new Chrono();
-      System.out.println("WSC23MoreSamples program, Specific cases\n");
+      System.out.println("Samo25Samples program, Specific cases\n");
       TallyStore statReps = new TallyStore(m);
       MonteCarloModelDouble model;
       int s = 8;
@@ -398,6 +402,33 @@ public class Samo25Samples extends RQMCExperiment64 {
             "Total time for simulRepsLatRv: " + timer.format() + "\n=========================================== \n");
    }
 
+
+   /**
+    * To make simple tests and trace for small s, k, and m.
+    */
+   public static void simulTrace (int m) throws IOException {
+      // RandomStream stream = new LFSR258();
+      RandomStream stream = new LFSR113();
+      System.out.println("Running SimulRepsSmallTest, with trace\n");
+      TallyStore statReps = new TallyStore(m);
+      MonteCarloModelDouble model;
+      int s = 4;
+      int k = 4;
+      int n = (int) Num.TWOEXP[k];
+      
+      Rank1Lattice pLat = new Rank1Lattice(n, a18, s);
+      pLat.clearRandomShift();
+      RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
+      
+      // Lat-Rv, random a, random shift
+      model = new SumUeU(s);
+      System.out.println("SumUeU, Lat-RvRS");
+      System.out.println("*   Lattice with random gen vector a, random shift");
+      // pLat.clearRandomShift();
+      randLatPar.setRandShift(true);
+      statReps.setName(model.getTag() + "-" + s + "-Lat-RvRS-" + k + "-" + m);
+      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+   }
    
    /**
     * For one model, perform m RQMC runs for all point set sizes k from mink to

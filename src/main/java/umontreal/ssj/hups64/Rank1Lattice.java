@@ -130,8 +130,11 @@ public class Rank1Lattice extends PointSet {
     */
    public void setRandomAforPow2n(RandomStream stream) {
       for (int j = 0; j < dim; j++)
-         genAs[j] = 2 * stream.nextInt(1, (numPoints-1)/2) - 1;
+         genAs[j] = 2 * stream.nextInt(1, numPoints/2-1) - 1;
       initA();      
+      // System.out.println("RandomAforPow2n");
+      // for (int j = 0; j < dim; j++)
+      //   System.out.println("j = " + j + ", a[j] = " + genAs[j] + ", v[j] = " + v[j]);
    }
    
    /**

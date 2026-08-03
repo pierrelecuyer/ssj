@@ -13,20 +13,20 @@ import java.util.Arrays;
 public class Samo25SamplesMain extends RQMCExperiment64 {
 
    public static void main(String[] args) throws IOException {
-      // WSC26RQMCSamples64.directory = "C:/Users/Lecuyer/Dropbox/wsc26/data64/"; // Retained for 64 bits
-      // WSC23MoreSamples.directory = "C:/Users/Lecuyer/Dropbox/wsc23/test/";        // For testing
-      // WSC23MoreSamples.directory = "C:/Users/Lecuyer/Dropbox/samo25/test/";        // For Samo paper
+      // Samo25Samples64.directory = "C:/Users/Lecuyer/Dropbox/wsc26/data64/"; // Retained for 64 bits
+      // Samo25Samples.directory = "C:/Users/Lecuyer/Dropbox/wsc23/test/";        // For testing
+      // Samo25Samples.directory = "C:/Users/Lecuyer/Dropbox/samo25/test/";        // For Samo paper
       Samo25Samples.directory = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";        // For Samo paper
 
       int m = 10000; // Number of RQMC randomizations.
-      int million = 1000000; // Number of RQMC randomizations.
+      // int million = 10000000; // Number of RQMC randomizations.
       // int m = 10; // Number of RQMC randomizations.
       int mink = 8;
       int maxk = 16;
       
-      System.out.println("Generating vector for lattices: " + Arrays.toString(Samo25Samples.a18));
+      // System.out.println("Generating vector for lattices: " + Arrays.toString(Samo25Samples.a18));
       Chrono timerTotal = new Chrono();
-/*      
+      
       for (int s = 1; s <= 32; s *= 2) {
 
       // for (int s = 2; s <= 32; s *= 2) {
@@ -48,8 +48,9 @@ public class Samo25SamplesMain extends RQMCExperiment64 {
          // Samo25Samples.simulRepsSelectedTypes(new SumUeU(s), s, 10, m);
          
       }
-*/      
-      Samo25Samples.simulRepsSpecificCases (million);
+      
+      // Samo25Samples.simulRepsSpecificCases (million);
+      // Samo25Samples.simulTrace (m);
 
       System.out.println("Total time for everything: " + timerTotal.format() +
             "\n=========================================== \n");

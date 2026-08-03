@@ -60,7 +60,7 @@ public class MSESamo25 {
       for (String model : modelTags)
          MeanMedianMSE.estimateMSEManyr(inputFolder, outputFolder, model, dims2,
                methods, ks2, numObs, numReps, rs2, stream);
-      
+
       // Grouping by category to make scatter plots.
       String[] modelTags3 = new String[] {
             "SmoothPerB4", "SumUeU", "MC2", "SmoothGauss", "PieceLinGauss", "IndSumNormal"
@@ -75,15 +75,35 @@ public class MSESamo25 {
             "Lat-Rv", "Lat-Rpv", "Sob-LMS"
       };
       int[] dims3 = {2, 4, 8, 16, 32};
-      int[] ks3 =  {10, 12, 14, 16};
-      int r3 = 5;
-      MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "a", methodsa,
-            modelTags3, dims3, ks3, numObs, numReps, r3, stream);
-      MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "b", methodsb,
-            modelTags3, dims3, ks3, numObs, numReps, r3, stream);
-      MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "c", methodsc,
-            modelTags3, dims3, ks3, numObs, numReps, r3, stream);
+      int[] ks3 = {10, 12, 14, 16}; 
+      int[] rs3 = {5, 11, 63};       
+      for (int r : rs3) {
+         MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "a", methodsa,
+            modelTags3, dims3, ks3, numObs, numReps, r, stream);
+         MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "b", methodsb,
+            modelTags3, dims3, ks3, numObs, numReps, r, stream);
+         MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "c", methodsc,
+            modelTags3, dims3, ks3, numObs, numReps, r, stream);
+      }
       
+      String[] modelTagsPieceLinGaus = new String[] {"PieceLinGauss"};
+      String[] modelTagsIndSumNormal = new String[] {"IndSumNormal"};
+      
+      int r = 11;
+      MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "a-PieceLinGauss", methodsa,
+            modelTagsPieceLinGaus, dims3, ks3, numObs, numReps, r, stream);
+      MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "b-PieceLinGauss", methodsb,
+            modelTagsPieceLinGaus, dims3, ks3, numObs, numReps, r, stream);
+      MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "c-PieceLinGauss", methodsc,
+            modelTagsPieceLinGaus, dims3, ks3, numObs, numReps, r, stream);
+
+      MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "a-IndSumNormal", methodsa,
+            modelTagsIndSumNormal, dims3, ks3, numObs, numReps, r, stream);
+      MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "b-IndSumNormal", methodsb,
+            modelTagsIndSumNormal, dims3, ks3, numObs, numReps, r, stream);
+      MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "c-IndSumNormal", methodsc,
+            modelTagsIndSumNormal, dims3, ks3, numObs, numReps, r, stream);
+
       System.out.println("\nTotal time for everything: " + timerTotal.format() +
             "\n=========================================== \n");
    }
