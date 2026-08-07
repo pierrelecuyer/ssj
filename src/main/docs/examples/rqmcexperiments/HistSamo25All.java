@@ -9,7 +9,7 @@ import java.io.IOException;
  * All of these are passed as parameters to `HistCollectionLatex.writeCollection`,
  * which constructs one LaTeX file for each model in the list.
  */
-public class HistSamo25 {
+public class HistSamo25All {
 
    /**
     * Sets the SAMO 2025 parameters and writes the histogram LaTeX files.

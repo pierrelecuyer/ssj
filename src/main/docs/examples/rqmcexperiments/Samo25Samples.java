@@ -80,19 +80,21 @@ public class Samo25Samples extends RQMCExperiment64 {
     * Performs m independent RQMC replications and save the sorted output in the
     * `statReps` collector. We assume that the randomization may change the number
     * of points, as it sometimes happens when using `RandomLatticeParams` for instance.
+    * If `crn` is `true`, the same substream is used for all calls to this methods.
     */
    public static void simulRepsRQMCSort(MonteCarloModelDouble model, PointSet p, PointSetRandomization rand, int m,
-         TallyStore statReps) throws IOException {
+         TallyStore statReps, boolean crn) throws IOException {
       statReps.init();
       Tally statValue = new Tally();
-      PointSetIterator stream = p.iterator();
+      if (crn) rand.getStream().resetStartStream();  // To use the same substream for all calls to this function.
+      PointSetIterator streampts = p.iterator();     // Iterator over the RQMC points.
       Chrono timer = new Chrono();
       for (int rep = 0; rep < m; rep++) {
          statValue.init();
+         if (crn) rand.getStream().resetNextSubstream();  // New substream for each rep.
          rand.randomize(p);
-         // PointSetIterator stream = p.iterator(); // NO need to create a new iterator.
-         stream.resetStartStream(); // This stream iterates over the points.
-         simulateRuns(model, p.getNumPoints(), stream, statValue);
+         streampts.resetStartStream(); // This stream iterates over the points.
+         simulateRuns(model, p.getNumPoints(), streampts, statValue);
          statReps.add(statValue.average()); // For the estimator of the mean.
          // System.out.println("average = " + statReps.average());
       }
@@ -100,10 +102,8 @@ public class Samo25Samples extends RQMCExperiment64 {
       System.out.println("Number obs:  " + statReps.numberObs());
       System.out.println("average = " + statReps.average());
       System.out.println("variance = " + statReps.variance());
-      // System.out.println("skewness from Colt = " + statReps.skewness2());
       System.out.println("skewness, bias corrected = " + statReps.skewness(true));
       System.out.println("skewness, not corrected  = " + statReps.skewness(false));
-      // System.out.println("excess kurtosis from Colt = " + statReps.kurtosis2());
       System.out.println("excess kurtosis, bias corrected = " + statReps.kurtosis(true, true));
       System.out.println("excess kurtosis, not corrected  = " + statReps.kurtosis(false, true));
       System.out.println("CPU time: " + timer.format() + "\n");
@@ -118,11 +118,11 @@ public class Samo25Samples extends RQMCExperiment64 {
     * via `redirectToFile`.
     * 
     */
-   public static void simulRepsAllTypes(MonteCarloModelDouble model, int s, int k, int m) throws IOException {
+   public static void simulRepsAllTypes(MonteCarloModelDouble model, int s, int k, int m, boolean crn) throws IOException {
       String modelTag = model.getTag();
       // String ident; // Identifies the case, used in file names.
       int n = (int) Num.TWOEXP[k];
-      RandomStream stream = new LFSR258();
+      RandomStream stream = new LFSR258();   // Used to randomize the points.
       Chrono timer = new Chrono();
       System.out.println("Samo25Samples program, RQMC replicates with model: " + model.toString() + "\n");
       TallyStore statReps = new TallyStore(m);
@@ -139,12 +139,12 @@ public class Samo25Samples extends RQMCExperiment64 {
       // Lat-RS
       System.out.println("*   Lattice with RS");
       statReps.setName(modelTag + "-" + s + "-Lat-RS-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randShift, m, statReps);
+      simulRepsRQMCSort(model, pLat, randShift, m, statReps, crn);
       
       // Lat-RSB
       System.out.println("*   Lattice with RS + tent transform");
       statReps.setName(modelTag + "-" + s + "-Lat-RSB-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, randShift, m, statReps);
+      simulRepsRQMCSort(model, ptent, randShift, m, statReps, crn);
 
       // Lat-Rv, random a
       System.out.println("*   Lattice with random gen vector a, no shift");
@@ -152,36 +152,36 @@ public class Samo25Samples extends RQMCExperiment64 {
       // pLat = new Rank1Lattice(n, a18, s);
       randLatPar.setRandShift(false);
       statReps.setName(modelTag + "-" + s + "-Lat-Rv-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps, crn);
 
       // Lat-RvRS, random a and RS
       System.out.println("*   Lattice with random gen vector a and RS");
       randLatPar.setRandShift(true);
       statReps.setName(modelTag + "-" + s + "-Lat-RvRS-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps, crn);
 
       // Lat-RvRSB, random a and RS + tent
       System.out.println("*   Lattice with random gen vector a and RS + tent");
       statReps.setName(modelTag + "-" + s + "-Lat-RvRSB-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, randLatPar, m, statReps);
+      simulRepsRQMCSort(model, ptent, randLatPar, m, statReps, crn);
 
       // Lat-Rpv, random n and a, no shift
       System.out.println("*   Lattice with random n and random gen vector a, no shift");
       pLat.clearRandomShift();
       randLatPar2.setRandShift(false);
       statReps.setName(modelTag + "-" + s + "-Lat-Rpv-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps, crn );
 
       // Lat-RpvRS, random n and a and RS
       System.out.println("*   Lattice with random n and random gen vector a, and RS");
       randLatPar2.setRandShift(true);
       statReps.setName(modelTag + "-" + s + "-Lat-RpvRS-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps, crn);
 
       // Lat-RpvRSB, random n and a and RS + tent
       System.out.println("*   Lattice with random n, random gen vector a, and RS + tent");
       statReps.setName(modelTag + "-" + s + "-Lat-RpvRSB-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, randLatPar2, m, statReps);
+      simulRepsRQMCSort(model, ptent, randLatPar2, m, statReps, crn);
 
       // -------------------------
       // Objects for Sobol' points
@@ -192,29 +192,30 @@ public class Samo25Samples extends RQMCExperiment64 {
       PointSetRandomization rds = new RandomShift(stream); // Digital shift
       PointSetRandomization lms = new LMScramble(stream);
       PointSetRandomization lmsrds = new LMScrambleShift(stream);
+      PointSetRandomization nus = new NestedUniformScrambling(stream, 53);
 
       // Sob-RDS System.out.println("* Sobol with RDS alone");
       statReps.setName(modelTag + "-" + s + "-Sob-RDS-" + k + "-" + m);
-      simulRepsRQMCSort(model, p, rds, m, statReps);
+      simulRepsRQMCSort(model, p, rds, m, statReps, crn);
 
       // Sob-RDSB System.out.println("* Sobol with RDS + baker transform");
       statReps.setName(modelTag + "-" + s + "-Sob-RDSB-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, rds, m, statReps);
+      simulRepsRQMCSort(model, ptent, rds, m, statReps, crn);
 
       // Sob-LMS System.out.println("* Sobol with LMS alone, no shift");
       p.clearRandomShift();     // This is essential to remove the digital shift.
       statReps.setName(modelTag + "-" + s + "-Sob-LMS-" + k + "-" + m);
-      simulRepsRQMCSort(model, p, lms, m, statReps);
+      simulRepsRQMCSort(model, p, lms, m, statReps, crn);
 
       // Sob-LMS-RDS System.out.println("* Sobol with LMS+RDS");
       statReps.setName(modelTag + "-" + s + "-Sob-LMS-RDS-" + k + "-" + m);
-      simulRepsRQMCSort(model, p, lmsrds, m, statReps);
+      simulRepsRQMCSort(model, p, lmsrds, m, statReps, crn);
 
       // Sob-LMS-RDS-IRB after k
       System.out.println("* Sobol with LMS+RDS+IRB (indep random bits after k)");
       statReps.setName(modelTag + "-" + s + "-Sob-LMS-RDS-IRB-" + k + "-" + m);
-      p.addIndepRandomBits(new LFSR258());
-      simulRepsRQMCSort(model, p, lmsrds, m, statReps);
+      p.addIndepRandomBits(stream);
+      simulRepsRQMCSort(model, p, lmsrds, m, statReps, crn);
       p.clearIndepRandomBits();
 
       // Sob-NUS
@@ -222,8 +223,7 @@ public class Samo25Samples extends RQMCExperiment64 {
       statReps.setName(modelTag + "-" + s + "-Sob-NUS-" + k + "-" + m);
       p.clearRandomShift();  
       CachedPointSet cp = new CachedPointSet(p);
-      PointSetRandomization nus = new NestedUniformScrambling(stream, 53);
-      simulRepsRQMCSort(model, cp, nus, m, statReps);
+      simulRepsRQMCSort(model, cp, nus, m, statReps, crn);
       
       /*
        * // Sob-Int2 Sob-interlaced-order2
@@ -231,8 +231,8 @@ public class Samo25Samples extends RQMCExperiment64 {
        * p2 = new SobolSequence(k, 60, 2*s); // n = 2^{k} points in 2s dim.
        * DigitalNetBase2 pitl = p2.matrixInterlace(2, s); ptent = new
        * BakerTransformedPointSet(p); // // System.out.println(p.formatPoints()); //
-       * simulRepsRQMCSort(model, pitl, nus, m, statReps); simulRepsRQMCSort(model,
-       * ptent, nus, m, statReps);
+       * simulRepsRQMCSort(model, pitl, nus, m, statReps, crn); simulRepsRQMCSort(model,
+       * ptent, nus, m, statReps, crn);
        */
 
       System.out.println(
@@ -242,7 +242,7 @@ public class Samo25Samples extends RQMCExperiment64 {
    /**
     * Same thing, but for just a few selected types of RQMC method.
     */
-   public static void simulRepsSelectedTypes(MonteCarloModelDouble model, int s, int k, int m) throws IOException {
+   public static void simulRepsSelectedTypes(MonteCarloModelDouble model, int s, int k, int m, boolean crn) throws IOException {
       String modelTag = model.getTag();
       // String ident; // Identifies the case, used in file names.
       int n = (int) Num.TWOEXP[k];
@@ -264,12 +264,12 @@ public class Samo25Samples extends RQMCExperiment64 {
       System.out.println("*   Lattice with random gen vector a and RS");
       randLatPar.setRandShift(true);
       statReps.setName(modelTag + "-" + s + "-Lat-RvRS-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps, crn);
 
       // Lat-RvRSB, random a and RS + tent
       System.out.println("*   Lattice with random gen vector a and RS + tent");
       statReps.setName(modelTag + "-" + s + "-Lat-RvRSB-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, randLatPar, m, statReps);
+      simulRepsRQMCSort(model, ptent, randLatPar, m, statReps, crn);
 
       System.out.println(
             "Total time for simulRepsSelectedTypes: " + timer.format() + "\n=========================================== \n");
@@ -278,7 +278,7 @@ public class Samo25Samples extends RQMCExperiment64 {
    /**
     * Specific models, s, k, method, usually for very large m.
     */
-   public static void simulRepsSpecificCases (int m) throws IOException {
+   public static void simulRepsSpecificCases (int m, boolean crn) throws IOException {
       RandomStream stream = new LFSR258();
       Chrono timer = new Chrono();
       System.out.println("Samo25Samples program, Specific cases\n");
@@ -300,7 +300,7 @@ public class Samo25Samples extends RQMCExperiment64 {
       // pLat.clearRandomShift();
       randLatPar.setRandShift(true);
       statReps.setName(model.getTag() + "-" + s + "-Lat-RvRS-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps, crn);
 
       /*
       
@@ -311,14 +311,14 @@ public class Samo25Samples extends RQMCExperiment64 {
       pLat.clearRandomShift();
       randLatPar2.setRandShift(false);
       statReps.setName(model.getTag() + "-" + s + "-Lat-Rpv-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps, crn);
 
       model = new MC2(s);
       System.out.println("MC2, Lat-Rpv, s=8, k=16 ");
       pLat.clearRandomShift();
       randLatPar2.setRandShift(false);
       statReps.setName(model.getTag() + "-" + s + "-Lat-Rpv-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);  
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps, crn);  
       
       model = new MC2(s);
       System.out.println("MC2, Lat-Rpv, s=8, k=16 ");
@@ -327,7 +327,7 @@ public class Samo25Samples extends RQMCExperiment64 {
       RandomLatticeParams randLatPar2 = new RandomLatticeParams(n / 2, n, stream); // This one also randomizes n.
       randLatPar2.setRandShift(false);
       statReps.setName(model.getTag() + "-" + s + "-Lat-Rpv-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps);
+      simulRepsRQMCSort(model, pLat, randLatPar2, m, statReps, crn);
   
       model = new MC2(s);
       System.out.println("MC2, Sob-LMS, s=8, k=16 ");
@@ -336,13 +336,13 @@ public class Samo25Samples extends RQMCExperiment64 {
       // PointSetRandomization lmsrds = new LMScrambleShift(stream);
       p.clearRandomShift(); 
       statReps.setName(model.getTag() + "-" + s + "-Sob-LMS-" + k + "-" + m);
-      simulRepsRQMCSort(model, p, lms, m, statReps);
+      simulRepsRQMCSort(model, p, lms, m, statReps, crn);
 
       System.out.println("MC2, Sob-RDSB, s=8, k=16 ");
       PointSetRandomization rds = new RandomShift(stream); // Digital shift
       BakerTransformedPointSet ptent = new BakerTransformedPointSet(p);
       statReps.setName(model.getTag() + "-" + s + "-Sob-RDSB-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, rds, m, statReps);
+      simulRepsRQMCSort(model, ptent, rds, m, statReps, crn);
       */
       System.out.println(
             "Total time for simulRepsLatRv: " + timer.format() + "\n=========================================== \n");
@@ -352,7 +352,7 @@ public class Samo25Samples extends RQMCExperiment64 {
    /**
     * Specific models, s, k, method, usually for very large m.
     */
-   public static void simulRepsSpecificCases2 (int m) throws IOException {
+   public static void simulRepsSpecificCases2 (int m, boolean crn) throws IOException {
       RandomStream stream = new LFSR258();
       Chrono timer = new Chrono();
       System.out.println("Samo25Samples program, Specific cases\n");
@@ -369,7 +369,7 @@ public class Samo25Samples extends RQMCExperiment64 {
       RandomLatticeParams randLatPar = new RandomLatticeParams(true, stream); // Randomizes a for n fixed.
       randLatPar.setRandShift(false);
       statReps.setName(model.getTag() + "-" + s + "-Lat-Rv-" + k + "-" + m);
-      // simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+      // simulRepsRQMCSort(model, pLat, randLatPar, m, statReps, crn);
  
       System.out.println("MC2, Sob-LMS, s=8, k=16 ");
       DigitalNetBase2 p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
@@ -377,18 +377,18 @@ public class Samo25Samples extends RQMCExperiment64 {
       PointSetRandomization lmsrds = new LMScrambleShift(stream);
       p.clearRandomShift(); 
       statReps.setName(model.getTag() + "-" + s + "-Sob-LMS-" + k + "-" + m);
-      // simulRepsRQMCSort(model, p, lms, m, statReps);
+      // simulRepsRQMCSort(model, p, lms, m, statReps, crn);
 
       System.out.println("MC2, Sob-LMS-RDS, s=8, k=16 ");
       p.clearRandomShift(); 
       statReps.setName(model.getTag() + "-" + s + "-Sob-LMS-RDS-" + k + "-" + m);
-      // simulRepsRQMCSort(model, p, lmsrds, m, statReps);
+      // simulRepsRQMCSort(model, p, lmsrds, m, statReps, crn);
       
       System.out.println("MC2, Sob-RDSB, s=8, k=16 ");
       PointSetRandomization rds = new RandomShift(stream); // Digital shift
       BakerTransformedPointSet ptent = new BakerTransformedPointSet(p);
       statReps.setName(model.getTag() + "-" + s + "-Sob-RDSB-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, rds, m, statReps);
+      simulRepsRQMCSort(model, ptent, rds, m, statReps, crn);
       
       s = 4;  k = 14;  n = (int) Num.TWOEXP[k];
       model = new MC2(s);
@@ -396,7 +396,7 @@ public class Samo25Samples extends RQMCExperiment64 {
       p = new SobolSequence(k, 53, s); // n = 2^{k} points in s dim.
       ptent = new BakerTransformedPointSet(p);
       statReps.setName(model.getTag() + "-" + s + "-Sob-RDSB-" + k + "-" + m);
-      simulRepsRQMCSort(model, ptent, rds, m, statReps);
+      simulRepsRQMCSort(model, ptent, rds, m, statReps, crn);
       
       System.out.println(
             "Total time for simulRepsLatRv: " + timer.format() + "\n=========================================== \n");
@@ -406,7 +406,7 @@ public class Samo25Samples extends RQMCExperiment64 {
    /**
     * To make simple tests and trace for small s, k, and m.
     */
-   public static void simulTrace (int m) throws IOException {
+   public static void simulTrace (int m, boolean crn) throws IOException {
       // RandomStream stream = new LFSR258();
       RandomStream stream = new LFSR113();
       System.out.println("Running SimulRepsSmallTest, with trace\n");
@@ -427,7 +427,7 @@ public class Samo25Samples extends RQMCExperiment64 {
       // pLat.clearRandomShift();
       randLatPar.setRandShift(true);
       statReps.setName(model.getTag() + "-" + s + "-Lat-RvRS-" + k + "-" + m);
-      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps);
+      simulRepsRQMCSort(model, pLat, randLatPar, m, statReps, crn);
    }
    
    /**
@@ -435,14 +435,14 @@ public class Samo25Samples extends RQMCExperiment64 {
     * maxk, by steps of 2, and puts the results in arrays. After that, the arrays
     * are used to output data sets in files.
     */
-   public static void simulRepsAllSizes(MonteCarloModelDouble model, int s, int mink, int maxk, int m)
+   public static void simulRepsAllSizes(MonteCarloModelDouble model, int s, int mink, int maxk, int m, boolean crn)
          throws IOException {
       // redirectToFile(model.getTag() + "-" + s + "-" + m);
       System.out.println("RQMC replicates with model: " + model.toString() + ", s = " + s + "\n");
       Chrono timer = new Chrono();
       for (int k = mink; k <= maxk; k += 2) { // For each point set size
-         // simulRepsAllTypes(model, s, k, m);
-         simulRepsSelectedTypes(model, s, k, m);
+         simulRepsAllTypes(model, s, k, m, crn);
+         //  simulRepsSelectedTypes(model, s, k, m, crn);
       }
       System.out.println(
             "\nTotal time for simulAllSizes: " + timer.format() + "\n=========================================== \n");

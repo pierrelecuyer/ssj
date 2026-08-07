@@ -59,7 +59,7 @@ import umontreal.ssj.stat.ScaledHistogram;
  * legend options passed to {@link #makeHistogramLatex} must include their own
  * legend content, style, and position.
  *
- * The program {@link HistSamo25} gives an example of how to use this
+ * The program {@link HistSamo25All} gives an example of how to use this
  * class. Before calling any method, one must specify the input and output
  * folders that contain the data files and the generated histograms latex files,
  * respectively. Then the set of model tags, the set of method names, the set of

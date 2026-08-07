@@ -4,12 +4,7 @@ import java.io.*;
 import umontreal.ssj.stat.*;
 
 /**
- * This is the main program used to make experiments for the WSC 2026 paper on RQMC.
- * It makes RQMC replicates for selected functions, a fixed list of RQMC methods
- * specified in `WSC26RQMCSamples64`, for selected numbers of dimensions s
- * and numbers of points @f$2^k@f$. The output is a set of files, two for each function 
- * and dimension, that contain data sets with the log-variance and the mean for each RQMC estimator
- * (each column) and each value of `k` (each row). 
+ * Makes histograms with data from the WSC 2023 paper on RQMC.
  */
 
 public class HistLatex {
