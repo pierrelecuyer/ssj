@@ -45,29 +45,17 @@ public class HistSamo25ArMr {
     * histograms of @f$A_r@f$ and @f$M_r@f$.
     */
    private static String makeArMrHistogramLatex(
-         File inputFile, String title,
-         RandomStream stream,
-         boolean resetBeforeHistogram) throws IOException {
+         File inputFile, String title, RandomStream stream, boolean crnboot) throws IOException {
 
       TallyStore tallyInput = new TallyStore();
       tallyInput.fillFromFile(inputFile.getAbsolutePath());
-
       TallyStore statAver = new TallyStore();
       TallyStore statMed = new TallyStore();
 
-      if (resetBeforeHistogram)
-         stream.resetStartStream();
-
-      MeanMedianMSE.bootstrapArMrValues(
-            tallyInput, NUM_REPS, R, stream, statAver, statMed);
-
+      if (crnboot) stream.resetStartStream();   // Reset to start of stream for each case.
+      MeanMedianMSE.bootstrapArMrValues(tallyInput, NUM_REPS, R, stream, statAver, statMed);
       return HistSamo25Paper.makeDoubleHistogramLatex(
-            statAver,
-            statMed,
-            title,
-            "pos=north east",
-            NUM_BINS,
-            MARKS);
+            statAver, statMed, title, "pos=north east", NUM_BINS, MARKS);
    }
 
    /**
@@ -83,23 +71,19 @@ public class HistSamo25ArMr {
          String modelTag, String[] methods, int s,
          int[] ks, int m, String pageTitle,
          RandomStream stream,
-         boolean resetBeforeEachHistogram) throws IOException {
+         boolean crnboot) throws IOException {
 
       out.println("\\sethistwidths{" + ks.length + "}");
       out.print(
             "\\begin{longtable}{@{}>{\\centering\\arraybackslash}p{\\histmethodwidth}");
-
       for (int i = 0; i < ks.length; i++)
          out.print("@{}>{\\centering\\arraybackslash}p{\\histcellwidth}");
-
       out.println("@{}}");
-
       String titleLatex = "\\scriptsize\\textbf{" + pageTitle + "}";
       String phantomTitleLatex = "\\phantom{" + titleLatex + "}";
 
       out.println("\\multicolumn{" + (ks.length + 1)
             + "}{c}{" + titleLatex + "} \\\\[2mm]");
-
       out.print("{}");
       for (int k : ks)
          out.print(" & \\makebox[\\histcellwidth][c]"
@@ -115,35 +99,28 @@ public class HistSamo25ArMr {
          out.print(" & \\makebox[\\histcellwidth][c]"
                + "{{\\scriptsize $n=2^{" + k + "}$}}");
       out.println(" \\\\[1.5mm]");
-
       out.println("\\endhead");
 
       for (String method : methods) {
          out.print("\\raisebox{0.7cm}{\\rotatebox{90}"
                + "{\\scriptsize " + method + "}}");
-
          for (int k : ks) {
             String fileName = fileNameMaker(
                   modelTag, s, method, k, m);
-
             File file = new File(inputFolder, fileName);
-
             if (!file.exists()) {
                System.out.println("Missing file: " + fileName);
                out.print(" & \\makebox[\\histcellwidth][c]"
                      + "{{\\tiny Missing}}");
                continue;
             }
-
             String title = method + ", $s=" + s + "$, $k=" + k + "$";
             String latexCode = makeArMrHistogramLatex(
-                  file, title, stream, resetBeforeEachHistogram);
-
+                  file, title, stream, crnboot);
             out.print(" & \\makebox[\\histcellwidth][c]{");
             out.print(latexCode);
             out.println("}");
          }
-
          out.println("\\\\[1.5mm]");
       }
       out.println("\\end{longtable}");
@@ -174,7 +151,7 @@ public class HistSamo25ArMr {
          String modelTag, String[] methods,
          int[] sDims, int[] ks, int m,
          RandomStream stream,
-         boolean resetBeforeEachHistogram) throws IOException {
+         boolean crnboot) throws IOException {
 
       if (ks.length == 0 || sDims.length == 0)
          throw new IllegalArgumentException(
@@ -184,17 +161,13 @@ public class HistSamo25ArMr {
 
       File inputDir = new File(inputFolder);
       File outputDir = new File(outputFolder);
-
       if (!outputDir.exists() && !outputDir.mkdirs())
          throw new IOException(
                "Could not create output directory: " + outputDir);
-
       File outFile = new File(
             outputDir, modelTag + "-ArMr-hist.tex");
-
       try (PrintWriter out =
             new PrintWriter(new FileWriter(outFile))) {
-
          out.println("\\documentclass[letterpaper]{article}");
          out.println("\\usepackage[margin=0.2in]{geometry}");
          out.println("\\usepackage{amsmath}");
@@ -228,28 +201,19 @@ public class HistSamo25ArMr {
                         ? "$10^{" + (mStr.length() - 1)
                               + "}$ samples"
                         : m + " samples";
-
             String pageTitle =
                   "RQMC comparison of $A_r$ and $M_r$: "
                         + modelTag.replace("_", "\\_")
                         + " s = " + s
                         + " (" + samples + ")";
-
             writeHistogramPageBody(
-                  out, inputDir,
-                  modelTag, methods,
-                  s, ks, m,
-                  pageTitle,
-                  stream,
-                  resetBeforeEachHistogram);
-
+                  out, inputDir, modelTag, methods,
+                  s, ks, m, pageTitle, stream, crnboot);
             out.println("\\clearpage");
             out.println();
          }
-
          out.println("\\end{document}");
       }
-
       System.out.println("LaTeX file created:");
       System.out.println(outFile.getAbsolutePath());
    }

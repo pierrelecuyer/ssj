@@ -29,6 +29,6 @@ public class MSETest {
       for (String model : modelTags)
          for (int r : rs)
             MeanMedianMSE.estimateMSEOneModel(inputFolder, outputFolder, model, dims,
-                methods, ks, numObs, numReps, r, stream);
+                methods, ks, numObs, numReps, r, stream, false);
       }
 }

@@ -20,8 +20,8 @@ import umontreal.ssj.stat.TallyStore;
 public class HistSamo25Paper {
 
    // Fixed parameters for this particular paper.
-   static String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
-   static String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdat/";
+   static String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
+   static String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdatcrn/";
          
    /**
     * Builds the PGFPlots LaTeX code for one histogram.
@@ -74,9 +74,10 @@ public class HistSamo25Paper {
       StringBuilder coords = new StringBuilder();
       for(int i : marks)
          coords.append("(").append(String.format(Locale.US, "%.17g", data.getArray()[i])).append(",0) ");
-      // The following is very specific to this Sob-RDS case; it adds purple markes in the middle.
+      // The following is ** very specific ** to this Sob-RDS case; it adds purple markes in the middle.
       if (fileName == "SmoothPerB4-8-Sob-RDS-16-10000")
-         coords.append(" (-4.760742119957395E-6,0) (4.485223280581408E-6,0)");
+         // coords.append(" (-4.760742119957395E-6,0) (4.485223280581408E-6,0)");  // No CRNs
+         coords.append(" (-3.71533896355935E-6,0) (5.211694443922366E-6,0)");      // With CRNs
       String adds = "\\addplot+[only marks, mark=|, mark size=2.5pt, "
             + "mark options={purple,thick}, forget plot] coordinates {" + coords + "};";
       latexCode = latexCode.replace("\\end{axis}", adds + "\n\\end{axis}");
@@ -92,7 +93,7 @@ public class HistSamo25Paper {
       double a = Math.min(data1.min(), data2.min());
       double b = Math.max(data1.max(), data2.max());
       double range = b - a;
-      System.out.println("makeSimpleHistogramLatex: a = " + a + ", b = " + b);
+      // System.out.println("makeDoubleHistogramLatex: a = " + a + ", b = " + b);
 
       TallyHistogram hist1 = new TallyHistogram(a, b + range * 1.0e-12, numBins);
       hist1.fillFromTallyStore(data1);     

@@ -15,6 +15,9 @@ import umontreal.ssj.util.Chrono;
  * entries are MSE or ratio values. One {@code .csv} file is also generated for
  * each model and value of @f$r@f$; it contains the moments and MSE estimates,
  * with one row for each existing input file.
+ * 
+ * The boolean `crnboot` decides if we use common random numbers (CRN) across all
+ * cases, or not.
  */
 public class MSESamo25 {
 
@@ -23,8 +26,8 @@ public class MSESamo25 {
     */
    public static void main(String[] args) throws IOException {
 
-      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
-      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/mse/";
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/msecrn/";
       // String[] modelTags = {"MC2"};
       String[] modelTags = new String[] {
             "SmoothPerB4", "SumUeU", "MC2", "Polynomial", "Oscillatory",
@@ -43,6 +46,7 @@ public class MSESamo25 {
       int numObs = 10000;   // Number of observations in the input data files.
       int numReps = 10000;  // Number of bootstrap subsamples to estimate the MSE[M_r].
 
+      boolean crnboot = true;   // Do we want CRNs? 
       RandomStream stream = new LFSR258();
       Chrono timerTotal = new Chrono();
 
@@ -50,7 +54,7 @@ public class MSESamo25 {
       for (String model : modelTags)
          for (int r : rs)
             MeanMedianMSE.estimateMSEOneModel(inputFolder, outputFolder, model, dims,
-                methods, ks, numObs, numReps, r, stream);
+                methods, ks, numObs, numReps, r, stream, crnboot);
                 
       // This part is to generate tables to plot the MSEs as functions of r.
       // String[] modelTags2 = new String[] {"MC2"};
@@ -59,7 +63,7 @@ public class MSESamo25 {
       int[] rs2 =  {11, 23, 47, 95, 189};
       for (String model : modelTags)
          MeanMedianMSE.estimateMSEManyr(inputFolder, outputFolder, model, dims2,
-               methods, ks2, numObs, numReps, rs2, stream);
+               methods, ks2, numObs, numReps, rs2, stream, crnboot);
 
       // Grouping by category to make scatter plots.
       String[] modelTags3 = new String[] {
@@ -79,11 +83,11 @@ public class MSESamo25 {
       int[] rs3 = {5, 11, 63};       
       for (int r : rs3) {
          MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "a", methodsa,
-            modelTags3, dims3, ks3, numObs, numReps, r, stream);
+            modelTags3, dims3, ks3, numObs, numReps, r, stream, crnboot);
          MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "b", methodsb,
-            modelTags3, dims3, ks3, numObs, numReps, r, stream);
+            modelTags3, dims3, ks3, numObs, numReps, r, stream, crnboot);
          MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "c", methodsc,
-            modelTags3, dims3, ks3, numObs, numReps, r, stream);
+            modelTags3, dims3, ks3, numObs, numReps, r, stream, crnboot);
       }
       
       String[] modelTagsPieceLinGaus = new String[] {"PieceLinGauss"};
@@ -91,18 +95,18 @@ public class MSESamo25 {
       
       int r = 11;
       MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "a-PieceLinGauss", methodsa,
-            modelTagsPieceLinGaus, dims3, ks3, numObs, numReps, r, stream);
+            modelTagsPieceLinGaus, dims3, ks3, numObs, numReps, r, stream, crnboot);
       MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "b-PieceLinGauss", methodsb,
-            modelTagsPieceLinGaus, dims3, ks3, numObs, numReps, r, stream);
+            modelTagsPieceLinGaus, dims3, ks3, numObs, numReps, r, stream, crnboot);
       MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "c-PieceLinGauss", methodsc,
-            modelTagsPieceLinGaus, dims3, ks3, numObs, numReps, r, stream);
+            modelTagsPieceLinGaus, dims3, ks3, numObs, numReps, r, stream, crnboot);
 
       MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "a-IndSumNormal", methodsa,
-            modelTagsIndSumNormal, dims3, ks3, numObs, numReps, r, stream);
+            modelTagsIndSumNormal, dims3, ks3, numObs, numReps, r, stream, crnboot);
       MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "b-IndSumNormal", methodsb,
-            modelTagsIndSumNormal, dims3, ks3, numObs, numReps, r, stream);
+            modelTagsIndSumNormal, dims3, ks3, numObs, numReps, r, stream, crnboot);
       MeanMedianMSE.estimateMSEOneCategory(inputFolder, outputFolder, "c-IndSumNormal", methodsc,
-            modelTagsIndSumNormal, dims3, ks3, numObs, numReps, r, stream);
+            modelTagsIndSumNormal, dims3, ks3, numObs, numReps, r, stream, crnboot);
 
       System.out.println("\nTotal time for everything: " + timerTotal.format() +
             "\n=========================================== \n");

@@ -96,21 +96,21 @@ public class MeanMedianMSE {
     */
    public static double mseAr(Tally tally, int r) {
       double bias = tally.average() - exactMean;
-      // double mse = (tally.variance() * (tally.numberObs() - 1.0) / tally.numberObs()) / r + bias * bias;
-      double mse = (tally.variance() * (tally.numberObs() - 1.0) / tally.numberObs()) / r;
+      double mse = (tally.variance() * (tally.numberObs() - 1.0) / tally.numberObs()) / r + bias * bias;
+      // double mse = (tally.variance() * (tally.numberObs() - 1.0) / tally.numberObs()) / r;
       // System.out.println("mseAr, exactMean =" + exactMean + ", bias = " + bias + ", MSE = " + mse);
       return mse;
    }
 
    /**
-    * Reads observations from an input data file and stores them in a TallyStore.
+    * Reads observations from an input data file and stores them in a new TallyStore.
     *
     * @param filename input data file
     * @return TallyStore containing the observations
     * @throws IllegalArgumentException if the file contains no observations
     */
    public static TallyStore readDataValues(String filename) {
-      TallyStore tally = new TallyStore();
+      TallyStore tally = new TallyStore();        // Creates a new Tally each time... ****
       // Use fillFromFile(filename, skip) if the file contains comments.
       tally.fillFromFile(filename);
       if (tally.numberObs() == 0)
@@ -119,8 +119,9 @@ public class MeanMedianMSE {
    }
 
    /**
-    * Performs bootstrap simulations to obtain realizations of @f$M_r@f$, and
-    * stores them in {@code statMed}.
+    * Draw @f$m@f$ bootstrap samples of size @f$r@f$ from the data in `tally` 
+    * to obtain @f$m@f$ realizations of @f$M_r@f$ returned in {@code statMed}. The samples are
+    * drawn using `stream`, with a new substream for each sample. 
     *
     * @param tally   input data observations
     * @param m       number of bootstrap samples
@@ -135,6 +136,7 @@ public class MeanMedianMSE {
       double[] sample = new double[r];
       statMed.init(); // Clear previous observations.
       for (int i = 0; i < m; i++) {
+         stream.resetNextSubstream();   // Use a new substream for each of the m bootstraps.
          for (int j = 0; j < r; j++) {
             sample[j] = values[stream.nextInt(0, numSim - 1)];
          }
@@ -142,10 +144,11 @@ public class MeanMedianMSE {
       }
    }
 
-
    /**
-    * Performs bootstrap simulations to obtain realizations of both @f$A_r@f$ and @f$M_r@f$, and
-    * stores them in {@code statAver} and  {@code statMed}.
+    * Draw @f$m@f$ bootstrap samples of size @f$r@f$ from the data in `tally` to
+    * obtain @f$m@f$ realizations of @f$A_r@f$ and @f$M_r@f$, which are returned in {@code statAver} 
+    * and {@code statMed}. The samples are drawn using `stream`, with a new substream for each sample. 
+    * This can be used to make histograms  of @f$A_r@f$ and @f$M_r@f$, for example.
     *
     * @param tally   input data observations
     * @param m       number of bootstrap samples
@@ -161,6 +164,7 @@ public class MeanMedianMSE {
       double[] sample = new double[r];
       statAver.init();  statMed.init(); // Clear previous observations.
       for (int i = 0; i < m; i++) {
+         stream.resetNextSubstream();   // Use a new substream for each of the m bootstraps.
          for (int j = 0; j < r; j++) {
             sample[j] = values[stream.nextInt(0, numSim - 1)];
          }
@@ -204,8 +208,7 @@ public class MeanMedianMSE {
          return null;
       }
       return file;
-   }
-   
+   } 
 
    /**
     * Computes the moments and the MSE estimates for one model and one value
@@ -214,6 +217,9 @@ public class MeanMedianMSE {
     * also writes one {@code .csv} file containing the moments and MSE estimates,
     * with one row for each existing input file. Missing input files are reported
     * and marked as {@code Missing} in the {@code .res} tables.
+    * The given `stream` is used for sampling to estimate the MSE.
+    * If `crnboot` is true, this stream is reset to its initial seed for all values
+    * of `s` and `k`, and all methods. This means that we use CRNs. 
     *
     * @param inputFolder  directory containing the input data files
     * @param outputFolder directory in which result files are written
@@ -229,7 +235,7 @@ public class MeanMedianMSE {
     * @throws IllegalArgumentException if the result directory cannot be created
     */
    public static void estimateMSEOneModel(String inputFolder, String outputFolder, String model, int[] dims,
-         String[] methods, int[] ks, int numObs, int m, int r, RandomStream stream) {
+         String[] methods, int[] ks, int numObs, int m, int r, RandomStream stream, boolean crnboot) {
       System.out.println("Running estimateMSEOneModel.... ");
       File resultFolder = new File(outputFolder);
       if (!resultFolder.exists() && !resultFolder.mkdirs())
@@ -267,10 +273,9 @@ public class MeanMedianMSE {
                   continue;
                }
                TallyStore tally = readDataValues(file.getAbsolutePath());
-
-               // We could use CRNs across the methods, but not sure if it makes sense,
-               // because the input data for different methods are different and independent.
-               // stream.resetStartSubstream();
+               
+               // If crnboot, we reuse the same stream for all cases.
+               if (crnboot) stream.resetStartStream();
                bootstrapMrValues(tally, m, r, stream, statMed);
                double arMse = mseAr(tally, r);
                double mrMse = statMed.mseKnownMean(exactMean);
@@ -320,6 +325,9 @@ public class MeanMedianMSE {
     * of @f$r@f$. For each dimension @f$s@f$ and each value of @f$k@f$, writes
     * three {@code .res} tables with one row for each value of @f$r@f$ and one
     * column for each RQMC method.
+    * The given `stream` is used for sampling to estimate the MSE.
+    * If `crnboot` is true, this stream is reset to its initial seed for all values
+    * of `s`, `k`, `r`, and all methods. This means that we use CRNs. 
     *
     * @param inputFolder  directory containing the input data files
     * @param outputFolder directory in which result files are written
@@ -334,7 +342,7 @@ public class MeanMedianMSE {
     * @throws IllegalArgumentException if the result directory cannot be created
     */
    public static void estimateMSEManyr(String inputFolder, String outputFolder, String model, int[] dims,
-         String[] methods, int[] ks, int numObs, int m, int[] rs, RandomStream stream) {
+         String[] methods, int[] ks, int numObs, int m, int[] rs, RandomStream stream, boolean crnboot) {
 
       System.out.println("Running estimateMSEManyr.... ");
       File resultFolder = new File(outputFolder);
@@ -371,7 +379,8 @@ public class MeanMedianMSE {
                   }
                   TallyStore tally = readDataValues(file.getAbsolutePath());
 
-                  // stream.resetStartSubstream();
+                  // If crnboot, we reuse the same stream for all cases.
+                  if (crnboot) stream.resetStartStream();
                   bootstrapMrValues(tally, m, r, stream, statMed);
                   double arMse = mseAr(tally, r);
                   double mrMse = statMed.mseKnownMean(exactMean);
@@ -414,7 +423,9 @@ public class MeanMedianMSE {
     * models, values of @f$s@f$, and values of @f$k@f$ in the sets. It constructs a
     * single .csv file that has one row for each case. The columns give the mean,
     * variance, absolute skewness, kurtosis (not excess), the MSE estimates, and
-    * their ratio.
+    * their ratio.  The given `stream` is used for sampling to estimate the MSE.
+    * If `crnboot` is true, this stream is reset to its initial seed for all values
+    * of `s`, `k`, and all methods and models. This means that we use CRNs. 
     *
     * @param inputFolder  directory containing the input data files
     * @param outputFolder directory in which result files are written
@@ -432,7 +443,7 @@ public class MeanMedianMSE {
     * @throws IllegalArgumentException if the result directory cannot be created
     */
    public static void estimateMSEOneCategory(String inputFolder, String outputFolder, String category, String[] methods,
-         String[] models, int[] dims, int[] ks, int numObs, int m, int r, RandomStream stream) {
+         String[] models, int[] dims, int[] ks, int numObs, int m, int r, RandomStream stream, boolean crnboot) {
 
       File resultFolder = new File(outputFolder);
       if (!resultFolder.exists() && !resultFolder.mkdirs())
@@ -453,6 +464,9 @@ public class MeanMedianMSE {
                for (String method : methods) {
                   File file = getDataFile(inputFolder, model, s, method, k, numObs);
                   TallyStore tally = readDataValues(file.getAbsolutePath());
+
+                  // If crnboot, we reuse the same stream for all cases.
+                  if (crnboot) stream.resetStartStream();
                   bootstrapMrValues(tally, m, r, stream, statMed);
                   double arMse = mseAr(tally, r);
                   double mrMse = statMed.mseKnownMean(exactMean);

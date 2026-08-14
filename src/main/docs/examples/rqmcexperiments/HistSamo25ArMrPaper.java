@@ -23,8 +23,8 @@ import umontreal.ssj.stat.TallyStore;
  */
 public class HistSamo25ArMrPaper {
 
-   static String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
-   static String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdat/";
+   static String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
+   static String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdatcrn/";
    
    /**
     * Sets the parameters and writes the histogram LaTeX files for the SAMO paper
@@ -50,7 +50,7 @@ public class HistSamo25ArMrPaper {
       int[] marks = new int[] {0, 99, 499, numObs-1, numObs-100, numObs-500};   // This is for 10^4 obs.
       int numReps = 10000;  // Number of bootstrap subsamples of A_r and M_r.
       RandomStream stream = new LFSR258();      // Maybe set the main seed ??? 
-      boolean resetBeforeEachHistogram = true;  // This is to use common random numbers.
+      boolean crnboot = true;  // This is to use common random numbers.
       
       TallyStore tallyInput = new TallyStore();   // The values of X.
       TallyStore statAver = new TallyStore();     // The values of A_r
@@ -58,7 +58,7 @@ public class HistSamo25ArMrPaper {
       for (int i = 0; i < fileNames.length; i++) {  // Draw histograms for each case.
          System.out.println("makeDoublestogramLatex: " + fileNames[i]);  // Optional
          tallyInput.fillFromFile(inputFolder + fileNames[i] + ".dat");
-         if (resetBeforeEachHistogram) stream.resetStartStream();
+         if (crnboot) stream.resetStartStream();
          MeanMedianMSE.bootstrapArMrValues(tallyInput, numReps, r, stream, statAver, statMed);       
          String latexCode = HistSamo25Paper.makeDoubleHistogramLatex(statAver, statMed, 
                titleNames[i], "pos=north east", numBins, marks);

@@ -16,8 +16,8 @@ public class HistSamo25All {
     */
    public static void main(String[] args) throws IOException {
 
-      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
-      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histograms/";
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histogramscrn/";  // This is for the crn data
 
       String[] modelTags = new String[] {
          "SmoothPerB4", "SumUeU", "MC2", "Polynomial", "Oscillatory",
