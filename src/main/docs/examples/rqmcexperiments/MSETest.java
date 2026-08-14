@@ -1,10 +1,8 @@
 package rqmcexperiments;
 
 import java.io.*;
-
 import umontreal.ssj.rng.LFSR258;
 import umontreal.ssj.rng.RandomStream;
-import umontreal.ssj.util.Chrono;
 
 public class MSETest {
 

@@ -5,47 +5,27 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
-
-
-import umontreal.ssj.rng.LFSR258;
 import umontreal.ssj.rng.RandomStream;
+import umontreal.ssj.stat.ScaledHistogram;
+import umontreal.ssj.stat.TallyHistogram;
 import umontreal.ssj.stat.TallyStore;
-//import umontreal.ssj.util.Chrono;
 
 /**
- * Generates standalone LaTeX documents that compare the distributions of the
+ * This class contains facilities to make bootstrap samples of size @f$r@f$ and
+ * produce standalone LaTeX histograms that compare the distributions of the
  * average @f$A_r@f$ and median @f$M_r@f$ for SAMO 2025 experiments.
- *
- * <p>For each input data file, the program bootstraps samples of size @f$r@f$
- * and draws the histograms of @f$A_r@f$ and @f$M_r@f$ on the same PGFPlots
- * axis. Each output document contains one table per value of @f$s@f$; a table
- * may span several pages. RQMC methods appear in rows, while sample sizes
- * appear in columns, with @f$n=2^k@f$.
+ * Each plot contains two superposed histograms.
+ * For eaach histogram, we also add 
+ * 
  */
 public class HistSamo25ArMr {
 
-   // Fixed parameters for this particular paper.   <--  Good idea  ????
-   private static final int NUM_BINS = 100;
-   private static final int R = 11;
-   private static final int NUM_REPS = 10000;
-   private static final int[] MARKS = {
-      0, 99, 499, NUM_REPS - 1, NUM_REPS - 100, NUM_REPS - 500
-   };
-
    /**
-    * Builds the input data file name for one experiment configuration.
+    * Draws @f$m@f$ realizations of @f$A_r@f$ and @f$M_r@f$ by using the data from `inputFile`
+    * and generates the LaTeX code for the two overlaid histograms of these values.
     */
-   private static String fileNameMaker(
-         String modelTag, int s, String method, int k, int m) {
-      return modelTag + "-" + s + "-" + method + "-" + k + "-" + m + ".dat";
-   }
-
-   /**
-    * Reads one data file and generates the LaTeX code for its overlaid
-    * histograms of @f$A_r@f$ and @f$M_r@f$.
-    */
-   private static String makeArMrHistogramLatex(
-         File inputFile, String title, RandomStream stream, boolean crnboot) throws IOException {
+   public static String makeArMrHistogramLatex(File inputFile, String title, int numObs,
+         int m, int r, int numBins, int[] marks, RandomStream stream, boolean crnboot) throws IOException {
 
       TallyStore tallyInput = new TallyStore();
       tallyInput.fillFromFile(inputFile.getAbsolutePath());
@@ -53,9 +33,60 @@ public class HistSamo25ArMr {
       TallyStore statMed = new TallyStore();
 
       if (crnboot) stream.resetStartStream();   // Reset to start of stream for each case.
-      MeanMedianMSE.bootstrapArMrValues(tallyInput, NUM_REPS, R, stream, statAver, statMed);
-      return HistSamo25Paper.makeDoubleHistogramLatex(
-            statAver, statMed, title, "pos=north east", NUM_BINS, MARKS);
+      MeanMedianMSE.bootstrapArMrValues(tallyInput, m, r, stream, statAver, statMed);
+      return makeDoubleHistogramLatex(statAver, statMed, title, numObs, r, numBins, marks);
+   }
+   
+   /**
+    * This function assumes that @f$m@f$ realizations of @f$A_r@f$ and @f$M_r@f$ are already
+    * in {@code data1} and {@code data2}, respectively, 
+    * and it generates the LaTeX code for the two overlaid histograms of these values.
+    */
+   public static String makeDoubleHistogramLatex(TallyStore data1, TallyStore data2, String titleName, 
+         int numObs, int r, int numBins, int[] marks) throws IOException {
+      data1.quickSort();
+      data2.quickSort();
+      // int n1 = data1.numberObs();
+      // int n2 = data2.numberObs();
+      double a = Math.min(data1.min(), data2.min());
+      double b = Math.max(data1.max(), data2.max());
+      double range = b - a;
+      // System.out.println("makeDoubleHistogramLatex: a = " + a + ", b = " + b);
+
+      TallyHistogram hist1 = new TallyHistogram(a, b + range * 1.0e-12, numBins);
+      hist1.fillFromTallyStore(data1);     
+      ScaledHistogram scHist1 = new ScaledHistogram(hist1);
+      TallyHistogram hist2 = new TallyHistogram(a, b + range * 1.0e-12, numBins);
+      hist2.fillFromTallyStore(data2);     
+      ScaledHistogram scHist2 = new ScaledHistogram(hist2);
+      // ScaledHistogram scHist = new ScaledHistogram();
+      
+      // System.out.println(hist.toString());
+      scHist1.setAxisOptions("title={" + titleName + "}, width=4.4cm, height=3.0cm, scale only axis, \n" +
+             "  ymin=0.0, xmin = " + (a - 0.01 * range) + ", xmax = " + (b + 0.01 * range) + 
+             ",\n  ylabel={}, yticklabels={}, \n" +
+             "  scaled x ticks=true, minor x tick num=0, scaled y ticks=false, \n" +
+             "  every x tick label/.append style={scale=0.6, transform shape}, \n" +
+             "  every x tick scale label/.style={at={(axis description cs:1, 0)}, \n" +
+                "  anchor=north east, xshift=2pt, yshift=-6.2pt, inner sep=0pt}, \n");
+      scHist1.setAddPlotOptions("mark=none,very thin,fill=green!25,opacity=0.6,fill opacity=0.6");
+      scHist2.setAddPlotOptions("mark=none,very thin,fill=red!25,opacity=0.6,fill opacity=0.6");
+      // Make the latex file.
+      String latexCode = scHist1.toLatexTwoHist(scHist2);
+      // Add the marks.
+      StringBuilder coords = new StringBuilder();
+      for(int i : marks)
+         coords.append("(").append(String.format(Locale.US, "%.17g", data1.getArray()[i])).append(",0) ");
+      String adds = "\\addplot+[only marks, mark=|, mark size=2.5pt, "
+            + "mark options={green,thick}, forget plot] coordinates {" + coords + "};";
+      latexCode = latexCode.replace("\\end{axis}", adds + "\n\\end{axis}");
+      coords = new StringBuilder();
+      for(int i : marks)
+         coords.append("(").append(String.format(Locale.US, "%.17g", data2.getArray()[i])).append(",0) ");
+      adds = "\\addplot+[only marks, mark=|, mark size=2.5pt, "
+            + "mark options={red,thick}, forget plot] coordinates {" + coords + "};";
+      latexCode = latexCode.replace("\\end{axis}", adds + "\n\\end{axis}");
+      return latexCode;
    }
 
    /**
@@ -67,10 +98,8 @@ public class HistSamo25ArMr {
     * averages and medians as overlaid histograms.
     */
    private static void writeHistogramPageBody(
-         PrintWriter out, File inputFolder,
-         String modelTag, String[] methods, int s,
-         int[] ks, int m, String pageTitle,
-         RandomStream stream,
+         PrintWriter out, File inputFolder, String modelTag, String[] methods, int s,
+         int[] ks, int m, int r, int numObs, int numBins, int[] marks, String pageTitle, RandomStream stream,
          boolean crnboot) throws IOException {
 
       out.println("\\sethistwidths{" + ks.length + "}");
@@ -105,8 +134,7 @@ public class HistSamo25ArMr {
          out.print("\\raisebox{0.7cm}{\\rotatebox{90}"
                + "{\\scriptsize " + method + "}}");
          for (int k : ks) {
-            String fileName = fileNameMaker(
-                  modelTag, s, method, k, m);
+            String fileName = modelTag + "-" + s + "-" + method + "-" + k + "-" + m + ".dat";
             File file = new File(inputFolder, fileName);
             if (!file.exists()) {
                System.out.println("Missing file: " + fileName);
@@ -115,8 +143,7 @@ public class HistSamo25ArMr {
                continue;
             }
             String title = method + ", $s=" + s + "$, $k=" + k + "$";
-            String latexCode = makeArMrHistogramLatex(
-                  file, title, stream, crnboot);
+            String latexCode = makeArMrHistogramLatex(file, title, numObs, m, r, numBins, marks, stream, crnboot);
             out.print(" & \\makebox[\\histcellwidth][c]{");
             out.print(latexCode);
             out.println("}");
@@ -149,9 +176,8 @@ public class HistSamo25ArMr {
    public static void writeModelFile(
          String inputFolder, String outputFolder,
          String modelTag, String[] methods,
-         int[] sDims, int[] ks, int m,
-         RandomStream stream,
-         boolean crnboot) throws IOException {
+         int[] sDims, int[] ks, int m, int r, int numObs, int numBins, int[] marks,
+         RandomStream stream, boolean crnboot) throws IOException {
 
       if (ks.length == 0 || sDims.length == 0)
          throw new IllegalArgumentException(
@@ -206,9 +232,8 @@ public class HistSamo25ArMr {
                         + modelTag.replace("_", "\\_")
                         + " s = " + s
                         + " (" + samples + ")";
-            writeHistogramPageBody(
-                  out, inputDir, modelTag, methods,
-                  s, ks, m, pageTitle, stream, crnboot);
+            writeHistogramPageBody(out, inputDir, modelTag, methods,
+                  s, ks, m, r, numObs, numBins, marks, pageTitle, stream, crnboot);
             out.println("\\clearpage");
             out.println();
          }

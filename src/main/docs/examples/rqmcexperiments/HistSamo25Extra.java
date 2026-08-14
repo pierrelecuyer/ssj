@@ -13,8 +13,8 @@ public class HistSamo25Extra {
 
    public static void main(String[] args) throws IOException {
 
-      // inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
-      // outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdat/";
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdat/";
 
       String[] fileNames = new String[] { "SmoothPerB4-8-Lat-Rv-16-1000000", "SmoothPerB4-8-Lat-Rpv-16-1000000",
             "SmoothPerB4-8-Lat-RvRS-16-1000000", "SmoothPerB4-8-Sob-LMS-RDS-16-1000000", "MC2-8-Lat-Rv-16-1000000",
@@ -32,9 +32,9 @@ public class HistSamo25Extra {
       int[] marks = new int[] { 0, 9, 99, 999, n - 1, n - 10, n - 100, n - 1000 }; // This is for 10^6 obs.
 
       for (int i = 0; i < fileNames.length; i++) {
-         String latexCode = HistSamo25Paper.makeSimpleHistogramLatex(fileNames[i], titleNames[i], legendAnchor[i],
+         String latexCode = HistSamo25Paper.makeSimpleHistogramLatex(inputFolder, fileNames[i], titleNames[i], legendAnchor[i],
                numBins, marks);
-         File outFile = new File(HistSamo25Paper.outputFolder, fileNames[i] + "-hist-paper.tex");
+         File outFile = new File(outputFolder, fileNames[i] + "-hist-paper.tex");
          try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
             out.print(latexCode);
             System.out.println("Hist printed to file: " + fileNames[i] + "-hist-paper.tex");

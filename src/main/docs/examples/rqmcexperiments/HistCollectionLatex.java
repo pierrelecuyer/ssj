@@ -271,6 +271,7 @@ public class HistCollectionLatex {
     */
    public static String makeHistogramLatex(String filePath, int numBins, String title,
       String width, String height, String legendOptions, int[] extremeMarks) throws IOException {
+      
       if (numBins <= 0) throw new IllegalArgumentException("Number of histogram bins must be positive.");
       if (width == null || width.isBlank() || height == null || height.isBlank())
          throw new IllegalArgumentException("Histogram width and height must not be null or blank.");
@@ -281,7 +282,6 @@ public class HistCollectionLatex {
 
       TallyStore fileStats = new TallyStore();
       fileStats.fillFromFile(filePath);
-
       if (fileStats.numberObs() == 0)
          throw new IOException("No observations found in " + filePath);
       double xmin = fileStats.min();
@@ -299,11 +299,9 @@ public class HistCollectionLatex {
          a = xmin;
          b = xmax;
       }
-  
       TallyHistogram hist = new TallyHistogram(a, b, numBins);
       hist.fillFromTallyStore(fileStats);
       ScaledHistogram scHist = new ScaledHistogram(hist);
-
       String titleOptions = title == null ? "" : "title={" + escapeLatex(title) + "}, " + "title style={font=\\scriptsize}, ";
 
       // Width and height apply only to the axis rectangle, excluding labels. (scale only axis, )
@@ -320,14 +318,13 @@ public class HistCollectionLatex {
             + getLegendOptions(hist, fileStats, legendOptions));
 
       scHist.setAddPlotOptions("fill=blue!25, draw=blue!80!black, very thin");
-      String latex = scHist.toLatex(true, false);
+      String latexCode = scHist.toLatex(true, false);
 
       String extremeMarksLatex = addExtremeMarks(fileStats.getArray(), extremeMarks, fileStats.numberObs());
       if (!extremeMarksLatex.isEmpty()) {
-         latex = latex.replace("\\end{axis}", extremeMarksLatex + "\n\\end{axis}");
+         latexCode = latexCode.replace("\\end{axis}", extremeMarksLatex + "\n\\end{axis}");
       }
-
-      return latex;
+      return latexCode;
    }
 
    /**

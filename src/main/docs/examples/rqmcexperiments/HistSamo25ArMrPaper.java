@@ -4,25 +4,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Locale;
-
-
 import umontreal.ssj.rng.LFSR258;
 import umontreal.ssj.rng.RandomStream;
 import umontreal.ssj.stat.TallyStore;
 
 /**
- * Generates standalone LaTeX documents that compare the distributions of the
+ * Uses the tools in `MeanmedianMSE` and `HistSamo25ArMr` to make bootstrap samples and
+ * produce standalone LaTeX histograms that compare the distributions of the
  * average @f$A_r@f$ and median @f$M_r@f$ for SAMO 2025 experiments.
- *
- * <p>For each input data file, the program bootstraps samples of size @f$r@f$
- * and draws the histograms of @f$A_r@f$ and @f$M_r@f$ on the same PGFPlots
- * axis. Each output document contains one table per value of @f$s@f$; a table
- * may span several pages. RQMC methods appear in rows, while sample sizes
- * appear in columns, with @f$n=2^k@f$.
+ * This is for the selected histograms that go in the main paper.
  */
 public class HistSamo25ArMrPaper {
 
+   // Input data is taken from `inputFolder` and `latex code is put in `outputFolder`.
    static String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
    static String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdatcrn/";
    
@@ -30,6 +24,8 @@ public class HistSamo25ArMrPaper {
     * Sets the parameters and writes the histogram LaTeX files for the SAMO paper
     */
    public static void main(String[] args) throws IOException {
+
+      boolean crnboot = true;  // `true` means we use common random numbers.
 
       String[] fileNames = new String[] {
          "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", 
@@ -50,7 +46,6 @@ public class HistSamo25ArMrPaper {
       int[] marks = new int[] {0, 99, 499, numObs-1, numObs-100, numObs-500};   // This is for 10^4 obs.
       int numReps = 10000;  // Number of bootstrap subsamples of A_r and M_r.
       RandomStream stream = new LFSR258();      // Maybe set the main seed ??? 
-      boolean crnboot = true;  // This is to use common random numbers.
       
       TallyStore tallyInput = new TallyStore();   // The values of X.
       TallyStore statAver = new TallyStore();     // The values of A_r
@@ -60,8 +55,8 @@ public class HistSamo25ArMrPaper {
          tallyInput.fillFromFile(inputFolder + fileNames[i] + ".dat");
          if (crnboot) stream.resetStartStream();
          MeanMedianMSE.bootstrapArMrValues(tallyInput, numReps, r, stream, statAver, statMed);       
-         String latexCode = HistSamo25Paper.makeDoubleHistogramLatex(statAver, statMed, 
-               titleNames[i], "pos=north east", numBins, marks);
+         String latexCode = HistSamo25ArMr.makeDoubleHistogramLatex(statAver, statMed, 
+               titleNames[i], numObs, r, numBins, marks);
          File outFile = new File(outputFolder, fileNames[i] + "-ArMr-hist.tex");  
          try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
             out.print(latexCode);
@@ -71,7 +66,6 @@ public class HistSamo25ArMrPaper {
          }
          
       }
-      System.out.println("ALL DONE ");
-
+      System.out.println("\nALL DONE!");
    }
 }
