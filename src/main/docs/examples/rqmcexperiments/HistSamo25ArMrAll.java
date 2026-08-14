@@ -12,17 +12,14 @@ import umontreal.ssj.rng.RandomStream;
  * Each output document contains one table of histograms per value of @f$s@f@.
  */
 public class HistSamo25ArMrAll {
-
-   // Fixed parameters for this particular paper.
-   // Input data is taken from `inputFolder` and `latex code is put in `outputFolder`.
-   static String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
-   static String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histogramscrn/";
-     
+   
    // Generates one LaTeX histogram document for each model listed below.
    public static void main(String[] args) throws IOException {
 
       boolean crnboot = true;  // To use common random numbers across all histograms.
-
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histogramscrn/";
+    
       String[] modelTags = {
          "SmoothPerB4", "SumUeU", "MC2", "Polynomial", "Oscillatory",
          "Gaussian", "SmoothGauss", "PieceLinGauss", "IndSumNormal"

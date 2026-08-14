@@ -15,18 +15,17 @@ import umontreal.ssj.stat.TallyStore;
  * This is for the selected histograms that go in the main paper.
  */
 public class HistSamo25ArMrPaper {
-
-   // Input data is taken from `inputFolder` and `latex code is put in `outputFolder`.
-   static String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
-   static String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdatcrn/";
-   
+ 
    /**
     * Sets the parameters and writes the histogram LaTeX files for the SAMO paper
     */
    public static void main(String[] args) throws IOException {
 
       boolean crnboot = true;  // `true` means we use common random numbers.
-
+      // Input data is taken from `inputFolder` and `latex code is put in `outputFolder`.
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histogramscrn/";
+      
       String[] fileNames = new String[] {
          "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", 
          "SmoothPerB4-8-Lat-RpvRS-16-10000", "SmoothPerB4-8-Sob-RDS-16-10000",
