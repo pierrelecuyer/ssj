@@ -26,8 +26,10 @@ public class MSESamo25 {
     */
    public static void main(String[] args) throws IOException {
 
-      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
-      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/msecrn/";
+      boolean crnboot = false;   // Do we want CRNs? 
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/mse/";
+      
       // String[] modelTags = {"MC2"};
       String[] modelTags = new String[] {
             "SmoothPerB4", "SumUeU", "MC2", "Polynomial", "Oscillatory",
@@ -46,7 +48,6 @@ public class MSESamo25 {
       int numObs = 10000;   // Number of observations in the input data files.
       int numReps = 10000;  // Number of bootstrap subsamples to estimate the MSE[M_r].
 
-      boolean crnboot = true;   // Do we want CRNs? 
       RandomStream stream = new LFSR258();
       Chrono timerTotal = new Chrono();
 

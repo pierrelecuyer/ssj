@@ -21,10 +21,10 @@ public class HistSamo25ArMrPaper {
     */
    public static void main(String[] args) throws IOException {
 
-      boolean crnboot = true;  // `true` means we use common random numbers.
+      boolean crnboot = false;  // `true` means we use common random numbers.
       // Input data is taken from `inputFolder` and `latex code is put in `outputFolder`.
-      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
-      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histogramscrn/";
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histograms/";
       
       String[] fileNames = new String[] {
          "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", 
@@ -42,8 +42,8 @@ public class HistSamo25ArMrPaper {
       int r = 11;
       int numBins = 100;
       int numObs = 10000;   // Number of observations in the input data files.
-      int[] marks = new int[] {0, 99, 499, numObs-1, numObs-100, numObs-500};   // This is for 10^4 obs.
       int numReps = 10000;  // Number of bootstrap subsamples of A_r and M_r.
+      int[] marks = new int[] {0, 99, 499, numReps-1, numReps-100, numReps-500}; // This is for 10^4 reps.
       RandomStream stream = new LFSR258();      // Maybe set the main seed ??? 
       
       TallyStore tallyInput = new TallyStore();   // The values of X.

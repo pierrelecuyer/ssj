@@ -16,9 +16,9 @@ public class HistSamo25ArMrAll {
    // Generates one LaTeX histogram document for each model listed below.
    public static void main(String[] args) throws IOException {
 
-      boolean crnboot = true;  // To use common random numbers across all histograms.
-      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
-      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histogramscrn/";
+      boolean crnboot = false;  // To use common random numbers across all histograms.
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histograms/";
     
       String[] modelTags = {
          "SmoothPerB4", "SumUeU", "MC2", "Polynomial", "Oscillatory",
@@ -35,8 +35,8 @@ public class HistSamo25ArMrAll {
       int r = 11;
       int numBins = 100;
       int numObs = 10000;   // Number of observations in the input data files.
-      int[] marks = new int[] {0, 99, 499, numObs-1, numObs-100, numObs-500};   // This is for 10^4 obs.
       int numReps = 10000;  // Number of bootstrap subsamples of A_r and M_r.
+      int[] marks = new int[] {0, 99, 499, numReps-1, numReps-100, numReps-500}; // This is for 10^4 reps.
       RandomStream stream = new LFSR258();      // Maybe reset the main seed ??? 
 
       for (String modelTag : modelTags)
