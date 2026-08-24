@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
+
 import umontreal.ssj.rng.RandomStream;
 import umontreal.ssj.stat.Tally;
 import umontreal.ssj.stat.TallyStore;
@@ -171,15 +173,15 @@ public class MeanMedianMSE {
    }
 
    /**
-    * Writes a formatted result table to a file.
+    * Writes the formatted result string to a file.
     *
     * @param file  output file
-    * @param table formatted table
+    * @param str   any String, could be a formatted table
     * @throws RuntimeException if the file cannot be written
     */
-   public static void writeTable(File file, String table) {
+   public static void stringToFile(File file, String str) {
       try (PrintWriter out = new PrintWriter(new FileWriter(file))) {
-         out.print(table);
+         out.print(str);
       } catch (IOException e) {
          throw new RuntimeException("Could not write " + file.getAbsolutePath(), e);
       }
@@ -297,9 +299,9 @@ public class MeanMedianMSE {
          File arFile = new File(resultFolder, model + "-" + s + "-r" + r + "-MSE-Ar.res");
          File mrFile = new File(resultFolder, model + "-" + s + "-r" + r + "-MSE-Mr.res");
          File ratioFile = new File(resultFolder, model + "-" + s + "-r" + r + "-MSE-Ratio-ArOverMr.res");
-         writeTable(arFile, arTable);
-         writeTable(mrFile, mrTable);
-         writeTable(ratioFile, ratioTable);
+         stringToFile(arFile, arTable);
+         stringToFile(mrFile, mrTable);
+         stringToFile(ratioFile, ratioTable);
 
          System.out.println("MSE tables written to:");
          System.out.println("  " + arFile.getAbsolutePath());
@@ -312,7 +314,7 @@ public class MeanMedianMSE {
       }
       String csvTable = csvHead.toString() + csvRows.toString();
       File csvFile = new File(resultFolder, model + "-MSE-" + r + ".csv");
-      writeTable(csvFile, csvTable);
+      stringToFile(csvFile, csvTable);
       System.out.println("csv file written to:");
       System.out.println("  " + csvFile.getAbsolutePath());
    }
@@ -397,9 +399,9 @@ public class MeanMedianMSE {
             File arFile = new File(resultFolder, model + "-" + s + "-k" + k + "-MSE-Ar.res");
             File mrFile = new File(resultFolder, model + "-" + s + "-k" + k + "-MSE-Mr.res");
             File ratioFile = new File(resultFolder, model + "-" + s + "-k" + k + "-MSE-Ratio-ArOverMr.res");
-            writeTable(arFile, arTable);
-            writeTable(mrFile, mrTable);
-            writeTable(ratioFile, ratioTable);
+            stringToFile(arFile, arTable);
+            stringToFile(mrFile, mrTable);
+            stringToFile(ratioFile, ratioTable);
 
             System.out.println("MSE tables written to:");
             System.out.println("  " + arFile.getAbsolutePath());
@@ -456,8 +458,6 @@ public class MeanMedianMSE {
          for (int s : dims) {
             statMed.init();
             for (int k : ks) {
-               // Use a new substream for this k.
-               // stream.resetNextSubstream();
                for (String method : methods) {
                   File file = getDataFile(inputFolder, model, s, method, k, numObs);
                   TallyStore tally = readDataValues(file.getAbsolutePath());
@@ -480,9 +480,90 @@ public class MeanMedianMSE {
       }
       String csvTable = csvHead.toString() + csvRows.toString();
       File csvFile = new File(resultFolder, "Categ-" + category + "-MSE-r" + r + ".csv");
-      writeTable(csvFile, csvTable);
+      stringToFile(csvFile, csvTable);
       System.out.println("csv file written to:");
       System.out.println("  " + csvFile.getAbsolutePath());
+   }
+
+   /**
+    * Similar to `estimateMSEOneModel`, but this one create files that contain the estimated 
+    * quantiles of the empirical distributions of @f$A_r@f$ and @f$M_r@f$, at 1\%, 5\%, 95\%, 99\%.
+    * The file contains one row for each value of `k` and one column for each combination of 
+    * method, @f$A_r@f$ or @f$M_r@f$, and quantile number.  Each file is for one model, 
+    * one value of @f$r@f$, and one value of @f$s@f$.
+    *
+    * @param inputFolder  directory containing the input data files
+    * @param outputFolder directory in which result files are written
+    * @param model        model name used in input filenames
+    * @param dims         set of model dimensions
+    * @param methods      RQMC method names
+    * @param ks           values of @f$k@f$
+    * @param numObs       number of observations identified in each filename
+    * @param m            number of bootstrap samples
+    * @param r            sample size used for @f$A_r@f$ and for each bootstrap
+    *                     sample of @f$M_r@f$
+    * @param stream       random stream used for sampling
+    * @throws IllegalArgumentException if the result directory cannot be created
+    */
+   public static void estimateQuantilesOneModel(String inputFolder, String outputFolder, String model, int[] dims,
+         String[] methods, int[] ks, int numObs, int m, int r, RandomStream stream, boolean crnboot) {
+      System.out.println("Running estimateQuantilesOneModel.... ");
+      File resultFolder = new File(outputFolder);
+      if (!resultFolder.exists() && !resultFolder.mkdirs())
+         throw new IllegalArgumentException("Could not create result folder " + resultFolder.getAbsolutePath());
+
+      // Builds the first row of the .res files.
+      String[] estims = {"Ar", "Mr"};
+      int[] qs = {1, 5, 95, 99};
+      int[] qsa = {95, 99};  // For absolute values
+      
+      StringBuilder csvHeader = new StringBuilder("k,");
+      for (String method : methods)
+         for (String estim : estims) {
+            for (int q : qs)
+               csvHeader.append("," + method + "-" + estim + q);
+            for (int q : qsa)
+               csvHeader.append("," + method + "-Abs-" + estim + q);
+         }
+      csvHeader.append("\n");
+      StringBuilder csvRows = new StringBuilder();
+
+      TallyStore statAver = new TallyStore("A_r");
+      TallyStore statMed = new TallyStore("M_r");
+
+      for (int s : dims) {
+         statMed.init();
+         for (int k : ks) {
+            csvRows.append(k).append(",");
+            for (String method : methods) {
+               File file = getDataFile(inputFolder, model, s, method, k, numObs);
+               TallyStore tally = readDataValues(file.getAbsolutePath());               
+               // If crnboot, we reuse the same stream for all cases.
+               if (crnboot) stream.resetStartStream();
+               bootstrapArMrValues(tally, m, r, stream, statAver, statMed);
+               statAver.quickSort();
+               statMed.quickSort();
+
+               // Absolute errors and their quantiles.
+               TallyStore absErrorAver = statAver.absErrorKnownMean(exactMean);
+               TallyStore absErrorMed = statMed.absErrorKnownMean(exactMean);
+               absErrorAver.quickSort();
+               absErrorMed.quickSort();
+               for(int q : qs) csvRows.append(",").append(statAver.getArray()[100*q-1]);
+               for(int q : qsa) csvRows.append(",").append(absErrorAver.getArray()[100*q-1]);
+               for(int q : qs) csvRows.append(",").append(statMed.getArray()[100*q-1]);
+               for(int q : qsa) csvRows.append(",").append(absErrorMed.getArray()[100*q-1]);
+               
+            }
+            csvRows.append("\n");
+         }
+
+         File csvFile = new File(resultFolder, model + "-" + s + "-r" + r + "-quant.csv");
+         String csvTable = csvHeader.toString() + csvRows.toString();
+         stringToFile(csvFile, csvTable);
+         System.out.println("csv file written to:");
+         System.out.println("  " + csvFile.getAbsolutePath());
+      }
    }
 
 }

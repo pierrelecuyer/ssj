@@ -21,20 +21,20 @@ public class HistSamo25ArMrPaper {
     */
    public static void main(String[] args) throws IOException {
 
-      boolean crnboot = false;  // `true` means we use common random numbers.
+      boolean crnboot = true;  // `true` means we use common random numbers.
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdatcrn/";
       // Input data is taken from `inputFolder` and `latex code is put in `outputFolder`.
-      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
-      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histograms/";
       
       String[] fileNames = new String[] {
-         "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", 
-         "SmoothPerB4-8-Lat-RpvRS-16-10000", "SmoothPerB4-8-Sob-RDS-16-10000",
-         "SmoothPerB4-8-Sob-LMS-RDS-16-10000", "SmoothPerB4-8-Sob-NUS-16-10000",
-         "MC2-8-Sob-LMS-RDS-16-10000", "MC2-16-Sob-LMS-RDS-14-10000",
-         "MC2-16-Sob-NUS-14-10000"
+         "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", "SmoothPerB4-8-Lat-RpvRS-16-10000", 
+         "SmoothPerB4-8-Lat-Rv-10-10000", "SmoothPerB4-8-Lat-Rpv-10-10000", "SmoothPerB4-8-Lat-RvRS-10-10000", 
+         "SmoothPerB4-8-Sob-RDS-16-10000", "SmoothPerB4-8-Sob-LMS-RDS-16-10000", "SmoothPerB4-8-Sob-NUS-16-10000",
+         "MC2-8-Sob-LMS-RDS-16-10000", "MC2-16-Sob-LMS-RDS-14-10000", "MC2-16-Sob-NUS-14-10000"
       };
       String[] titleNames = new String[] {
-            "Lat-RS", "Lat-RvRS", "Lat-RpvRS","Sob-RDS", "Sob-LMS-RDS", "Sob-NUS",
+            "Lat-RS", "Lat-RvRS", "Lat-RpvRS", "Lat-Rv, $k=10$", "Lat-Rpv, $k=10$", "Lat-RvRS,  $k=10$",  
+            "Sob-RDS", "Sob-LMS-RDS", "Sob-NUS",
             "Sob-LMS-RDS, $s=8$, $k=16$", "Sob-LMS-RDS, $s=16$, $k=14$",
             "Sob-NUS, $s=16$, $k=14$"
          };

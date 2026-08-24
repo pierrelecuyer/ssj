@@ -174,7 +174,20 @@ public class TallyStore extends Tally {
          curSum2 += obs[i] * obs[i];
       }
    }
-
+  
+   /**
+    * Returns a new `TallyStore` that contains the absolute errors of all observations, 
+    * under the assumption that the exact mean is known and equal to 'exactMean'.  
+    */
+   public TallyStore absErrorKnownMean (double exactMean) {
+      TallyStore absErrors = new TallyStore (this.numberObs());      
+      double[] obs = this.getArray();
+      for (int i = 0; i < numberObs(); i++) {
+         absErrors.add(Math.abs(obs[i] - exactMean));
+      }
+      return absErrors;
+   }
+   
    /**
     * Recomputes and returns the variance from the observations contained in this tally.
     * This uses the function @ref cern.jet.stat.Descriptive.sampleVariance.

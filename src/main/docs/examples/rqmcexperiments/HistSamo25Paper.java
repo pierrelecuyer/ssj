@@ -94,27 +94,25 @@ public class HistSamo25Paper {
     */
    public static void main(String[] args) throws IOException {  
 
-      // Fixed parameters for this particular paper.
-      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
-      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdatcrn/";
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";  // CRN for data.
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdat/";
 
+      // Fixed parameters for this particular paper.
       String[] fileNames = new String[] {
-         "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", 
-         "SmoothPerB4-8-Lat-RpvRS-16-10000", 
+         "SmoothPerB4-8-Lat-RS-16-10000", "SmoothPerB4-8-Lat-RvRS-16-10000", "SmoothPerB4-8-Lat-RpvRS-16-10000", 
+         "SmoothPerB4-8-Lat-Rv-16-10000", "SmoothPerB4-8-Lat-Rpv-16-10000", 
          "SmoothPerB4-8-Sob-RDS-16-10000",
          "SmoothPerB4-8-Sob-LMS-RDS-16-10000", "SmoothPerB4-8-Sob-NUS-16-10000",
-         "MC2-8-Sob-LMS-RDS-16-10000", "MC2-16-Sob-LMS-RDS-14-10000",
-         "MC2-16-Sob-NUS-14-10000"
+         "MC2-8-Sob-LMS-RDS-16-10000", "MC2-16-Sob-LMS-RDS-14-10000", "MC2-16-Sob-NUS-14-10000"
       };
       String[] titleNames = new String[] {
-            "Lat-RS", "Lat-RvRS", 
-            "Lat-RpvRS","Sob-RDS", "Sob-LMS-RDS", "Sob-NUS",
-            "Sob-LMS-RDS, $s=8$, $k=16$", "Sob-LMS-RDS, $s=16$, $k=14$",
-            "Sob-NUS, $s=16$, $k=14$"
+            "Lat-RS", "Lat-RvRS", "Lat-RpvRS", "Lat-Rv", "Lat-Rpv", "Sob-RDS", "Sob-LMS-RDS", "Sob-NUS",
+            "Sob-LMS-RDS, $s=8$, $k=16$", "Sob-LMS-RDS, $s=16$, $k=14$", "Sob-NUS, $s=16$, $k=14$"
          };
       String[] legendAnchor = new String[] {
             "style={at={(0.5, 0.97)}, anchor=north}", 
             "pos=north west", "pos=north west", 
+            "pos=north east", "pos=north east", 
             "style={at={(0.5, 0.97)}, anchor=north}", 
             "pos=north east", "pos=north east", 
             "pos=north east", "pos=north east", "pos=north east",
@@ -132,24 +130,7 @@ public class HistSamo25Paper {
             throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
          }
       }
-/*
-      // The following gives almost the same output using 'HistCollectionLatex.makeHistogramLatex'
-      int[] ExtremMarks = new int[] {2,2};
-      String path;
-      String latexHist;
-      for(String fileName: fileNames){
-         path = inputFolder + fileName + ".dat";
-         latexHist = HistCollectionLatex.makeHistogramLatex(path, numBins, fileName,
-            "4.4 cm", "3 cm", "builtin", ExtremMarks);
-         // -hist25 is used to not overwrite makeSimpleHistogramLatex files
-         File outFile = new File(outputFolder, fileName + "-hist25.tex");
-         try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
-            out.print(latexHist);
-         } catch (IOException e) {
-            throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
-         }
-      }
-*/
+      System.out.println("\nALL DONE!");
    }
    
 }
