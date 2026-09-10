@@ -15,10 +15,11 @@ public class Samo25SamplesMain extends RQMCExperiment64 {
    public static void main(String[] args) throws IOException {
       // Samo25Samples64.directory = "C:/Users/Lecuyer/Dropbox/wsc26/data64/"; // Retained for 64 bits
       // Samo25Samples.directory = "C:/Users/Lecuyer/Dropbox/wsc23/test/";     // For testing
-      // Samo25Samples.directory = "C:/Users/Lecuyer/Dropbox/samo25/test/";    // For Samo paper
+      // Samo25Samples.directory = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";    // For Samo paper, no CRNs.
       Samo25Samples.directory = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";    // For Samo paper, with CRNs.
 
       boolean crn = true;  // Use common random numbers across all cases for randomizations.
+      
       int m = 10000; // Number of RQMC randomizations.
       // int million = 10000000; // Number of RQMC randomizations.
       // int m = 10; // Number of RQMC randomizations.

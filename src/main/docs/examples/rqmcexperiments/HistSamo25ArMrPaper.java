@@ -22,8 +22,8 @@ public class HistSamo25ArMrPaper {
    public static void main(String[] args) throws IOException {
 
       boolean crnboot = true;  // `true` means we use common random numbers.
-      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datacrn/";
-      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdatcrn/";
+      String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdat/";
       // Input data is taken from `inputFolder` and `latex code is put in `outputFolder`.
       
       String[] fileNames = new String[] {
@@ -50,7 +50,7 @@ public class HistSamo25ArMrPaper {
       TallyStore statAver = new TallyStore();     // The values of A_r
       TallyStore statMed = new TallyStore();      // The values of M_r
       for (int i = 0; i < fileNames.length; i++) {  // Draw histograms for each case.
-         System.out.println("makeDoublestogramLatex: " + fileNames[i]);  // Optional
+         System.out.println("makeDoubleHistogramLatex: " + fileNames[i]);  // Optional
          tallyInput.fillFromFile(inputFolder + fileNames[i] + ".dat");
          if (crnboot) stream.resetStartStream();
          MeanMedianMSE.bootstrapArMrValues(tallyInput, numReps, r, stream, statAver, statMed);       

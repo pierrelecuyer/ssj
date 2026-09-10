@@ -37,7 +37,7 @@ public class QuantilesSamo25 {
       // This is to estimate the MSE for each case and put that in `mse` directory.
       for (String model : modelTags)
          for (int r : rs)
-            MeanMedianMSE.estimateQuantilesOneModel(inputFolder, outputFolder, model, dims,
+            MeanMedianMSE.quantilesAndMSEArMrOneModel(inputFolder, outputFolder, model, dims,
                 methods, ks, numObs, numReps, r, stream, crnboot);
 
       System.out.println("\nAll Done.");

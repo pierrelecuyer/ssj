@@ -5,11 +5,12 @@ import umontreal.ssj.rng.LFSR258;
 import umontreal.ssj.rng.RandomStream;
  
 /**
- * Uses the tools in `MeanmedianMSE` and `HistSamo25ArMr` to make bootstrap samples and
+ * Uses the tools in `MeanMedianMSE` and `HistSamo25ArMr` to make bootstrap samples and
  * produce standalone LaTeX histograms that compare the distributions of the
  * average @f$A_r@f$ and median @f$M_r@f$ for SAMO 2025 experiments, for all the cases.
  * This provides a very large collection of histograms.
- * Each output document contains one table of histograms per value of @f$s@f@.
+ * There is one output document for each model and it contains one table of histograms 
+ * per value of @f$s@f@.  
  */
 public class HistSamo25ArMrAll {
    

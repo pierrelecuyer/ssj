@@ -15,7 +15,8 @@ import umontreal.ssj.stat.TallyStore;
  * produce standalone LaTeX histograms that compare the distributions of the
  * average @f$A_r@f$ and median @f$M_r@f$ for SAMO 2025 experiments.
  * Each plot contains two superposed histograms.
- * For eaach histogram, we also add 
+ * For each histogram, we also add markers for selected quantiles of the distributions
+ * of @f$A_r@f$ and @f$M_r@f$.
  * 
  */
 public class HistSamo25ArMr {
@@ -41,6 +42,8 @@ public class HistSamo25ArMr {
     * This function assumes that @f$m@f$ realizations of @f$A_r@f$ and @f$M_r@f$ are already
     * in {@code data1} and {@code data2}, respectively, 
     * and it generates the LaTeX code for the two overlaid histograms of these values.
+    * For each histogram, we also add markers for selected quantiles of the distributions
+    * of @f$A_r@f$ and @f$M_r@f$. These selected quantiles are specified by {@code marks}.
     */
    public static String makeDoubleHistogramLatex(TallyStore data1, TallyStore data2, String titleName, 
          int numObs, int r, int numBins, int[] marks) throws IOException {

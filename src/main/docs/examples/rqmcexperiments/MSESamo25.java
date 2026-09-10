@@ -54,7 +54,7 @@ public class MSESamo25 {
       // This is to estimate the MSE for each case and put that in `mse` directory.
       for (String model : modelTags)
          for (int r : rs)
-            MeanMedianMSE.estimateMSEOneModel(inputFolder, outputFolder, model, dims,
+            MeanMedianMSE.quantilesAndMSEArMrOneModel(inputFolder, outputFolder, model, dims,
                 methods, ks, numObs, numReps, r, stream, crnboot);
                 
       // This part is to generate tables to plot the MSEs as functions of r.
@@ -63,10 +63,12 @@ public class MSESamo25 {
       int[] ks2 =  {10, 14};
       int[] rs2 =  {11, 23, 47, 95, 189};
       for (String model : modelTags)
-         MeanMedianMSE.estimateMSEManyr(inputFolder, outputFolder, model, dims2,
-               methods, ks2, numObs, numReps, rs2, stream, crnboot);
+         for (int k : ks2)
+            MeanMedianMSE.estimMSEArMrManyr(inputFolder, outputFolder, model, dims2,
+                  methods, k, numObs, numReps, rs2, stream, crnboot);     
 
       // Grouping by category to make scatter plots.
+      // This includes only the six models considered in the main paper. 
       String[] modelTags3 = new String[] {
             "SmoothPerB4", "SumUeU", "MC2", "SmoothGauss", "PieceLinGauss", "IndSumNormal"
       };

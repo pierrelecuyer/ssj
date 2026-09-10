@@ -26,7 +26,7 @@ public class MSETest {
       System.out.println("Starting MSETest ");     
       for (String model : modelTags)
          for (int r : rs)
-            MeanMedianMSE.estimateMSEOneModel(inputFolder, outputFolder, model, dims,
+            MeanMedianMSE.quantilesAndMSEArMrOneModel(inputFolder, outputFolder, model, dims,
                 methods, ks, numObs, numReps, r, stream, false);
       }
 }

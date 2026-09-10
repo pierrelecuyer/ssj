@@ -8,6 +8,7 @@ import java.io.IOException;
  * dimensions, values of `k = log_2 n`, and number of observations.
  * All of these are passed as parameters to `HistCollectionLatex.writeCollection`,
  * which constructs one LaTeX file for each model in the list.
+ * Compiling them will give one .pdf file per model.
  */
 public class HistSamo25All {
 
