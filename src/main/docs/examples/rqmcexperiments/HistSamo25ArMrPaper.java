@@ -37,7 +37,7 @@ public class HistSamo25ArMrPaper {
             "Sob-RDS", "Sob-LMS-RDS", "Sob-NUS",
             "Sob-LMS-RDS, $s=8$, $k=16$", "Sob-LMS-RDS, $s=16$, $k=14$",
             "Sob-NUS, $s=16$, $k=14$"
-         };
+      };
       // Fixed parameters for this particular paper.
       int r = 11;
       int numBins = 100;
@@ -50,12 +50,14 @@ public class HistSamo25ArMrPaper {
       TallyStore statAver = new TallyStore();     // The values of A_r
       TallyStore statMed = new TallyStore();      // The values of M_r
       for (int i = 0; i < fileNames.length; i++) {  // Draw histograms for each case.
-         System.out.println("makeDoubleHistogramLatex: " + fileNames[i]);  // Optional
+         System.out.println("NEW  makeDoubleHistogramLatex: " + fileNames[i]);  // Optional
          tallyInput.fillFromFile(inputFolder + fileNames[i] + ".dat");
          if (crnboot) stream.resetStartStream();
          MeanMedianMSE.bootstrapArMrValues(tallyInput, numReps, r, stream, statAver, statMed);       
          String latexCode = HistSamo25ArMr.makeDoubleHistogramLatex(statAver, statMed, 
                titleNames[i], numObs, r, numBins, marks);
+         System.out.println(latexCode);
+         
          File outFile = new File(outputFolder, fileNames[i] + "-ArMr-hist.tex");  
          try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
             out.print(latexCode);

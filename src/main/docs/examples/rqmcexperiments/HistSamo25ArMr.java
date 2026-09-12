@@ -72,8 +72,8 @@ public class HistSamo25ArMr {
              "  every x tick label/.append style={scale=0.6, transform shape}, \n" +
              "  every x tick scale label/.style={at={(axis description cs:1, 0)}, \n" +
                 "  anchor=north east, xshift=2pt, yshift=-6.2pt, inner sep=0pt}, \n");
-      scHist1.setAddPlotOptions("mark=none,very thin,fill=green!25,opacity=0.6,fill opacity=0.6");
-      scHist2.setAddPlotOptions("mark=none,very thin,fill=red!25,opacity=0.6,fill opacity=0.6");
+      scHist1.setAddPlotOptions("mark=none,very thin,draw=green!85!black,fill=green!35,opacity=0.6,fill opacity=0.6");
+      scHist2.setAddPlotOptions("mark=none,very thin,draw=red,fill=red!25,opacity=0.6,fill opacity=0.6");
       // Make the latex file.
       String latexCode = scHist1.toLatexTwoHist(scHist2);
       // Add the marks.
@@ -81,7 +81,7 @@ public class HistSamo25ArMr {
       for(int i : marks)
          coords.append("(").append(String.format(Locale.US, "%.17g", data1.getArray()[i])).append(",0) ");
       String adds = "\\addplot+[only marks, mark=|, mark size=2.5pt, "
-            + "mark options={green,thick}, forget plot] coordinates {" + coords + "};";
+            + "mark options={green!75!black,thick}, forget plot] coordinates {" + coords + "};";
       latexCode = latexCode.replace("\\end{axis}", adds + "\n\\end{axis}");
       coords = new StringBuilder();
       for(int i : marks)
