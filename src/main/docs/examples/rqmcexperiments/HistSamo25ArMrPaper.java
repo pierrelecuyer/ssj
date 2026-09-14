@@ -56,7 +56,7 @@ public class HistSamo25ArMrPaper {
          MeanMedianMSE.bootstrapArMrValues(tallyInput, numReps, r, stream, statAver, statMed);       
          String latexCode = HistSamo25ArMr.makeDoubleHistogramLatex(statAver, statMed, 
                titleNames[i], numObs, r, numBins, marks);
-         System.out.println(latexCode);
+         // System.out.println(latexCode);
          
          File outFile = new File(outputFolder, fileNames[i] + "-ArMr-hist.tex");  
          try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {

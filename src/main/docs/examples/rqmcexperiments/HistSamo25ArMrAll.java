@@ -1,6 +1,7 @@
 package rqmcexperiments;
 
 import java.io.IOException;
+import java.io.File;
 import umontreal.ssj.rng.LFSR258;
 import umontreal.ssj.rng.RandomStream;
  
@@ -39,10 +40,13 @@ public class HistSamo25ArMrAll {
       int numReps = 10000;  // Number of bootstrap subsamples of A_r and M_r.
       int[] marks = new int[] {0, 99, 499, numReps-1, numReps-100, numReps-500}; // This is for 10^4 reps.
       RandomStream stream = new LFSR258();      // Maybe reset the main seed ??? 
-
-      for (String modelTag : modelTags)
+      
+      for (String modelTag : modelTags) {
          HistSamo25ArMr.writeModelFile (inputFolder, outputFolder, modelTag, methods, 
                sDims, ks, numReps, r, numObs, numBins, marks, stream, crnboot);
+         // ProcessBuilder pb = new ProcessBuilder("pdflatex", "/c", modelTag + "-ArMr-hist.tex");
+         // pb.directory(new File("C:/Users/Lecuyer/Dropbox/samo25/histograms"));
+      }
       System.out.println("\nALL DONE!");
    }
 }

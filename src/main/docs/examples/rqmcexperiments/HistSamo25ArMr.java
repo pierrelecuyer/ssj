@@ -65,15 +65,15 @@ public class HistSamo25ArMr {
       // ScaledHistogram scHist = new ScaledHistogram();
       
       // System.out.println(hist.toString());
-      scHist1.setAxisOptions("title={" + titleName + "}, width=4.4cm, height=3.0cm, scale only axis, \n" +
+      scHist1.setAxisOptions("title={\\small " + titleName + "}, width=4.4cm, height=3.0cm, scale only axis, \n" +
              "  ymin=0.0, xmin = " + (a - 0.01 * range) + ", xmax = " + (b + 0.01 * range) + 
              ",\n  ylabel={}, yticklabels={}, \n" +
              "  scaled x ticks=true, minor x tick num=0, scaled y ticks=false, \n" +
              "  every x tick label/.append style={scale=0.6, transform shape}, \n" +
              "  every x tick scale label/.style={at={(axis description cs:1, 0)}, \n" +
                 "  anchor=north east, xshift=2pt, yshift=-6.2pt, inner sep=0pt}, \n");
-      scHist1.setAddPlotOptions("mark=none,very thin,draw=green!85!black,fill=green!35,opacity=0.6,fill opacity=0.6");
-      scHist2.setAddPlotOptions("mark=none,very thin,draw=red,fill=red!25,opacity=0.6,fill opacity=0.6");
+      scHist1.setAddPlotOptions("very thin,draw=green!85!black,fill=green!35,opacity=0.6,fill opacity=0.6");
+      scHist2.setAddPlotOptions("very thin,draw=red,fill=red!25,opacity=0.6,fill opacity=0.6");
       // Make the latex file.
       String latexCode = scHist1.toLatexTwoHist(scHist2);
       // Add the marks.
@@ -227,14 +227,14 @@ public class HistSamo25ArMr {
             String mStr = Integer.toString(m);
             String samples =
                   m > 0 && mStr.matches("10*")
-                        ? "$10^{" + (mStr.length() - 1)
+                        ? "$m=10^{" + (mStr.length() - 1)
                               + "}$ samples"
                         : m + " samples";
             String pageTitle =
-                  "RQMC comparison of $A_r$ and $M_r$: "
+                  "RQMC comparison of $A_r$ and $M_r$, "
                         + modelTag.replace("_", "\\_")
-                        + " s = " + s
-                        + " (" + samples + ")";
+                        + ", s = " + s
+                        + ", " + samples;
             writeHistogramPageBody(out, inputDir, modelTag, methods,
                   s, ks, m, r, numObs, numBins, marks, pageTitle, stream, crnboot);
             out.println("\\clearpage");
