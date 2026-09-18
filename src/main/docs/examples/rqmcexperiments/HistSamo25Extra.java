@@ -14,16 +14,16 @@ public class HistSamo25Extra {
    public static void main(String[] args) throws IOException {
 
       String inputFolder = "C:/Users/Lecuyer/Dropbox/samo25/datapl/";
-      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/paperdat/";
+      String outputFolder = "C:/Users/Lecuyer/Dropbox/samo25/histograms/";
 
       String[] fileNames = new String[] { "SmoothPerB4-8-Lat-Rv-16-1000000", "SmoothPerB4-8-Lat-Rpv-16-1000000",
             "SmoothPerB4-8-Lat-RvRS-16-1000000", "SmoothPerB4-8-Sob-LMS-RDS-16-1000000", "MC2-8-Lat-Rv-16-1000000",
             "MC2-8-Lat-Rpv-16-1000000", "MC2-8-Sob-LMS-16-1000000", "MC2-8-Sob-LMS-RDS-16-1000000",
             "MC2-8-Sob-RDSB-16-1000000", "MC2-4-Sob-RDSB-14-1000000", };
-      String[] titleNames = new String[] { "\\small SmoothPerB4-8-Lat-Rv-16-M", "\\small SmoothPerB4-8-Lat-Rpv-16-M",
-            "\\small SmoothPerB4-8-Lat-RvRS-16-M", "\\small SmoothPerB4-8-Sob-LMS-RDS-16-M",
-            "\\small MC2-8-Lat-Rv-16-M", "\\small MC2-8-Lat-Rpv-16-M", "\\small MC2-8-Sob-LMS-16-M",
-            "\\small MC2-8-Sob-LMS-RDS-16-M", "\\small MC2-8-Sob-RDSB-16-M", "\\small MC2-4-Sob-RDSB-14-M", };
+      String[] titleNames = new String[] { "SmoothPerB4-8-Lat-Rv-16-M", "SmoothPerB4-8-Lat-Rpv-16-M",
+            "SmoothPerB4-8-Lat-RvRS-16-M", "SmoothPerB4-8-Sob-LMS-RDS-16-M",
+            "MC2-8-Lat-Rv-16-M", "MC2-8-Lat-Rpv-16-M", "MC2-8-Sob-LMS-16-M",
+            "MC2-8-Sob-LMS-RDS-16-M", "MC2-8-Sob-RDSB-16-M", "MC2-4-Sob-RDSB-14-M" };
       String[] legendAnchor = new String[] { "pos=north east", "pos=north east", "pos=north west", "pos=north west",
             "pos=north east", "pos=north east", "pos=north east", "pos=north east",
             "style={at={(0.5, 0.95)}, anchor=north}", "style={at={(0.5, 0.95)}, anchor=north}", };
@@ -32,12 +32,12 @@ public class HistSamo25Extra {
       int[] marks = new int[] { 0, 9, 99, 999, n - 1, n - 10, n - 100, n - 1000 }; // This is for 10^6 obs.
 
       for (int i = 0; i < fileNames.length; i++) {
-         String latexCode = HistSamo25Paper.makeSimpleHistogramLatex(inputFolder, fileNames[i], titleNames[i], legendAnchor[i],
-               numBins, marks);
-         File outFile = new File(outputFolder, fileNames[i] + "-hist-paper.tex");
+         String latexCode = HistSamo25Paper.makeSimpleHistogramLatex(inputFolder, fileNames[i], 
+               "\\footnotesize " + titleNames[i], legendAnchor[i], numBins, marks);
+         File outFile = new File(outputFolder, fileNames[i] + "-hist.tex");
          try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
             out.print(latexCode);
-            System.out.println("Hist printed to file: " + fileNames[i] + "-hist-paper.tex");
+            System.out.println("Hist printed to file: " + fileNames[i] + "-hist.tex");
          } catch (IOException e) {
             throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
          }

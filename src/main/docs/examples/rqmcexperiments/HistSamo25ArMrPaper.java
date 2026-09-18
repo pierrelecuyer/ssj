@@ -50,7 +50,7 @@ public class HistSamo25ArMrPaper {
       TallyStore statAver = new TallyStore();     // The values of A_r
       TallyStore statMed = new TallyStore();      // The values of M_r
       for (int i = 0; i < fileNames.length; i++) {  // Draw histograms for each case.
-         System.out.println("NEW  makeDoubleHistogramLatex: " + fileNames[i]);  // Optional
+         // System.out.println("makeDoubleHistogramLatex: " + fileNames[i]);  // Optional
          tallyInput.fillFromFile(inputFolder + fileNames[i] + ".dat");
          if (crnboot) stream.resetStartStream();
          MeanMedianMSE.bootstrapArMrValues(tallyInput, numReps, r, stream, statAver, statMed);       
@@ -61,7 +61,7 @@ public class HistSamo25ArMrPaper {
          File outFile = new File(outputFolder, fileNames[i] + "-ArMr-hist.tex");  
          try (PrintWriter out = new PrintWriter(new FileWriter(outFile))) {
             out.print(latexCode);
-            System.out.println("Hist printed to file: " + fileNames[i]);
+            System.out.println("Hist printed to file: " + fileNames[i] + "-ArMr-hist.tex");
          } catch (IOException e) {
             throw new RuntimeException("Could not write " + outFile.getAbsolutePath(), e);
          }

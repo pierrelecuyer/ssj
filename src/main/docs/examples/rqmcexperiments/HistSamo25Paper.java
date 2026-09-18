@@ -36,14 +36,14 @@ public class HistSamo25Paper {
    public static String makeSimpleHistogramLatex(String inputFolder, String fileName, String titleName, 
          String legpos, int numBins, int[] marks) throws IOException {
       TallyStore data = new TallyStore();
-      System.out.println("makeSimpleHistogramLatex: " + fileName);
+      // System.out.println("makeSimpleHistogramLatex: " + fileName);
       data.fillFromFile(inputFolder + fileName + ".dat");
       data.quickSort();
       // int n = data.numberObs();
       double a = data.min();
       double b = data.max();
       double range = b - a;
-      System.out.println("makeSimpleHistogramLatex: a = " + a + ", b = " + b);
+      System.out.println("makeSimpleHistogramLatex: " + fileName + ", a = " + a + ", b = " + b);
 
       TallyHistogram hist = new TallyHistogram(a, b + range * 1.0e-12, numBins);
       hist.fillFromTallyStore(data);     
