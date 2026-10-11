@@ -1,3 +1,27 @@
+/*
+ * Class:        MWC64k2a2
+ * Description:  multiply-with-carry generator with base 2^64 and order 2
+ * Environment:  Java
+ * Software:     SSJ
+ * Copyright (C) 2001  Pierre L'Ecuyer and Universite de Montreal
+ * Organization: DIRO, Universite de Montreal
+ * @author
+ * @since
+ *
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package umontreal.ssj.rng;
 
 import java.math.BigInteger;
@@ -32,7 +56,7 @@ import java.math.BigInteger;
  */
 public class MWC64k2a2 extends RandomStreamBase {
 
-   private static final long serialVersionUID = 20260518L;
+   private static final long serialVersionUID = 260518L;
 
    // State components x_{n-1}, x_{n-2} and c_{n-1} interpreted as unsigned 64-bit.
    private long x1, x2, carry;
@@ -256,8 +280,8 @@ public class MWC64k2a2 extends RandomStreamBase {
     * Returns a random long in the inclusive range {@code [i, j]}.
     *
     * Uses 63 random bits and rejection sampling when the range size fits in a
-    * positive long. For larger ranges, it samples full 64-bit values until one
-    * falls inside the interval.
+    * positive long. when the range size does not fit in a positive long,
+    * it samples full 64-bit values until one falls inside the interval.
     *
     * @param i lower bound, inclusive
     * @param j upper bound, inclusive
@@ -416,6 +440,18 @@ public class MWC64k2a2 extends RandomStreamBase {
          throw new IllegalArgumentException(
                "The all-ones/max-carry state is not allowed.");
    }
+
+   /*
+    * Stream and substream jumps use an equivalent multiplicative LCG modulo m.
+    * An MWC state {x_{n-2}, x_{n-1}, carry} is mapped to an LCG state y.
+    * Advancing the MWC recurrence by n steps is equivalent to
+    * y = (b^(-1))^n * y mod m.
+    *
+    * The fixed stream and substream multipliers are precomputed in Montgomery
+    * form. The methods below multiply the saved Montgomery LCG state by the
+    * appropriate multiplier using three 64-bit limbs, then convert the result
+    * back to an MWC state.
+    */
 
    /**
     * Computes a fixed jump multiplier in Montgomery form for static setup.
@@ -804,13 +840,17 @@ public class MWC64k2a2 extends RandomStreamBase {
    }
 
    /**
-    * Advances the current stream state by n steps.
+    * Advances the current stream state by arbitrary {@code n} steps.
     *
-    * This method is for a general jump size n. It maps the current MWC
-    * state to the equivalent LCG state, applies
-    * the LCG jump, then converts the result back to the MWC state.
+    * {@code n} is a nonnegative {@link BigInteger}, so jumps larger than
+    * {@code Long.MAX_VALUE}, are supported.
     *
-    * @param n number of steps to jump
+    * This method advances only the current state. It does not change the
+    * stream-start or substream-start states; a subsequent reset restores the
+    * corresponding saved state.
+    *
+    * @param n nonnegative number of steps to jump
+    * @throws IllegalArgumentException if {@code n} is negative
     */
    public void advanceStateByJump(BigInteger n) {
       if (n.signum() < 0)
