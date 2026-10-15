@@ -2,7 +2,7 @@ package rqmcexperiments;
 
 import umontreal.ssj.hups64.*;
 import umontreal.ssj.rng.LFSR258;  // With this one, we get negative output values!  ***** 
-import umontreal.ssj.rng.MWC64k2a2;  // With this one, we get negative output values!  ***** 
+import umontreal.ssj.rng.MWC64k2a2;  // With this one, we get negative output values!  *****
 import umontreal.ssj.rng.RandomStream;
 import umontreal.ssj.util.Chrono;
 import umontreal.ssj.util.Num;
@@ -127,7 +127,7 @@ public class TestRQMCSpeed64 {
       // testSpeedAll(m, p, hck0.getRandomization(), s);
       testSpeedAll(m, hck0.getPointSet(), hck0.getRandomization(), s);
       //  This one does not work .....
- 
+
       System.out.println("Korobov lattice with random shift, implemented as an LCG \n");
       testSpeedAll(m, lcg, rs, s);
 
@@ -161,25 +161,23 @@ public class TestRQMCSpeed64 {
       p.addIndepRandomBits(new LFSR258());
       testSpeedAll(m, p, lmsrds, s);
       p.clearIndepRandomBits();
- 
 
       p.resetGeneratorMatrices();
 
       System.out.println("Sobol points with NUS, new FK \n");
       RQMCPointSet fk = new RQMCCachedNUS(p, cp, noise);
       testSpeedAll(m, fk.getPointSet(), fk.getRandomization(), s);
-      
+
       System.out.println("Sobol points with NUS, new HCK \n");
       RQMCPointSet hck = new RQMCDigitalNet2HCK(p, cp, noise, 53);
       testSpeedAll(m, hck.getPointSet(), hck.getRandomization(), s);
       
       System.out.println("Sobol points with NUS, old SSJ \n");
       testSpeedAll(m, cp, nus, s);
-         
+
       System.out.println("Independent random points cached \n");
       IndependentPointsCached cip = new IndependentPointsCached (n, s);
       testSpeedAll(m, cip, rs, s);
       
    }
-   
 }
