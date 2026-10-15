@@ -529,6 +529,10 @@ public class DigitalNetBase2 extends DigitalNet {
       }
    }
 
+   @Override
+   public void eraseOriginalGeneratorMatrices() {
+      originalMat = null;
+   }
 
    /**
     * Generate a vector of `numBits <= 31` random bits using the random stream
