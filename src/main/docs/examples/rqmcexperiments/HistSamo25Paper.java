@@ -49,7 +49,7 @@ public class HistSamo25Paper {
       hist.fillFromTallyStore(data);     
       ScaledHistogram scHist = new ScaledHistogram(hist);
       // System.out.println(hist.toString());
-      scHist.setAxisOptions("title={" + titleName + "}, width=4.4cm, height=3.0cm, scale only axis, \n" +
+      scHist.setAxisOptions("title={" + titleName + "}, width=4.4cm, height=2.5cm, scale only axis, \n" +
              "  ymin=0.0, xmin = " + (a - 0.01 * range) + ", xmax = " + (b + 0.01 * range) + 
              ",\n  ylabel={}, yticklabels={}, \n" +
              "  scaled x ticks=true, minor x tick num=0, scaled y ticks=false, \n" +
@@ -72,8 +72,8 @@ public class HistSamo25Paper {
          coords.append("(").append(String.format(Locale.US, "%.17g", data.getArray()[i])).append(",0) ");
       // The following is ** very specific ** to this Sob-RDS case; it adds purple markes in the middle.
       if (fileName == "SmoothPerB4-8-Sob-RDS-16-10000")
-         // coords.append(" (-4.760742119957395E-6,0) (4.485223280581408E-6,0)");  // No CRNs
-         coords.append(" (-3.71533896355935E-6,0) (5.211694443922366E-6,0)");      // With CRNs
+         coords.append(" (-4.760742119957395E-6,0) (4.485223280581408E-6,0)");  // No CRNs
+         // coords.append(" (-3.71533896355935E-6,0) (5.211694443922366E-6,0)");      // With CRNs
       String adds = "\\addplot+[only marks, mark=|, mark size=2.5pt, "
             + "mark options={purple,thick}, forget plot] coordinates {" + coords + "};";
       latexCode = latexCode.replace("\\end{axis}", adds + "\n\\end{axis}");
